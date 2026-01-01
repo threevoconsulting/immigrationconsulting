@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ====================== -->
+    <!-- Portal Signing Pages -->
+    <!-- ====================== -->
+    
+    <!-- Main Signing Page -->
+    <template id="portal_sign_view" name="E-Sign Document">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h2>Document Signing</h2>
+                            <p class="text-muted">
+                                <t t-esc="document_type_display"/>
+                                for Case <strong t-field="case.name"/>
+                            </p>
+                        </div>
+                        
+                        <!-- Document Preview Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">
+                                    <i class="fa fa-file-pdf-o text-danger me-2" 
+                                       title="PDF Document" role="img" aria-label="PDF Document"/>
+                                    Document Preview
+                                </h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="esign-document-container" style="height: 500px; overflow: auto;">
+                                    <iframe t-attf-src="/my/immigration/sign/#{token}/document" 
+                                            width="100%" height="100%" style="border: none;"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Signature Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">
+                                    <i class="fa fa-pencil text-primary me-2"
+                                       title="Signature" role="img" aria-label="Signature"/>
+                                    Your Signature
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Signature Type Toggle -->
+                                <div class="btn-group mb-3 w-100" role="group">
+                                    <button type="button" class="btn btn-outline-primary active" 
+                                            id="btn-draw-signature" onclick="toggleSignatureType('draw')">
+                                        <i class="fa fa-paint-brush me-1" 
+                                           title="Draw" role="img" aria-label="Draw"/> Draw Signature
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" 
+                                            id="btn-type-signature" onclick="toggleSignatureType('type')">
+                                        <i class="fa fa-keyboard-o me-1"
+                                           title="Type" role="img" aria-label="Type"/> Type Signature
+                                    </button>
+                                </div>
+                                
+                                <!-- Draw Signature Panel -->
+                                <div id="draw-signature-panel">
+                                    <p class="text-muted small mb-2">
+                                        Use your mouse or finger to draw your signature below:
+                                    </p>
+                                    <div class="signature-pad-container border rounded bg-white mb-2" 
+                                         style="position: relative;">
+                                        <canvas id="signature-pad" width="600" height="200" 
+                                                style="width: 100%; touch-action: none;"/>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                            onclick="clearSignature()">
+                                        <i class="fa fa-eraser" title="Clear" role="img" aria-label="Clear"/> 
+                                        Clear
+                                    </button>
+                                </div>
+                                
+                                <!-- Type Signature Panel -->
+                                <div id="type-signature-panel" style="display: none;">
+                                    <p class="text-muted small mb-2">
+                                        Type your full legal name below:
+                                    </p>
+                                    <input type="text" id="typed-signature" class="form-control form-control-lg mb-2"
+                                           t-att-placeholder="signer_name" style="font-family: 'Brush Script MT', cursive;
+                                           font-size: 28px; text-align: center;"/>
+                                    <p class="text-muted small">
+                                        Preview: <span id="typed-signature-preview" 
+                                                       style="font-family: 'Brush Script MT', cursive; font-size: 24px;"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Agreement Checkbox -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="agreement-checkbox"/>
+                                    <label class="form-check-label" for="agreement-checkbox">
+                                        I, <strong t-esc="signer_name"/>, confirm that I have read and 
+                                        understood the above document, and I agree to be legally bound by its terms. 
+                                        I understand that this electronic signature constitutes a valid and 
+                                        enforceable agreement.
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="button" id="submit-signature" class="btn btn-primary btn-lg px-5"
+                                    onclick="submitSignature()" disabled="disabled">
+                                <i class="fa fa-check me-2" title="Sign" role="img" aria-label="Sign"/>
+                                Sign Document
+                            </button>
+                            <p class="text-muted small mt-2">
+                                Your IP address and timestamp will be recorded for audit purposes.
+                            </p>
+                        </div>
+                        
+                        <!-- Hidden form data -->
+                        <input type="hidden" id="signature-token" t-att-value="token"/>
+                        <input type="hidden" id="csrf-token" t-att-value="request.csrf_token()"/>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Inline JavaScript for Signature Pad -->
+            <script>
+                (function() {
+                    'use strict';
+                    
+                    var currentSignatureType = 'draw';
+                    var signaturePadInstance = null;
+                    
+                    function initSignaturePad() {
+                        var canvas = document.getElementById('signature-pad');
+                        if (!canvas) {
+                            console.error('Canvas not found');
+                            return;
+                        }
+                        
+                        if (typeof SignaturePad === 'undefined') {
+                            console.error('SignaturePad not loaded, retrying in 500ms');
+                            setTimeout(initSignaturePad, 500);
+                            return;
+                        }
+                        
+                        var container = canvas.parentElement;
+                        var containerWidth = container.offsetWidth || 600;
+                        
+                        canvas.width = containerWidth;
+                        canvas.height = 200;
+                        canvas.style.width = containerWidth + 'px';
+                        canvas.style.height = '200px';
+                        
+                        signaturePadInstance = new SignaturePad(canvas, {
+                            backgroundColor: 'rgb(255, 255, 255)',
+                            penColor: 'rgb(0, 0, 0)',
+                            minWidth: 0.5,
+                            maxWidth: 2.5
+                        });
+                        
+                        window.signaturePad = signaturePadInstance;
+                        
+                        var typedInput = document.getElementById('typed-signature');
+                        var typedPreview = document.getElementById('typed-signature-preview');
+                        
+                        if (typedInput &amp;&amp; typedPreview) {
+                            typedInput.addEventListener('input', function() {
+                                typedPreview.textContent = this.value;
+                                updateSubmitButton();
+                            });
+                        }
+                        
+                        var agreementCheckbox = document.getElementById('agreement-checkbox');
+                        if (agreementCheckbox) {
+                            agreementCheckbox.addEventListener('change', updateSubmitButton);
+                        }
+                        
+                        canvas.addEventListener('pointerup', updateSubmitButton);
+                        canvas.addEventListener('mouseup', updateSubmitButton);
+                        canvas.addEventListener('touchend', updateSubmitButton);
+                    }
+                    
+                    function updateSubmitButton() {
+                        var submitButton = document.getElementById('submit-signature');
+                        var agreementCheckbox = document.getElementById('agreement-checkbox');
+                        if (!submitButton || !agreementCheckbox) return;
+                        
+                        var hasSignature = false;
+                        if (currentSignatureType === 'draw') {
+                            hasSignature = signaturePadInstance &amp;&amp; !signaturePadInstance.isEmpty();
+                        } else {
+                            var typedInput = document.getElementById('typed-signature');
+                            hasSignature = typedInput &amp;&amp; typedInput.value.trim().length > 0;
+                        }
+                        
+                        submitButton.disabled = !(hasSignature &amp;&amp; agreementCheckbox.checked);
+                    }
+                    
+                    window.toggleSignatureType = function(type) {
+                        currentSignatureType = type;
+                        var drawPanel = document.getElementById('draw-signature-panel');
+                        var typePanel = document.getElementById('type-signature-panel');
+                        var btnDraw = document.getElementById('btn-draw-signature');
+                        var btnType = document.getElementById('btn-type-signature');
+                        
+                        if (type === 'draw') {
+                            drawPanel.style.display = 'block';
+                            typePanel.style.display = 'none';
+                            btnDraw.classList.add('active');
+                            btnType.classList.remove('active');
+                        } else {
+                            drawPanel.style.display = 'none';
+                            typePanel.style.display = 'block';
+                            btnDraw.classList.remove('active');
+                            btnType.classList.add('active');
+                        }
+                        updateSubmitButton();
+                    };
+                    
+                    window.clearSignature = function() {
+                        if (signaturePadInstance) {
+                            signaturePadInstance.clear();
+                            updateSubmitButton();
+                        }
+                    };
+                    
+                    window.submitSignature = function() {
+                        var submitButton = document.getElementById('submit-signature');
+                        var token = document.getElementById('signature-token').value;
+                        var csrfToken = document.getElementById('csrf-token').value;
+                        
+                        submitButton.disabled = true;
+                        submitButton.innerHTML = '&lt;i class="fa fa-spinner fa-spin me-2"&gt;&lt;/i&gt;Signing...';
+                        
+                        var signatureData;
+                        var typedName = null;
+                        
+                        if (currentSignatureType === 'draw') {
+                            if (!signaturePadInstance || signaturePadInstance.isEmpty()) {
+                                alert('Please draw your signature first.');
+                                resetSubmitButton();
+                                return;
+                            }
+                            signatureData = signaturePadInstance.toDataURL('image/png');
+                        } else {
+                            var typedInput = document.getElementById('typed-signature');
+                            typedName = typedInput.value.trim();
+                            if (!typedName) {
+                                alert('Please type your name.');
+                                resetSubmitButton();
+                                return;
+                            }
+                            var tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = 400;
+                            tempCanvas.height = 100;
+                            var ctx = tempCanvas.getContext('2d');
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, 400, 100);
+                            ctx.fillStyle = '#000000';
+                            ctx.font = '48px "Brush Script MT", cursive';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(typedName, 200, 50);
+                            signatureData = tempCanvas.toDataURL('image/png');
+                        }
+                        
+                        var formData = new FormData();
+                        formData.append('csrf_token', csrfToken);
+                        formData.append('signature_type', currentSignatureType);
+                        formData.append('signature_data', signatureData);
+                        if (typedName) formData.append('typed_name', typedName);
+                        
+                        fetch('/my/immigration/sign/' + token + '/submit', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(function(r) { return r.json(); })
+                        .then(function(data) {
+                            if (data.success) {
+                                submitButton.innerHTML = '&lt;i class="fa fa-check me-2"&gt;&lt;/i&gt;Signed!';
+                                submitButton.classList.remove('btn-primary');
+                                submitButton.classList.add('btn-success');
+                                setTimeout(function() { window.location.href = data.redirect_url; }, 1000);
+                            } else {
+                                alert('Error: ' + (data.error || 'Unknown error'));
+                                resetSubmitButton();
+                            }
+                        })
+                        .catch(function(e) {
+                            alert('Error submitting signature. Please try again.');
+                            resetSubmitButton();
+                        });
+                    };
+                    
+                    function resetSubmitButton() {
+                        var btn = document.getElementById('submit-signature');
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = '&lt;i class="fa fa-check me-2"&gt;&lt;/i&gt;Sign Document';
+                            btn.classList.remove('btn-success');
+                            btn.classList.add('btn-primary');
+                        }
+                        updateSubmitButton();
+                    }
+                    
+                    // Initialize when ready
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initSignaturePad);
+                    } else {
+                        initSignaturePad();
+                    }
+                })();
+            </script>
+            
+        </t>
+    </template>
+    
+    <!-- Signature Complete Page -->
+    <template id="portal_sign_complete" name="Signature Complete">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        
+                        <div class="mb-4">
+                            <i class="fa fa-check-circle text-success" style="font-size: 80px;"/>
+                        </div>
+                        
+                        <h2 class="mb-3">Document Signed Successfully!</h2>
+                        
+                        <p class="text-muted mb-4">
+                            Thank you for signing your <t t-esc="esign_request.document_type.replace('_', ' ').title()"/>.
+                            A confirmation email with a copy of the signed document has been sent to your email address.
+                        </p>
+                        
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <p class="mb-1"><strong>Document Reference:</strong> <span t-field="esign_request.name"/></p>
+                                <p class="mb-1"><strong>Signed:</strong> <span t-field="esign_request.signed_date" t-options="{'widget': 'datetime'}"/></p>
+                                <p class="mb-0"><strong>Case:</strong> <span t-field="case.name"/></p>
+                            </div>
+                        </div>
+                        
+                        <t t-if="show_payment_link">
+                            <div class="alert alert-info mb-4">
+                                <h5 class="alert-heading">Next Step: Complete Payment</h5>
+                                <p class="mb-0">
+                                    Please proceed to payment to unlock your detailed assessment questionnaire.
+                                </p>
+                            </div>
+                            <a t-attf-href="/my/immigration/pay/#{case.id}" class="btn btn-success btn-lg mb-3">
+                                <i class="fa fa-credit-card me-2" title="Pay" role="img" aria-label="Pay"/>
+                                Proceed to Payment
+                            </a>
+                        </t>
+                        
+                        <div>
+                            <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-outline-primary">
+                                <i class="fa fa-arrow-left me-2" title="Back" role="img" aria-label="Back"/>
+                                Back to My Case
+                            </a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </t>
+    </template>
+    
+    <!-- Invalid Token Page -->
+    <template id="portal_sign_invalid_token" name="Invalid Signing Link">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-exclamation-triangle text-warning" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">Invalid Signing Link</h2>
+                        <p class="text-muted mb-4">
+                            This signing link is invalid or has already been used.
+                            Please contact us if you need a new signing link.
+                        </p>
+                        <a href="/my/immigration" class="btn btn-primary">
+                            Go to My Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- Expired Page -->
+    <template id="portal_sign_expired" name="Signing Link Expired">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-clock-o text-warning" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">Signing Link Expired</h2>
+                        <p class="text-muted mb-4">
+                            This signing link has expired. Please contact us to receive a new link.
+                        </p>
+                        <a href="/my/immigration" class="btn btn-primary">
+                            Go to My Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- Already Signed Page -->
+    <template id="portal_sign_already_signed" name="Document Already Signed">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-check-circle text-success" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">Document Already Signed</h2>
+                        <p class="text-muted mb-4">
+                            This document was signed on <span t-field="esign_request.signed_date" t-options="{'widget': 'datetime'}"/>.
+                        </p>
+                        <a t-attf-href="/my/immigration/case/#{esign_request.case_id.id}" class="btn btn-primary">
+                            View My Case
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- Cancelled Page -->
+    <template id="portal_sign_cancelled" name="Signature Request Cancelled">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-times-circle text-danger" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">Signature Request Cancelled</h2>
+                        <p class="text-muted mb-4">
+                            This signature request has been cancelled. Please contact us for more information.
+                        </p>
+                        <a href="/my/immigration" class="btn btn-primary">
+                            Go to My Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- Pending Consultant Signature Page -->
+    <template id="portal_sign_pending_consultant" name="Pending Consultant Signature">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-clock-o text-warning" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">Thank You for Signing!</h2>
+                        <p class="text-muted mb-4">
+                            Your signature has been recorded. The document is now awaiting counter-signature from our consultant to be fully executed.
+                        </p>
+                        
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <p class="mb-1"><strong>Document Reference:</strong> <span t-field="esign_request.name"/></p>
+                                <p class="mb-1"><strong>Your Signature:</strong> <span t-field="esign_request.signed_date" t-options="{'widget': 'datetime'}"/></p>
+                                <p class="mb-0"><strong>Status:</strong> <span class="badge bg-warning text-dark">Awaiting Consultant Signature</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info mb-4">
+                            <h5 class="alert-heading"><i class="fa fa-info-circle me-2"/>What Happens Next?</h5>
+                            <p class="mb-0">
+                                Our consultant has been notified and will review and counter-sign your document shortly. 
+                                You will receive an email notification once the document is fully executed, 
+                                after which you can proceed to the next step.
+                            </p>
+                        </div>
+                        
+                        <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-primary">
+                            <i class="fa fa-folder-open me-2"/>View My Case
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- ====================== -->
+    <!-- Quote/Pricing Pages -->
+    <!-- ====================== -->
+    
+    <!-- Quote View Page -->
+    <template id="portal_quote_view" name="Immigration Quote">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h2>Service Quote</h2>
+                            <p class="text-muted">
+                                Case Reference: <strong t-field="case.name"/>
+                            </p>
+                        </div>
+                        
+                        <!-- Quote Details Card -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">
+                                    <i class="fa fa-file-text-o text-primary me-2" 
+                                       title="Quote" role="img" aria-label="Quote"/>
+                                    Quote Details
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Service</th>
+                                            <th class="text-end">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="order_lines" t-as="line">
+                                            <tr>
+                                                <td><t t-esc="line.name"/></td>
+                                                <td class="text-end">
+                                                    <span t-field="line.price_subtotal" 
+                                                          t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="table-active fw-bold">
+                                            <td>Total</td>
+                                            <td class="text-end">
+                                                <span t-field="sale_order.amount_total" 
+                                                      t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Status and Actions -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <t t-if="agreement_signed">
+                                    <div class="text-center">
+                                        <i class="fa fa-check-circle text-success" style="font-size: 48px;"/>
+                                        <h4 class="mt-3">Agreement Signed</h4>
+                                        <p class="text-muted">
+                                            Your service agreement has been signed. Please proceed to payment.
+                                        </p>
+                                        <a t-attf-href="/my/immigration/pay/#{case.id}" class="btn btn-primary btn-lg">
+                                            <i class="fa fa-credit-card me-2"/>Proceed to Payment
+                                        </a>
+                                    </div>
+                                </t>
+                                <t t-elif="agreement_pending">
+                                    <div class="text-center">
+                                        <i class="fa fa-clock-o text-warning" style="font-size: 48px;"/>
+                                        <h4 class="mt-3">Agreement Pending</h4>
+                                        <p class="text-muted">
+                                            A service agreement has been sent for your signature.
+                                        </p>
+                                        <a t-attf-href="/my/immigration/sign/#{service_agreement.access_token}" 
+                                           class="btn btn-primary btn-lg">
+                                            <i class="fa fa-pencil me-2"/>Sign Agreement
+                                        </a>
+                                    </div>
+                                </t>
+                                <t t-elif="can_sign">
+                                    <div class="text-center">
+                                        <h4>Ready to Proceed?</h4>
+                                        <p class="text-muted">
+                                            Review the quote above. When ready, request the service agreement to sign.
+                                        </p>
+                                        <form t-attf-action="/my/immigration/quote/#{case.id}/request-agreement" method="post">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class="fa fa-file-text me-2"/>Request Service Agreement
+                                            </button>
+                                        </form>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="text-center">
+                                        <p class="text-muted">
+                                            Please contact us for more information about this quote.
+                                        </p>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                        
+                        <!-- Back Link -->
+                        <div class="text-center">
+                            <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-outline-secondary">
+                                <i class="fa fa-arrow-left me-2"/>Back to Case
+                            </a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- Quote Not Found -->
+    <template id="portal_quote_not_found" name="Quote Not Found">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-file-o text-muted" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">No Quote Available</h2>
+                        <p class="text-muted mb-4">
+                            There is no quote available for this case yet. 
+                            Please complete the assessment questionnaire first.
+                        </p>
+                        <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-primary">
+                            <i class="fa fa-arrow-left me-2"/>Back to Case
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- ====================== -->
+    <!-- Payment Pages -->
+    <!-- ====================== -->
+    
+    <!-- Payment View Page -->
+    <template id="portal_payment_view" name="Immigration Payment">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h2>Complete Payment</h2>
+                            <p class="text-muted">
+                                Case Reference: <strong t-field="case.name"/>
+                            </p>
+                        </div>
+                        
+                        <!-- Payment Card -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">
+                                    <i class="fa fa-credit-card text-primary me-2"
+                                       title="Payment" role="img" aria-label="Payment"/>
+                                    Payment Details
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-6">Invoice Reference:</div>
+                                    <div class="col-6 text-end"><strong t-field="invoice.name"/></div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">Amount Due:</div>
+                                    <div class="col-6 text-end">
+                                        <strong>
+                                            <span t-field="invoice.amount_residual" 
+                                                  t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div class="text-center">
+                                    <a t-att-href="invoice_url" class="btn btn-primary btn-lg">
+                                        <i class="fa fa-lock me-2"/>Pay Securely Now
+                                    </a>
+                                    <p class="text-muted small mt-2">
+                                        You will be redirected to our secure payment portal.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Info Box -->
+                        <div class="alert alert-info">
+                            <h5 class="alert-heading">
+                                <i class="fa fa-info-circle me-2"/>Payment Information
+                            </h5>
+                            <p class="mb-0">
+                                Upon successful payment, you will receive a confirmation email and your case 
+                                will automatically progress to the next stage. You can then begin the detailed 
+                                questionnaire process.
+                            </p>
+                        </div>
+                        
+                        <!-- Back Link -->
+                        <div class="text-center">
+                            <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-outline-secondary">
+                                <i class="fa fa-arrow-left me-2"/>Back to Case
+                            </a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- Payment Already Completed -->
+    <template id="portal_payment_already_paid" name="Payment Already Completed">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-check-circle text-success" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">Payment Completed</h2>
+                        <p class="text-muted mb-4">
+                            Payment for this case has already been received. Thank you!
+                        </p>
+                        <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-primary">
+                            <i class="fa fa-folder-open me-2"/>View My Case
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- No Invoice Available -->
+    <template id="portal_payment_no_invoice" name="No Invoice Available">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-clock-o text-warning" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">Invoice Pending</h2>
+                        <p class="text-muted mb-4">
+                            Your invoice is being prepared. Please check back shortly or contact us 
+                            if you have any questions.
+                        </p>
+                        <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-primary">
+                            <i class="fa fa-arrow-left me-2"/>Back to Case
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+</odoo>

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Report Action -->
+    <record id="report_service_agreement" model="ir.actions.report">
+        <field name="name">Service Agreement</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mm_esign.report_service_agreement_document</field>
+        <field name="report_file">mm_esign.report_service_agreement_document</field>
+        <field name="print_report_name">'Service_Agreement_%s' % (object.name)</field>
+        <field name="binding_type">report</field>
+    </record>
+    
+    <!-- Report Template -->
+    <template id="report_service_agreement_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="case">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: 'Times New Roman', serif; font-size: 11pt; line-height: 1.6;">
+                        
+                        <!-- Title -->
+                        <div style="text-align: center; margin-bottom: 30px;">
+                            <h1 style="font-size: 18pt; font-weight: bold; margin-bottom: 10px;">
+                                MASTER SERVICE AGREEMENT
+                            </h1>
+                            <p style="font-style: italic; color: #666; margin: 0;">
+                                (Immigration Consulting Services)
+                            </p>
+                        </div>
+                        
+                        <!-- Section 1: Parties -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                1. PARTIES
+                            </h2>
+                            <p>This Service Agreement ("Agreement") is entered into between:</p>
+                            
+                            <div style="margin: 15px 0; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
+                                <p style="margin: 0 0 10px 0;"><strong>Service Provider</strong></p>
+                                <p style="margin: 0;" t-field="case.company_id.name"/>
+                                <p style="margin: 0;" t-if="case.company_id.street" t-field="case.company_id.street"/>
+                                <p style="margin: 0;">
+                                    <t t-if="case.company_id.city"><span t-field="case.company_id.city"/>, </t>
+                                    <t t-if="case.company_id.state_id"><span t-field="case.company_id.state_id.name"/> </t>
+                                    <t t-if="case.company_id.zip"><span t-field="case.company_id.zip"/></t>
+                                </p>
+                                <p style="margin: 0;" t-if="case.company_id.email">
+                                    Email: <span t-field="case.company_id.email"/>
+                                </p>
+                            </div>
+                            
+                            <p style="text-align: center; font-weight: bold; margin: 10px 0;">and</p>
+                            
+                            <div style="margin: 15px 0; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd;">
+                                <p style="margin: 0 0 10px 0;"><strong>Client</strong></p>
+                                <p style="margin: 0;">Full Legal Name: <span t-field="case.partner_id.name"/></p>
+                                <p style="margin: 0;" t-if="case.profile_id and case.profile_id.date_of_birth">
+                                    Date of Birth: <span t-field="case.profile_id.date_of_birth"/>
+                                </p>
+                                <p style="margin: 0;" t-if="case.partner_id.email">
+                                    Email: <span t-field="case.partner_id.email"/>
+                                </p>
+                                <p style="margin: 0;" t-if="case.profile_id and case.profile_id.residence_country_id">
+                                    Country of Residence: <span t-field="case.profile_id.residence_country_id.name"/>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Section 2: Purpose -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                2. PURPOSE OF AGREEMENT
+                            </h2>
+                            <p>The purpose of this Agreement is to define the terms under which the Service Provider 
+                            delivers immigration-related advisory services, including but not limited to:</p>
+                            <ul>
+                                <li>Initial immigration consultations</li>
+                                <li>Immigration eligibility analysis</li>
+                                <li>Immigration roadmaps and strategic planning documents</li>
+                            </ul>
+                            <p>This Agreement does not constitute legal representation before Immigration, Refugees 
+                            and Citizenship Canada (IRCC) unless explicitly stated in a separate Retainer Agreement.</p>
+                        </div>
+                        
+                        <!-- Section 3: Service Types -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                3. SERVICE TYPES
+                            </h2>
+                            <p>The Client acknowledges that services are offered in distinct service tiers, 
+                            each governed by this Agreement.</p>
+                            
+                            <h3 style="font-size: 11pt; font-weight: bold; margin-top: 15px;">
+                                3.1 Initial Immigration Consultation
+                            </h3>
+                            <p><strong>Scope includes:</strong></p>
+                            <ul>
+                                <li>Review of client-provided background information</li>
+                                <li>High-level discussion of immigration options</li>
+                                <li>Identification of potential programs (e.g., Express Entry, PNP, Study, Work, Family)</li>
+                                <li>General guidance on next steps</li>
+                            </ul>
+                            <p><strong>Explicit exclusions:</strong></p>
+                            <ul>
+                                <li>No application preparation</li>
+                                <li>No form completion</li>
+                                <li>No document review beyond discussion-level</li>
+                                <li>No guaranteed outcomes</li>
+                            </ul>
+                            
+                            <h3 style="font-size: 11pt; font-weight: bold; margin-top: 15px;">
+                                3.2 Immigration Roadmap / Strategy Report
+                            </h3>
+                            <p><strong>Scope includes:</strong></p>
+                            <ul>
+                                <li>Structured assessment of eligibility factors (education, language, work, age, adaptability)</li>
+                                <li>Analysis of applicable federal and provincial programs</li>
+                                <li>Risk identification and mitigation strategies</li>
+                                <li>Step-by-step recommended immigration pathway</li>
+                                <li>Timelines, dependencies, and prerequisites (e.g., ECA, language tests)</li>
+                            </ul>
+                            <p><strong>Deliverable:</strong> Written Immigration Roadmap (PDF / digital report)</p>
+                            <p><strong>Explicit exclusions:</strong></p>
+                            <ul>
+                                <li>No submission of applications</li>
+                                <li>No representation before IRCC</li>
+                                <li>No legal opinions</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Section 4: No Guarantee -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                4. NO GUARANTEE OF OUTCOME
+                            </h2>
+                            <p>The Client acknowledges and agrees that:</p>
+                            <ul>
+                                <li>Immigration decisions are made solely by IRCC or other authorized government bodies</li>
+                                <li>The Service Provider does not guarantee approvals, invitations, visas, or permanent residence</li>
+                                <li>Advice is based on legislation, regulations, policy guidance, and publicly available 
+                                information at the time of service</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Section 5: Client Obligations -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                5. CLIENT OBLIGATIONS
+                            </h2>
+                            <p>The Client agrees to:</p>
+                            <ul>
+                                <li>Provide truthful, complete, and accurate information</li>
+                                <li>Disclose any refusals, bans, criminal history, or misrepresentation issues</li>
+                                <li>Review deliverables promptly and request clarifications within the allowed timeframe</li>
+                                <li>Understand that omissions or inaccuracies may invalidate advice provided</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Section 6: Fees & Payment -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                6. FEES &amp; PAYMENT
+                            </h2>
+                            
+                            <h3 style="font-size: 11pt; font-weight: bold; margin-top: 15px;">6.1 Fee Structure</h3>
+                            <p>Fees are clearly displayed prior to purchase:</p>
+                            <t t-if="case.sale_order_id and case.sale_order_id.order_line">
+                                <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                                    <tr style="background-color: #f0f0f0;">
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Service</th>
+                                        <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Amount</th>
+                                    </tr>
+                                    <t t-foreach="case.sale_order_id.order_line" t-as="line">
+                                        <tr>
+                                            <td style="border: 1px solid #ddd; padding: 8px;"><t t-esc="line.name"/></td>
+                                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
+                                                <span t-field="line.price_subtotal" 
+                                                      t-options="{'widget': 'monetary', 'display_currency': case.sale_order_id.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr style="font-weight: bold;">
+                                        <td style="border: 1px solid #ddd; padding: 8px;">Total</td>
+                                        <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
+                                            <span t-field="case.sale_order_id.amount_total"
+                                                  t-options="{'widget': 'monetary', 'display_currency': case.sale_order_id.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </t>
+                            
+                            <h3 style="font-size: 11pt; font-weight: bold; margin-top: 15px;">6.2 Refund Policy</h3>
+                            <ul>
+                                <li>Consultation fees are non-refundable once delivered</li>
+                                <li>Roadmap fees are refundable only if work has not commenced</li>
+                                <li>No refunds for dissatisfaction with outcome or eligibility conclusions</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Section 7: Intellectual Property -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                7. INTELLECTUAL PROPERTY
+                            </h2>
+                            <p>All reports, roadmaps, templates, methodologies, and frameworks remain the 
+                            intellectual property of the Service Provider.</p>
+                            <p>The Client receives a personal, non-transferable license to use the deliverables 
+                            for their own immigration planning.</p>
+                        </div>
+                        
+                        <!-- Section 8: Limitation of Liability -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                8. LIMITATION OF LIABILITY
+                            </h2>
+                            <p>To the maximum extent permitted by law:</p>
+                            <ul>
+                                <li>The Service Provider shall not be liable for indirect, incidental, or 
+                                consequential damages</li>
+                                <li>Total liability shall not exceed the amount paid for the specific service rendered</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Section 9: Confidentiality -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                9. CONFIDENTIALITY &amp; DATA HANDLING
+                            </h2>
+                            <ul>
+                                <li>Client data is handled in accordance with applicable privacy laws (PIPEDA / GDPR where applicable)</li>
+                                <li>Information is used solely for service delivery</li>
+                                <li>Data may be stored electronically within the Service Provider's platform</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Section 10: No Legal Representation -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                10. NO LEGAL REPRESENTATION
+                            </h2>
+                            <p>Unless explicitly stated otherwise in writing:</p>
+                            <ul>
+                                <li>The Service Provider is not acting as legal counsel</li>
+                                <li>This Agreement does not establish solicitor-client privilege</li>
+                                <li>Representation before IRCC requires a separate Retainer Agreement</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Section 11: Termination -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                11. TERMINATION
+                            </h2>
+                            <p>This Agreement terminates automatically upon:</p>
+                            <ul>
+                                <li>Completion of the purchased service, or</li>
+                                <li>Written notice by either party before service delivery begins</li>
+                            </ul>
+                            <p>Sections relating to limitation of liability, IP, confidentiality, and governing 
+                            law survive termination.</p>
+                        </div>
+                        
+                        <!-- Section 12: Governing Law -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                12. GOVERNING LAW
+                            </h2>
+                            <p>This Agreement shall be governed by and construed in accordance with the laws of:</p>
+                            <p style="margin-left: 30px;">
+                                <strong>
+                                    Province of <span t-if="case.company_id.state_id" t-field="case.company_id.state_id.name"/><t t-else="">Alberta</t>, Canada
+                                </strong>
+                            </p>
+                        </div>
+                        
+                        <!-- Section 13: Electronic Acceptance -->
+                        <div style="margin-bottom: 25px;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                13. ELECTRONIC ACCEPTANCE
+                            </h2>
+                            <p>By providing an electronic signature through the platform, the Client acknowledges that:</p>
+                            <ul>
+                                <li>They have read and understood this Agreement</li>
+                                <li>They agree to be legally bound by its terms</li>
+                                <li>Electronic acceptance constitutes a valid and enforceable agreement</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Section 14: Signatures - UPDATED FOR BETTER OVERLAY POSITIONING -->
+                        <div style="margin-top: 40px; page-break-inside: avoid;">
+                            <h2 style="font-size: 12pt; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                                14. SIGNATURES
+                            </h2>
+                            
+                            <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+                                <tr>
+                                    <!-- Client Signature Block -->
+                                    <td style="width: 45%; vertical-align: top;">
+                                        <p style="margin: 0 0 5px 0; font-weight: bold;">Client:</p>
+                                        <!-- Signature area with fixed height for overlay -->
+                                        <div style="height: 60px; margin-bottom: 0;">
+                                            <!-- Signature image overlaid here by Python -->
+                                        </div>
+                                        <p style="border-top: 1px solid #000; margin: 0; padding-top: 5px;">
+                                            <t t-esc="case.partner_id.name"/>
+                                        </p>
+                                        <p style="margin: 10px 0 0 0; font-size: 10pt;">
+                                            <span style="color: #666;">Date: </span>
+                                            <span style="border-bottom: 1px solid #999; display: inline-block; width: 150px;">
+                                                <!-- Date filled in by Python overlay -->
+                                            </span>
+                                        </p>
+                                    </td>
+                                    
+                                    <!-- Spacer -->
+                                    <td style="width: 10%;"></td>
+                                    
+                                    <!-- Service Provider Signature Block -->
+                                    <td style="width: 45%; vertical-align: top;">
+                                        <p style="margin: 0 0 5px 0; font-weight: bold;">Service Provider:</p>
+                                        <!-- Signature area with fixed height for overlay -->
+                                        <div style="height: 60px; margin-bottom: 0;">
+                                            <!-- Signature image overlaid here by Python -->
+                                        </div>
+                                        <p style="border-top: 1px solid #000; margin: 0; padding-top: 5px;">
+                                            <t t-esc="case.company_id.name"/>
+                                        </p>
+                                        <p style="margin: 10px 0 0 0; font-size: 10pt;">
+                                            <span style="color: #666;">Date: </span>
+                                            <span style="border-bottom: 1px solid #999; display: inline-block; width: 150px;">
+                                                <!-- Date filled in by Python overlay -->
+                                            </span>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- Footer with Case Reference -->
+                        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; 
+                                    font-size: 9pt; color: #999; text-align: center;">
+                            <p style="margin: 0;">
+                                Case Reference: <span t-field="case.name"/> | 
+                                Generated: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                            </p>
+                        </div>
+                        
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+    
+</odoo>

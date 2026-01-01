@@ -1,0 +1,588 @@
+// ============================================================================
+// The Migration Monitor - E-Sign Portal Styles
+// ============================================================================
+// Stylesheet for the E-Signature Module (mm_esign)
+//
+// IMPORTANT - Odoo 19 Compliance:
+// - No @import statements (forbidden in Odoo 19)
+// - Variables are loaded via mm_portal/_variables.scss (dependency loads first)
+// - All custom classes use .mm- prefix
+// - BEM naming convention: .mm-block__element--modifier
+// ============================================================================
+
+// ============================================================================
+// DOCUMENT CONTAINER
+// ============================================================================
+
+.esign-document-container {
+    background-color: $mm-gray-100;
+    border: 1px solid $mm-border-color;
+    border-radius: $mm-radius-lg;
+    overflow: hidden;
+    
+    iframe {
+        background-color: $mm-white;
+        display: block;
+    }
+    
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: $mm-gray-100;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: $mm-gray-400;
+        border-radius: $mm-radius-sm;
+        
+        &:hover {
+            background: $mm-gray-500;
+        }
+    }
+}
+
+// ============================================================================
+// SIGNATURE PAD
+// ============================================================================
+
+.signature-pad-container {
+    background-color: $mm-white;
+    min-height: 200px;
+    cursor: crosshair;
+    border: 2px solid $mm-border-color;
+    border-radius: $mm-radius-lg;
+    transition: border-color $mm-transition-base, box-shadow $mm-transition-base;
+    
+    canvas {
+        display: block;
+        width: 100%;
+        height: 200px;
+        border-radius: $mm-radius-md;
+    }
+    
+    &:hover,
+    &:focus-within {
+        border-color: $mm-primary;
+        box-shadow: 0 0 0 3px rgba($mm-primary, 0.15);
+    }
+}
+
+// ============================================================================
+// SIGNATURE TYPE TOGGLE
+// ============================================================================
+
+.mm-signature-toggle {
+    display: flex;
+    gap: $mm-spacing-2;
+    margin-bottom: $mm-spacing-4;
+    
+    .btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $mm-spacing-2;
+        padding: $mm-spacing-3;
+        border-radius: $mm-radius-lg;
+        font-weight: $mm-font-weight-medium;
+        transition: all $mm-transition-base;
+        
+        &.btn-outline-secondary {
+            border-color: $mm-border-color;
+            color: $mm-text-secondary;
+            
+            &:hover {
+                background-color: $mm-light;
+                border-color: $mm-gray-400;
+            }
+        }
+        
+        &.active,
+        &:active {
+            background-color: $mm-primary !important;
+            border-color: $mm-primary !important;
+            color: $mm-white !important;
+        }
+    }
+}
+
+// Legacy button group support
+.btn-group {
+    #btn-draw-signature,
+    #btn-type-signature {
+        &.active {
+            background-color: $mm-primary;
+            border-color: $mm-primary;
+            color: $mm-white;
+        }
+    }
+}
+
+// ============================================================================
+// TYPED SIGNATURE
+// ============================================================================
+
+#typed-signature {
+    font-family: 'Brush Script MT', 'Segoe Script', 'Dancing Script', cursive;
+    font-size: 28px;
+    text-align: center;
+    border: 2px dashed $mm-border-color;
+    border-radius: $mm-radius-lg;
+    padding: $mm-spacing-4;
+    transition: border-color $mm-transition-base, box-shadow $mm-transition-base;
+    
+    &:focus {
+        border-color: $mm-primary;
+        border-style: solid;
+        box-shadow: $mm-focus-ring;
+        outline: none;
+    }
+    
+    &::placeholder {
+        color: $mm-gray-400;
+        font-family: $mm-font-family-base;
+        font-size: $mm-font-size-base;
+    }
+}
+
+#typed-signature-preview {
+    font-family: 'Brush Script MT', 'Segoe Script', 'Dancing Script', cursive;
+    font-size: 24px;
+    color: $mm-dark;
+    padding: $mm-spacing-3;
+    text-align: center;
+    border-bottom: 2px solid $mm-gray-300;
+}
+
+// ============================================================================
+// AGREEMENT CHECKBOX
+// ============================================================================
+
+.mm-agreement-check {
+    padding: $mm-spacing-4;
+    background-color: $mm-light;
+    border-radius: $mm-radius-lg;
+    margin-bottom: $mm-spacing-4;
+    
+    .form-check {
+        margin-bottom: 0;
+        
+        .form-check-input {
+            width: 1.25em;
+            height: 1.25em;
+            margin-top: 0.125em;
+            border-color: $mm-gray-400;
+            
+            &:checked {
+                background-color: $mm-primary;
+                border-color: $mm-primary;
+            }
+            
+            &:focus {
+                box-shadow: $mm-focus-ring;
+            }
+        }
+        
+        .form-check-label {
+            line-height: 1.6;
+            color: $mm-text-primary;
+            padding-left: $mm-spacing-2;
+        }
+    }
+}
+
+// ============================================================================
+// SUBMIT BUTTON
+// ============================================================================
+
+#submit-signature {
+    transition: all $mm-transition-base;
+    padding: $mm-spacing-3 $mm-spacing-6;
+    font-weight: $mm-font-weight-medium;
+    
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    &.btn-success {
+        background-color: $mm-success;
+        border-color: $mm-success;
+        animation: mm-pulse 0.5s ease;
+        
+        &:hover {
+            background-color: $mm-success-dark;
+            border-color: $mm-success-dark;
+        }
+    }
+}
+
+@keyframes mm-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+// ============================================================================
+// QUOTE PAGE
+// ============================================================================
+
+.portal-quote {
+    .mm-service-item {
+        padding: $mm-spacing-4;
+        border-bottom: 1px solid $mm-border-color;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        &:last-child {
+            border-bottom: none;
+        }
+        
+        .mm-service-item__name {
+            font-weight: $mm-font-weight-medium;
+            color: $mm-text-primary;
+        }
+        
+        .mm-service-item__price {
+            font-weight: $mm-font-weight-semibold;
+            color: $mm-secondary;
+        }
+    }
+    
+    .quote-total,
+    .mm-quote-total {
+        font-size: $mm-font-size-2xl;
+        font-weight: $mm-font-weight-bold;
+        color: $mm-primary;
+        padding: $mm-spacing-4;
+        background-color: rgba($mm-primary, 0.05);
+        border-radius: $mm-radius-lg;
+        text-align: center;
+    }
+}
+
+// ============================================================================
+// PAYMENT PAGE
+// ============================================================================
+
+.portal-payment {
+    .amount-display,
+    .mm-amount-display {
+        font-size: 3rem;
+        font-weight: $mm-font-weight-bold;
+        color: $mm-primary;
+        text-align: center;
+        padding: $mm-spacing-6;
+        background: linear-gradient(135deg, rgba($mm-primary, 0.05) 0%, rgba($mm-primary, 0.1) 100%);
+        border-radius: $mm-radius-xl;
+        margin-bottom: $mm-spacing-5;
+    }
+    
+    .payment-security,
+    .mm-payment-security {
+        color: $mm-text-muted;
+        font-size: $mm-font-size-sm;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $mm-spacing-2;
+        
+        i {
+            color: $mm-success;
+        }
+    }
+    
+    // Payment method cards
+    .mm-payment-method {
+        border: 2px solid $mm-border-color;
+        border-radius: $mm-radius-lg;
+        padding: $mm-spacing-4;
+        margin-bottom: $mm-spacing-3;
+        cursor: pointer;
+        transition: all $mm-transition-base;
+        
+        &:hover {
+            border-color: $mm-primary-light;
+            background-color: rgba($mm-primary, 0.02);
+        }
+        
+        &--selected {
+            border-color: $mm-primary;
+            background-color: rgba($mm-primary, 0.05);
+        }
+    }
+}
+
+// ============================================================================
+// SUCCESS PAGE
+// ============================================================================
+
+.esign-success,
+.mm-esign-success {
+    text-align: center;
+    padding: $mm-spacing-10 $mm-spacing-5;
+    
+    .success-icon,
+    .mm-success-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: $mm-radius-full;
+        background-color: $mm-success;
+        color: $mm-white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto $mm-spacing-5;
+        font-size: 2.5rem;
+        animation: mm-checkmark 0.5s ease;
+    }
+    
+    h2 {
+        color: $mm-secondary;
+        margin-bottom: $mm-spacing-3;
+    }
+    
+    p {
+        color: $mm-text-muted;
+        max-width: 400px;
+        margin: 0 auto $mm-spacing-5;
+    }
+}
+
+@keyframes mm-checkmark {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+// ============================================================================
+// STATUS PAGES (Expired, Invalid, etc.)
+// ============================================================================
+
+.esign-status-page,
+.mm-esign-status {
+    text-align: center;
+    padding: $mm-spacing-10 $mm-spacing-5;
+    
+    .status-icon,
+    .mm-status-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: $mm-radius-full;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto $mm-spacing-6;
+        
+        i {
+            font-size: 3rem;
+        }
+        
+        &--warning {
+            background-color: $mm-warning-bg;
+            color: $mm-warning;
+        }
+        
+        &--danger {
+            background-color: $mm-danger-bg;
+            color: $mm-danger;
+        }
+        
+        &--info {
+            background-color: $mm-info-bg;
+            color: $mm-info;
+        }
+    }
+    
+    h2 {
+        color: $mm-secondary;
+        margin-bottom: $mm-spacing-3;
+    }
+    
+    p {
+        color: $mm-text-muted;
+        max-width: 500px;
+        margin: 0 auto $mm-spacing-5;
+    }
+}
+
+// ============================================================================
+// CARD ENHANCEMENTS
+// ============================================================================
+
+.o_portal {
+    .mm-esign-card {
+        border: none;
+        border-radius: $mm-radius-xl;
+        box-shadow: $mm-shadow-lg;
+        overflow: hidden;
+        
+        .card-header {
+            border-radius: $mm-radius-xl $mm-radius-xl 0 0;
+            padding: $mm-spacing-4 $mm-spacing-5;
+            
+            &.bg-primary {
+                background-color: $mm-primary !important;
+            }
+            
+            &.mm-header-secondary {
+                background: linear-gradient(135deg, $mm-secondary 0%, $mm-secondary-dark 100%);
+                color: $mm-white;
+            }
+        }
+        
+        .card-body {
+            padding: $mm-spacing-5;
+        }
+    }
+}
+
+// ============================================================================
+// STICKY SIDEBAR
+// ============================================================================
+
+@media (min-width: $mm-breakpoint-lg) {
+    .mm-sticky-sidebar {
+        position: sticky;
+        top: $mm-spacing-5;
+    }
+}
+
+// ============================================================================
+// LOADING STATES
+// ============================================================================
+
+.mm-loading {
+    position: relative;
+    pointer-events: none;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba($mm-white, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: inherit;
+    }
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 24px;
+        height: 24px;
+        margin: -12px 0 0 -12px;
+        border: 3px solid $mm-gray-300;
+        border-top-color: $mm-primary;
+        border-radius: $mm-radius-full;
+        animation: mm-spin 0.8s linear infinite;
+        z-index: 1;
+    }
+}
+
+@keyframes mm-spin {
+    to { transform: rotate(360deg); }
+}
+
+// ============================================================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================================================
+
+@media (max-width: $mm-breakpoint-md - 1px) {
+    .signature-pad-container {
+        canvas {
+            height: 150px;
+        }
+    }
+    
+    #typed-signature {
+        font-size: 20px;
+    }
+    
+    .portal-payment .mm-amount-display,
+    .portal-payment .amount-display {
+        font-size: 2rem;
+        padding: $mm-spacing-4;
+    }
+    
+    .mm-signature-toggle,
+    .btn-group {
+        flex-direction: column;
+        
+        .btn {
+            border-radius: $mm-radius-lg !important;
+            margin-bottom: $mm-spacing-2;
+        }
+    }
+    
+    .mm-esign-success .mm-success-icon,
+    .esign-success .success-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.75rem;
+    }
+}
+
+// ============================================================================
+// PRINT STYLES
+// ============================================================================
+
+@media print {
+    .esign-document-container,
+    .signature-pad-container,
+    .mm-signature-toggle,
+    .btn-group {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .btn,
+    .mm-agreement-check,
+    .mm-section-nav {
+        display: none !important;
+    }
+}
+
+// ============================================================================
+// ACCESSIBILITY ENHANCEMENTS
+// ============================================================================
+
+.btn:focus,
+.form-control:focus,
+.form-check-input:focus {
+    outline: none;
+    box-shadow: $mm-focus-ring;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+    .signature-pad-container {
+        border-width: 3px;
+    }
+    
+    #typed-signature {
+        border-width: 3px;
+    }
+    
+    .mm-agreement-check {
+        border: 2px solid $mm-dark;
+    }
+}

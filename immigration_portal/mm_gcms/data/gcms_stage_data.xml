@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- 
+        GCMS Workflow Stages
+        Phase 6: GCMS Notes Request Workflow
+        
+        Stages specific to GCMS case type. These stages have case_type='gcms'
+        to filter them from PR stages in kanban/list views.
+        
+        Note: state field uses existing values from mm.immigration.case
+        since we cannot extend the selection. GCMS workflow is tracked
+        via case_type + stage_id, not via state field.
+        
+        GCMS Workflow:
+        1. Form Submitted → Client fills out GCMS request form
+        2. Service Payment → Client pays GCMS service fee
+        3. Processing → Consultant submits request to IRCC
+        4. Notes Delivered → GCMS notes received, breakdown provided
+        5. Consultation Requested → Client requests follow-up call (optional)
+        6. Consultation Payment → Client pays consultation fee
+        7. Call Scheduled → Consultation call booked
+        8. Completed → Case closed
+        -->
+        
+        <!-- Stage 1: Form Submitted -->
+        <record id="gcms_form_submitted" model="mm.immigration.stage">
+            <field name="name">Form Submitted</field>
+            <field name="sequence">100</field>
+            <field name="state">invited</field>
+            <field name="case_type">gcms</field>
+            <field name="fold">False</field>
+            <field name="portal_description">Please review and sign the GCMS Service Agreement to proceed.</field>
+            <field name="portal_action_text">Sign Agreement</field>
+            <field name="portal_action_url">/my/immigration/gcms/agreement</field>
+            <field name="requires_signature">True</field>
+            <field name="requires_payment">False</field>
+        </record>
+        
+        <!-- Stage 2: Service Payment -->
+        <record id="gcms_service_payment" model="mm.immigration.stage">
+            <field name="name">Awaiting Payment</field>
+            <field name="sequence">101</field>
+            <field name="state">quoted</field>
+            <field name="case_type">gcms</field>
+            <field name="fold">False</field>
+            <field name="portal_description">Complete your payment to begin the GCMS notes request process.</field>
+            <field name="portal_action_text">Complete Payment</field>
+            <field name="portal_action_url">/my/immigration/gcms/payment</field>
+            <field name="requires_signature">False</field>
+            <field name="requires_payment">True</field>
+            <field name="requires_gcms_payment">True</field>
+        </record>
+        
+        <!-- Stage 3: Processing -->
+        <record id="gcms_processing" model="mm.immigration.stage">
+            <field name="name">Processing</field>
+            <field name="sequence">102</field>
+            <field name="state">assessment</field>
+            <field name="case_type">gcms</field>
+            <field name="fold">False</field>
+            <field name="portal_description">Your GCMS request has been submitted to IRCC. Processing typically takes 30-45 days. We will notify you when your notes are ready.</field>
+            <field name="portal_action_text"></field>
+            <field name="portal_action_url"></field>
+            <field name="requires_signature">False</field>
+            <field name="requires_payment">False</field>
+        </record>
+        
+        <!-- Stage 4: Notes Delivered -->
+        <record id="gcms_notes_delivered" model="mm.immigration.stage">
+            <field name="name">Notes Delivered</field>
+            <field name="sequence">103</field>
+            <field name="state">roadmap_delivered</field>
+            <field name="case_type">gcms</field>
+            <field name="fold">False</field>
+            <field name="portal_description">Your GCMS notes are ready! Download your notes and our detailed breakdown below. If you'd like to discuss the findings with a consultant, you can request a consultation.</field>
+            <field name="portal_action_text">Download Notes</field>
+            <field name="portal_action_url">/my/immigration/gcms/documents</field>
+            <field name="requires_signature">False</field>
+            <field name="requires_payment">False</field>
+        </record>
+        
+        <!-- Stage 5: Consultation Requested (Optional Path) -->
+        <record id="gcms_consultation_requested" model="mm.immigration.stage">
+            <field name="name">Consultation Requested</field>
+            <field name="sequence">104</field>
+            <field name="state">call_scheduled</field>
+            <field name="case_type">gcms</field>
+            <field name="fold">False</field>
+            <field name="portal_description">Please sign the consultation agreement to proceed with scheduling your call.</field>
+            <field name="portal_action_text">Sign Consultation Agreement</field>
+            <field name="portal_action_url">/my/immigration/gcms/consultation/agreement</field>
+            <field name="requires_signature">True</field>
+            <field name="requires_payment">False</field>
+        </record>
+        
+        <!-- Stage 6: Consultation Payment -->
+        <record id="gcms_consultation_payment" model="mm.immigration.stage">
+            <field name="name">Consultation Payment</field>
+            <field name="sequence">105</field>
+            <field name="state">call_scheduled</field>
+            <field name="case_type">gcms</field>
+            <field name="fold">False</field>
+            <field name="portal_description">Complete your consultation payment to schedule your call with our consultant.</field>
+            <field name="portal_action_text">Complete Payment</field>
+            <field name="portal_action_url">/my/immigration/gcms/consultation/payment</field>
+            <field name="requires_signature">False</field>
+            <field name="requires_payment">True</field>
+            <field name="requires_consultation_payment">True</field>
+        </record>
+        
+        <!-- Stage 7: Call Scheduled -->
+        <record id="gcms_call_scheduled" model="mm.immigration.stage">
+            <field name="name">Call Scheduled</field>
+            <field name="sequence">106</field>
+            <field name="state">call_scheduled</field>
+            <field name="case_type">gcms</field>
+            <field name="fold">False</field>
+            <field name="portal_description">Schedule your consultation call at a time that works for you.</field>
+            <field name="portal_action_text">Schedule Call</field>
+            <field name="portal_action_url">/my/immigration/gcms/schedule</field>
+            <field name="requires_signature">False</field>
+            <field name="requires_payment">False</field>
+        </record>
+        
+        <!-- Stage 8: Completed -->
+        <record id="gcms_completed" model="mm.immigration.stage">
+            <field name="name">Completed</field>
+            <field name="sequence">107</field>
+            <field name="state">application</field>
+            <field name="case_type">gcms</field>
+            <field name="fold">True</field>
+            <field name="portal_description">Your GCMS case is complete. Thank you for choosing The Migration Monitor.</field>
+            <field name="portal_action_text"></field>
+            <field name="portal_action_url"></field>
+            <field name="requires_signature">False</field>
+            <field name="requires_payment">False</field>
+        </record>
+        
+    </data>
+</odoo>

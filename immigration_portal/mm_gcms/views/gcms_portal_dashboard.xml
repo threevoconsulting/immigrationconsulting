@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- 
+    GCMS Portal Dashboard Extension
+    Phase 6: GCMS Notes Request Workflow
+    
+    Extends the main immigration portal dashboard to show GCMS-specific
+    content and actions based on case type and state.
+    
+    Pattern from Phase 3 Lessons Learned:
+    - Update BOTH dashboard AND detail templates
+    - Use specific state checks before generic stage-based content
+    - Provide proper fallbacks for all states
+    -->
+    
+    <!-- ================================================================== -->
+    <!-- DASHBOARD CARD EXTENSION FOR GCMS CASES                            -->
+    <!-- ================================================================== -->
+    
+    <template id="portal_gcms_case_card" name="GCMS Case Card Content">
+        <!-- 
+        This template provides GCMS-specific content for case cards 
+        on the dashboard. It should be called within a case card context.
+        -->
+        
+        <!-- GCMS Case Badge -->
+        <span class="badge bg-info mb-2">GCMS Request</span>
+        
+        <!-- Stage-specific content -->
+        <t t-if="case.stage_id">
+            
+            <!-- Form Submitted - Need to sign agreement -->
+            <t t-if="case.stage_id.id == request.env.ref('mm_gcms.gcms_form_submitted', raise_if_not_found=False).id">
+                <p class="text-muted mb-2">Sign the service agreement to proceed.</p>
+                <a t-attf-href="/my/immigration/gcms/agreement/#{case.id}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-file-signature me-1" title="Sign" role="img" aria-label="Sign"/>
+                    Sign Agreement
+                </a>
+            </t>
+            
+            <!-- Service Payment - Need to pay -->
+            <t t-elif="case.stage_id.id == request.env.ref('mm_gcms.gcms_service_payment', raise_if_not_found=False).id">
+                <p class="text-muted mb-2">Complete payment to start processing.</p>
+                <a t-attf-href="/my/immigration/gcms/payment/#{case.id}" class="btn btn-success btn-sm">
+                    <i class="fa fa-credit-card me-1" title="Pay" role="img" aria-label="Pay"/>
+                    Complete Payment
+                </a>
+            </t>
+            
+            <!-- Processing - Waiting for IRCC -->
+            <t t-elif="case.stage_id.id == request.env.ref('mm_gcms.gcms_processing', raise_if_not_found=False).id">
+                <div class="alert alert-info py-2 mb-2">
+                    <i class="fa fa-clock-o me-2" title="Processing" role="img" aria-label="Processing"/>
+                    Your request is being processed by IRCC (30-45 days)
+                </div>
+                <t t-if="case.gcms_request_date">
+                    <small class="text-muted">Submitted: <t t-esc="case.gcms_request_date"/></small>
+                </t>
+            </t>
+            
+            <!-- Notes Delivered - Can download -->
+            <t t-elif="case.stage_id.id == request.env.ref('mm_gcms.gcms_notes_delivered', raise_if_not_found=False).id">
+                <div class="alert alert-success py-2 mb-2">
+                    <i class="fa fa-check-circle me-2" title="Ready" role="img" aria-label="Ready"/>
+                    Your GCMS notes are ready!
+                </div>
+                <div class="btn-group btn-group-sm">
+                    <a t-attf-href="/my/immigration/gcms/documents/#{case.id}" class="btn btn-primary">
+                        <i class="fa fa-download me-1" title="Download" role="img" aria-label="Download"/>
+                        Download
+                    </a>
+                    <t t-if="not case.gcms_consultation_requested">
+                        <form t-attf-action="/my/immigration/gcms/consultation/request/#{case.id}" method="post" style="display: inline;">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <button type="submit" class="btn btn-outline-secondary">
+                                <i class="fa fa-phone me-1" title="Consultation" role="img" aria-label="Consultation"/>
+                                Request Consultation
+                            </button>
+                        </form>
+                    </t>
+                </div>
+            </t>
+            
+            <!-- Consultation Requested -->
+            <t t-elif="case.stage_id.id == request.env.ref('mm_gcms.gcms_consultation_requested', raise_if_not_found=False).id">
+                <p class="text-muted mb-2">Sign the consultation agreement to proceed.</p>
+                <a t-attf-href="/my/immigration/gcms/consultation/agreement/#{case.id}" class="btn btn-primary btn-sm">
+                    <i class="fa fa-file-signature me-1" title="Sign" role="img" aria-label="Sign"/>
+                    Sign Agreement
+                </a>
+            </t>
+            
+            <!-- Consultation Payment -->
+            <t t-elif="case.stage_id.id == request.env.ref('mm_gcms.gcms_consultation_payment', raise_if_not_found=False).id">
+                <p class="text-muted mb-2">Complete payment to schedule your call.</p>
+                <a t-attf-href="/my/immigration/gcms/consultation/payment/#{case.id}" class="btn btn-success btn-sm">
+                    <i class="fa fa-credit-card me-1" title="Pay" role="img" aria-label="Pay"/>
+                    Complete Payment
+                </a>
+            </t>
+            
+            <!-- Call Scheduled -->
+            <t t-elif="case.stage_id.id == request.env.ref('mm_gcms.gcms_call_scheduled', raise_if_not_found=False).id">
+                <t t-if="case.gcms_consultation_date">
+                    <div class="alert alert-info py-2 mb-2">
+                        <i class="fa fa-calendar me-2" title="Scheduled" role="img" aria-label="Scheduled"/>
+                        Call scheduled: <t t-esc="case.gcms_consultation_date" t-options="{'widget': 'datetime'}"/>
+                    </div>
+                </t>
+                <t t-else="">
+                    <p class="text-muted mb-2">Schedule your consultation call.</p>
+                    <a t-attf-href="/my/immigration/gcms/schedule/#{case.id}" class="btn btn-primary btn-sm">
+                        <i class="fa fa-calendar me-1" title="Schedule" role="img" aria-label="Schedule"/>
+                        Schedule Call
+                    </a>
+                </t>
+            </t>
+            
+            <!-- Completed -->
+            <t t-elif="case.stage_id.id == request.env.ref('mm_gcms.gcms_completed', raise_if_not_found=False).id">
+                <div class="alert alert-success py-2 mb-0">
+                    <i class="fa fa-check-circle me-2" title="Complete" role="img" aria-label="Complete"/>
+                    Case completed
+                </div>
+            </t>
+            
+            <!-- Fallback for any other stage -->
+            <t t-else="">
+                <p class="text-muted mb-2">
+                    <t t-esc="case.stage_id.portal_description or 'Processing your request...'"/>
+                </p>
+                <t t-if="case.stage_id.portal_action_url and case.stage_id.portal_action_text">
+                    <a t-att-href="case.stage_id.portal_action_url" class="btn btn-primary btn-sm">
+                        <t t-esc="case.stage_id.portal_action_text"/>
+                    </a>
+                </t>
+            </t>
+            
+        </t>
+        
+    </template>
+    
+    <!-- ================================================================== -->
+    <!-- NEW GCMS REQUEST BUTTON ON DASHBOARD                               -->
+    <!-- ================================================================== -->
+    
+    <template id="portal_gcms_new_request_button" name="New GCMS Request Button">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="mb-1">
+                            <i class="fa fa-file-text-o me-2 text-info" title="GCMS" role="img" aria-label="GCMS"/>
+                            Need Your GCMS Notes?
+                        </h5>
+                        <p class="text-muted mb-0">Request a copy of your immigration file from IRCC.</p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a href="/my/immigration/gcms/request" class="btn btn-outline-info">
+                            <i class="fa fa-plus me-1" title="New" role="img" aria-label="New"/>
+                            Request GCMS Notes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- ================================================================== -->
+    <!-- CASE DETAIL PAGE EXTENSION FOR GCMS                                -->
+    <!-- ================================================================== -->
+    
+    <template id="portal_gcms_case_detail" name="GCMS Case Detail Content">
+        <!-- 
+        This template provides GCMS-specific content for the case detail page.
+        Should be included in the main case detail template.
+        -->
+        
+        <!-- GCMS Information Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fa fa-info-circle me-2" title="Info" role="img" aria-label="Info"/>
+                    GCMS Request Details
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>UCI Number:</strong> <t t-esc="case.gcms_uci_number or 'Not provided'"/></p>
+                        <p><strong>Application Number:</strong> <t t-esc="case.gcms_application_number or 'Not provided'"/></p>
+                        <p><strong>Application Type:</strong> 
+                            <t t-if="case.gcms_application_type == 'other'">
+                                <t t-esc="case.gcms_application_type_other"/>
+                            </t>
+                            <t t-else="">
+                                <t t-esc="dict(case._fields['gcms_application_type'].selection).get(case.gcms_application_type, 'N/A')"/>
+                            </t>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Request Date:</strong> <t t-esc="case.gcms_request_date or 'Pending'"/></p>
+                        <p><strong>Notes Received:</strong> <t t-esc="case.gcms_received_date or 'Pending'"/></p>
+                        <p><strong>Service Paid:</strong> 
+                            <t t-if="case.gcms_service_paid">
+                                <span class="badge bg-success">Yes</span>
+                            </t>
+                            <t t-else="">
+                                <span class="badge bg-warning">No</span>
+                            </t>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Documents Card (if notes received) -->
+        <t t-if="case.gcms_received_date">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fa fa-file-pdf-o me-2" title="Documents" role="img" aria-label="Documents"/>
+                        Your Documents
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <t t-if="case.gcms_notes_document">
+                                <a t-attf-href="/my/immigration/gcms/download/#{case.id}/notes" class="btn btn-outline-primary w-100">
+                                    <i class="fa fa-download me-2" title="Download" role="img" aria-label="Download"/>
+                                    Download GCMS Notes
+                                </a>
+                            </t>
+                            <t t-else="">
+                                <button class="btn btn-outline-secondary w-100" disabled="">
+                                    GCMS Notes - Not Available
+                                </button>
+                            </t>
+                        </div>
+                        <div class="col-md-6">
+                            <t t-if="case.gcms_breakdown_document">
+                                <a t-attf-href="/my/immigration/gcms/download/#{case.id}/breakdown" class="btn btn-outline-primary w-100">
+                                    <i class="fa fa-download me-2" title="Download" role="img" aria-label="Download"/>
+                                    Download Breakdown
+                                </a>
+                            </t>
+                            <t t-else="">
+                                <button class="btn btn-outline-secondary w-100" disabled="">
+                                    Breakdown - Not Available
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+        
+        <!-- Consultation Card (if requested) -->
+        <t t-if="case.gcms_consultation_requested">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fa fa-phone me-2" title="Consultation" role="img" aria-label="Consultation"/>
+                        Consultation
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> 
+                        <t t-if="case.gcms_consultation_date">
+                            <span class="badge bg-success">Scheduled</span>
+                        </t>
+                        <t t-elif="case.gcms_consultation_paid">
+                            <span class="badge bg-info">Ready to Schedule</span>
+                        </t>
+                        <t t-else="">
+                            <span class="badge bg-warning">Awaiting Payment</span>
+                        </t>
+                    </p>
+                    <t t-if="case.gcms_consultation_date">
+                        <p><strong>Date &amp; Time:</strong> <t t-esc="case.gcms_consultation_date" t-options="{'widget': 'datetime'}"/></p>
+                    </t>
+                </div>
+            </div>
+        </t>
+        
+    </template>
+    
+</odoo>

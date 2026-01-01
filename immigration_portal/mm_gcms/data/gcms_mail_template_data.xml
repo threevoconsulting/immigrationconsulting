@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- 
+        GCMS Email Templates
+        Phase 6: GCMS Notes Request Workflow
+        
+        Email templates for GCMS case notifications:
+        1. GCMS Notes Ready - sent when notes are received from IRCC
+        2. GCMS Request Submitted - confirmation of submission
+        3. Consultation Scheduled - confirmation of scheduled call
+        -->
+        
+        <!-- GCMS Notes Ready Notification -->
+        <record id="mail_template_gcms_notes_ready" model="mail.template">
+            <field name="name">GCMS: Notes Ready for Download</field>
+            <field name="model_id" ref="mm_immigration.model_mm_immigration_case"/>
+            <field name="subject">Your GCMS Notes Are Ready - {{ object.name }}</field>
+            <field name="email_from">{{ (object.consultant_id.email or object.company_id.email or 'noreply@themigrationmonitor.ca') }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 20px; background-color: #8B2332; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0;">The Migration Monitor</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 30px; background-color: #ffffff;">
+                <h2 style="color: #8B2332; margin-top: 0;">Your GCMS Notes Are Ready!</h2>
+                
+                <p>Dear <t t-out="object.partner_id.name or 'Client'"/>,</p>
+                
+                <p>Great news! We have received your GCMS (Global Case Management System) notes from IRCC. Your documents are now available for download in your client portal.</p>
+                
+                <p><strong>Case Reference:</strong> <t t-out="object.name"/></p>
+                <p><strong>Notes Received:</strong> <t t-out="object.gcms_received_date"/></p>
+                
+                <div style="margin: 25px 0; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
+                    <h3 style="margin-top: 0; color: #333;">What's Included:</h3>
+                    <ul style="margin-bottom: 0;">
+                        <li>Your complete GCMS notes from IRCC</li>
+                        <li>Our detailed breakdown and analysis</li>
+                        <li>Key findings summary</li>
+                    </ul>
+                </div>
+                
+                <p style="text-align: center; margin: 30px 0;">
+                    <a href="/my/immigration" 
+                       style="display: inline-block; padding: 12px 30px; background-color: #8B2332; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        View Your Documents
+                    </a>
+                </p>
+                
+                <div style="margin: 25px 0; padding: 15px; background-color: #e8f4f8; border-left: 4px solid #17a2b8; border-radius: 0 5px 5px 0;">
+                    <p style="margin: 0;"><strong>Need Help Understanding Your Notes?</strong></p>
+                    <p style="margin: 10px 0 0 0;">You can request a consultation with one of our Regulated Canadian Immigration Consultants to discuss your notes in detail. Simply log in to your portal and click "Request Consultation".</p>
+                </div>
+                
+                <p>If you have any questions, please don't hesitate to reach out.</p>
+                
+                <p>Best regards,<br/>
+                <strong>The Migration Monitor Team</strong></p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 20px; background-color: #f8f9fa; text-align: center; font-size: 12px; color: #666;">
+                <p style="margin: 0;">The Migration Monitor | Immigration Consulting Services</p>
+                <p style="margin: 5px 0 0 0;">This is an automated notification. Please do not reply directly to this email.</p>
+            </td>
+        </tr>
+    </table>
+</div>
+]]></field>
+            <field name="auto_delete">False</field>
+        </record>
+        
+        <!-- GCMS Request Submitted Confirmation -->
+        <record id="mail_template_gcms_submitted" model="mail.template">
+            <field name="name">GCMS: Request Submitted Confirmation</field>
+            <field name="model_id" ref="mm_immigration.model_mm_immigration_case"/>
+            <field name="subject">GCMS Request Submitted - {{ object.name }}</field>
+            <field name="email_from">{{ (object.consultant_id.email or object.company_id.email or 'noreply@themigrationmonitor.ca') }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 20px; background-color: #8B2332; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0;">The Migration Monitor</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 30px; background-color: #ffffff;">
+                <h2 style="color: #8B2332; margin-top: 0;">Your GCMS Request Has Been Submitted</h2>
+                
+                <p>Dear <t t-out="object.partner_id.name or 'Client'"/>,</p>
+                
+                <p>Thank you for your payment. Your GCMS notes request has been submitted to Immigration, Refugees and Citizenship Canada (IRCC).</p>
+                
+                <p><strong>Case Reference:</strong> <t t-out="object.name"/></p>
+                <p><strong>UCI Number:</strong> <t t-out="object.gcms_uci_number or 'On File'"/></p>
+                <p><strong>Request Date:</strong> <t t-out="object.gcms_request_date"/></p>
+                
+                <div style="margin: 25px 0; padding: 20px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 0 5px 5px 0;">
+                    <h3 style="margin-top: 0; color: #856404;">What to Expect</h3>
+                    <p style="margin-bottom: 0;">GCMS notes typically take <strong>30-45 days</strong> to be processed by IRCC. We will notify you by email as soon as your notes are ready for download.</p>
+                </div>
+                
+                <p>You can track the status of your request anytime by logging into your client portal.</p>
+                
+                <p style="text-align: center; margin: 30px 0;">
+                    <a href="/my/immigration" 
+                       style="display: inline-block; padding: 12px 30px; background-color: #8B2332; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        Track Your Request
+                    </a>
+                </p>
+                
+                <p>If you have any questions, please don't hesitate to contact us.</p>
+                
+                <p>Best regards,<br/>
+                <strong>The Migration Monitor Team</strong></p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 20px; background-color: #f8f9fa; text-align: center; font-size: 12px; color: #666;">
+                <p style="margin: 0;">The Migration Monitor | Immigration Consulting Services</p>
+                <p style="margin: 5px 0 0 0;">This is an automated notification. Please do not reply directly to this email.</p>
+            </td>
+        </tr>
+    </table>
+</div>
+]]></field>
+            <field name="auto_delete">False</field>
+        </record>
+        
+        <!-- Consultation Scheduled Confirmation -->
+        <record id="mail_template_gcms_consultation_scheduled" model="mail.template">
+            <field name="name">GCMS: Consultation Scheduled</field>
+            <field name="model_id" ref="mm_immigration.model_mm_immigration_case"/>
+            <field name="subject">Consultation Scheduled - {{ object.name }}</field>
+            <field name="email_from">{{ (object.consultant_id.email or object.company_id.email or 'noreply@themigrationmonitor.ca') }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="body_html"><![CDATA[
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 20px; background-color: #8B2332; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0;">The Migration Monitor</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 30px; background-color: #ffffff;">
+                <h2 style="color: #8B2332; margin-top: 0;">Your Consultation is Scheduled</h2>
+                
+                <p>Dear <t t-out="object.partner_id.name or 'Client'"/>,</p>
+                
+                <p>Your GCMS notes consultation has been scheduled. Here are the details:</p>
+                
+                <div style="margin: 25px 0; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
+                    <p style="margin: 0;"><strong>Case Reference:</strong> <t t-out="object.name"/></p>
+                    <p style="margin: 10px 0 0 0;"><strong>Date &amp; Time:</strong> <t t-out="object.gcms_consultation_date" t-options="{'widget': 'datetime'}"/></p>
+                    <p style="margin: 10px 0 0 0;"><strong>Consultant:</strong> <t t-out="object.consultant_id.name or 'To be assigned'"/></p>
+                </div>
+                
+                <div style="margin: 25px 0; padding: 15px; background-color: #d4edda; border-left: 4px solid #28a745; border-radius: 0 5px 5px 0;">
+                    <h3 style="margin-top: 0; color: #155724;">Before Your Call</h3>
+                    <ul style="margin-bottom: 0;">
+                        <li>Review your GCMS notes and breakdown document</li>
+                        <li>Prepare any questions you'd like to discuss</li>
+                        <li>Ensure you have a stable internet connection</li>
+                    </ul>
+                </div>
+                
+                <p>If you need to reschedule, please log into your portal or contact us at least 24 hours before your appointment.</p>
+                
+                <p style="text-align: center; margin: 30px 0;">
+                    <a href="/my/immigration" 
+                       style="display: inline-block; padding: 12px 30px; background-color: #8B2332; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        View Your Portal
+                    </a>
+                </p>
+                
+                <p>We look forward to speaking with you!</p>
+                
+                <p>Best regards,<br/>
+                <strong>The Migration Monitor Team</strong></p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 20px; background-color: #f8f9fa; text-align: center; font-size: 12px; color: #666;">
+                <p style="margin: 0;">The Migration Monitor | Immigration Consulting Services</p>
+                <p style="margin: 5px 0 0 0;">This is an automated notification. Please do not reply directly to this email.</p>
+            </td>
+        </tr>
+    </table>
+</div>
+]]></field>
+            <field name="auto_delete">False</field>
+        </record>
+        
+    </data>
+    
+    <!-- Portal Invitation Templates - Can be updated on upgrade -->
+    <data noupdate="0">
+        
+        <!-- ================================================================== -->
+        <!-- PR STRATEGY CASE - PORTAL INVITATION                               -->
+        <!-- ================================================================== -->
+        
+        <record id="mail_template_portal_invite_pr" model="mail.template">
+            <field name="name">Portal Invitation - PR Strategy Case</field>
+            <field name="model_id" ref="mm_immigration.model_mm_immigration_case"/>
+            <field name="subject">Welcome to Your Immigration Portal - {{ object.partner_id.name }}</field>
+            <field name="email_from">{{ (object.consultant_id.email_formatted or object.company_id.email_formatted or 'noreply@themigrationmonitor.ca') }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="description">Sent when inviting a client to the portal for a PR Strategy case</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.6; color: #333333;">
+    
+    <!-- Header -->
+    <div style="background-color: #1a365d; padding: 30px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px;">The Migration Monitor</h1>
+        <p style="color: #e2e8f0; margin: 10px 0 0 0; font-size: 14px;">Your Canadian Immigration Journey Starts Here</p>
+    </div>
+    
+    <!-- Main Content -->
+    <div style="padding: 30px; background-color: #ffffff;">
+        
+        <p style="margin-bottom: 20px;">Dear <t t-out="object.partner_id.name or 'Valued Client'"/>,</p>
+        
+        <p style="margin-bottom: 20px;">
+            Welcome to <strong>The Migration Monitor</strong>! We're excited to partner with you on your 
+            journey to Canadian permanent residence.
+        </p>
+        
+        <p style="margin-bottom: 20px;">
+            The Migration Monitor is a Regulated Canadian Immigration Consultant (RCIC) practice 
+            dedicated to providing personalized immigration strategies. Your secure client portal 
+            has been created to streamline our work together.
+        </p>
+        
+        <!-- What to Expect Section -->
+        <div style="background-color: #f7fafc; border-left: 4px solid #3182ce; padding: 20px; margin: 25px 0;">
+            <h3 style="color: #1a365d; margin: 0 0 15px 0; font-size: 16px;">What You'll Do in the Portal</h3>
+            <ol style="margin: 0; padding-left: 20px;">
+                <li style="margin-bottom: 10px;"><strong>Complete Your Profile Questionnaire</strong> - Tell us about your background, education, work experience, and immigration goals.</li>
+                <li style="margin-bottom: 10px;"><strong>Review Your Assessment</strong> - We'll analyze your eligibility and recommend the best pathway.</li>
+                <li style="margin-bottom: 10px;"><strong>Sign Your Service Agreement</strong> - Review and electronically sign your consultation agreement.</li>
+                <li style="margin-bottom: 10px;"><strong>Make Secure Payments</strong> - Pay for services through our secure payment system.</li>
+                <li style="margin-bottom: 10px;"><strong>Track Your Progress</strong> - Monitor your case status and upcoming milestones.</li>
+            </ol>
+        </div>
+        
+        <!-- Documents to Prepare Section -->
+        <div style="background-color: #fffbeb; border-left: 4px solid #d69e2e; padding: 20px; margin: 25px 0;">
+            <h3 style="color: #744210; margin: 0 0 15px 0; font-size: 16px;">📋 Documents to Have Ready</h3>
+            <p style="margin: 0 0 10px 0;">To complete your questionnaire efficiently, please gather:</p>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li style="margin-bottom: 8px;"><strong>Passport</strong> - Current and any previous passports</li>
+                <li style="margin-bottom: 8px;"><strong>Education Documents</strong> - Degrees, diplomas, transcripts</li>
+                <li style="margin-bottom: 8px;"><strong>Language Test Results</strong> - IELTS, CELPIP, TEF, or TCF scores (if available)</li>
+                <li style="margin-bottom: 8px;"><strong>Work History</strong> - Employment letters, job descriptions, NOC codes</li>
+                <li style="margin-bottom: 8px;"><strong>ECA Report</strong> - Educational Credential Assessment (if completed)</li>
+                <li style="margin-bottom: 8px;"><strong>Proof of Funds</strong> - Bank statements (last 6 months)</li>
+            </ul>
+        </div>
+        
+        <!-- Access Button -->
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="/my/immigration" 
+               style="display: inline-block; background-color: #3182ce; color: #ffffff; 
+                      padding: 14px 40px; text-decoration: none; border-radius: 6px; 
+                      font-weight: bold; font-size: 16px;">
+                Access Your Portal
+            </a>
+        </div>
+        
+        <p style="margin-bottom: 15px;">
+            <strong>Your Case Reference:</strong> <t t-out="object.name"/>
+        </p>
+        
+        <p style="margin-bottom: 20px; font-size: 13px; color: #718096;">
+            If this is your first time accessing the portal, you'll receive a separate email 
+            with instructions to set your password.
+        </p>
+        
+        <!-- Consultant Info -->
+        <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 25px;">
+            <p style="margin: 0;">
+                Warm regards,<br/><br/>
+                <strong><t t-out="object.consultant_id.name or 'The Migration Monitor Team'"/></strong><br/>
+                <t t-if="object.consultant_id.email">
+                    <span style="color: #718096;"><t t-out="object.consultant_id.email"/></span>
+                </t>
+            </p>
+        </div>
+        
+    </div>
+    
+    <!-- Footer -->
+    <div style="background-color: #f7fafc; padding: 20px; text-align: center; font-size: 12px; color: #718096;">
+        <p style="margin: 0 0 10px 0;">
+            This is a secure communication from The Migration Monitor.
+        </p>
+        <p style="margin: 0;">
+            © 2026 The Migration Monitor. All rights reserved.
+        </p>
+    </div>
+    
+</div>
+            </field>
+        </record>
+        
+        <!-- ================================================================== -->
+        <!-- GCMS CASE - PORTAL INVITATION                                      -->
+        <!-- ================================================================== -->
+        
+        <record id="mail_template_portal_invite_gcms" model="mail.template">
+            <field name="name">Portal Invitation - GCMS Request Case</field>
+            <field name="model_id" ref="mm_immigration.model_mm_immigration_case"/>
+            <field name="subject">Your GCMS Notes Request Portal Access - {{ object.partner_id.name }}</field>
+            <field name="email_from">{{ (object.consultant_id.email_formatted or object.company_id.email_formatted or 'noreply@themigrationmonitor.ca') }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="description">Sent when inviting a client to the portal for a GCMS Request case</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.6; color: #333333;">
+    
+    <!-- Header -->
+    <div style="background-color: #1a365d; padding: 30px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px;">The Migration Monitor</h1>
+        <p style="color: #e2e8f0; margin: 10px 0 0 0; font-size: 14px;">GCMS Notes Request Service</p>
+    </div>
+    
+    <!-- Main Content -->
+    <div style="padding: 30px; background-color: #ffffff;">
+        
+        <p style="margin-bottom: 20px;">Dear <t t-out="object.partner_id.name or 'Valued Client'"/>,</p>
+        
+        <p style="margin-bottom: 20px;">
+            Welcome to <strong>The Migration Monitor</strong>! We're here to help you obtain your 
+            GCMS (Global Case Management System) notes from Immigration, Refugees and Citizenship 
+            Canada (IRCC).
+        </p>
+        
+        <p style="margin-bottom: 20px;">
+            GCMS notes provide detailed information about your immigration application, including 
+            processing history, officer notes, and reasons for any decisions. This information 
+            can be invaluable for understanding your case status or preparing an appeal.
+        </p>
+        
+        <!-- What to Expect Section -->
+        <div style="background-color: #f7fafc; border-left: 4px solid #3182ce; padding: 20px; margin: 25px 0;">
+            <h3 style="color: #1a365d; margin: 0 0 15px 0; font-size: 16px;">What You'll Do in the Portal</h3>
+            <ol style="margin: 0; padding-left: 20px;">
+                <li style="margin-bottom: 10px;"><strong>Complete the GCMS Request Form</strong> - Provide your UCI number and application details.</li>
+                <li style="margin-bottom: 10px;"><strong>Sign the Consent Form</strong> - Authorize us to request your GCMS notes on your behalf.</li>
+                <li style="margin-bottom: 10px;"><strong>Pay the Service Fee</strong> - Complete payment through our secure system.</li>
+                <li style="margin-bottom: 10px;"><strong>Receive Your Notes</strong> - We'll deliver your GCMS notes once received from IRCC.</li>
+                <li style="margin-bottom: 10px;"><strong>Optional Consultation</strong> - Book a call to review your notes with a consultant.</li>
+            </ol>
+        </div>
+        
+        <!-- Documents to Prepare Section -->
+        <div style="background-color: #fffbeb; border-left: 4px solid #d69e2e; padding: 20px; margin: 25px 0;">
+            <h3 style="color: #744210; margin: 0 0 15px 0; font-size: 16px;">📋 Information You'll Need</h3>
+            <p style="margin: 0 0 10px 0;">Please have the following ready:</p>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li style="margin-bottom: 8px;"><strong>UCI Number</strong> - Your 8 or 10-digit Unique Client Identifier</li>
+                <li style="margin-bottom: 8px;"><strong>Application/File Number</strong> - The number on your application acknowledgement</li>
+                <li style="margin-bottom: 8px;"><strong>Application Type</strong> - The type of visa/permit you applied for</li>
+                <li style="margin-bottom: 8px;"><strong>Date of Birth</strong> - As shown on your application</li>
+            </ul>
+            <p style="margin: 15px 0 0 0; font-size: 13px; color: #744210;">
+                <strong>Tip:</strong> Your UCI number can be found on any correspondence from IRCC, 
+                including your application receipt, biometrics request, or previous visa/permit.
+            </p>
+        </div>
+        
+        <!-- Timeline Note -->
+        <div style="background-color: #ebf8ff; border-left: 4px solid #3182ce; padding: 15px; margin: 25px 0;">
+            <p style="margin: 0; font-size: 13px;">
+                <strong>⏱ Processing Time:</strong> GCMS notes typically take 4-8 weeks to receive from IRCC. 
+                We'll keep you updated on the status through your portal.
+            </p>
+        </div>
+        
+        <!-- Access Button -->
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="/my/immigration" 
+               style="display: inline-block; background-color: #3182ce; color: #ffffff; 
+                      padding: 14px 40px; text-decoration: none; border-radius: 6px; 
+                      font-weight: bold; font-size: 16px;">
+                Access Your Portal
+            </a>
+        </div>
+        
+        <p style="margin-bottom: 15px;">
+            <strong>Your Case Reference:</strong> <t t-out="object.name"/>
+        </p>
+        
+        <p style="margin-bottom: 20px; font-size: 13px; color: #718096;">
+            If this is your first time accessing the portal, you'll receive a separate email 
+            with instructions to set your password.
+        </p>
+        
+        <!-- Consultant Info -->
+        <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 25px;">
+            <p style="margin: 0;">
+                Warm regards,<br/><br/>
+                <strong><t t-out="object.consultant_id.name or 'The Migration Monitor Team'"/></strong><br/>
+                <t t-if="object.consultant_id.email">
+                    <span style="color: #718096;"><t t-out="object.consultant_id.email"/></span>
+                </t>
+            </p>
+        </div>
+        
+    </div>
+    
+    <!-- Footer -->
+    <div style="background-color: #f7fafc; padding: 20px; text-align: center; font-size: 12px; color: #718096;">
+        <p style="margin: 0 0 10px 0;">
+            This is a secure communication from The Migration Monitor.
+        </p>
+        <p style="margin: 0;">
+            © 2026 The Migration Monitor. All rights reserved.
+        </p>
+    </div>
+    
+</div>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Immigration Menu -->
+    <menuitem id="menu_immigration_root"
+              name="Immigration"
+              sequence="50"
+              web_icon="mm_immigration,static/description/icon.png"
+              groups="mm_immigration.group_immigration_user"/>
+
+    <!-- Cases Menu -->
+    <menuitem id="menu_immigration_cases"
+              name="Cases"
+              parent="menu_immigration_root"
+              sequence="10"/>
+
+    <menuitem id="menu_immigration_case_my"
+              name="My Cases"
+              parent="menu_immigration_cases"
+              action="action_immigration_case"
+              sequence="10"/>
+
+    <menuitem id="menu_immigration_case_all"
+              name="All Cases"
+              parent="menu_immigration_cases"
+              action="action_immigration_case_all"
+              sequence="20"
+              groups="mm_immigration.group_immigration_manager"/>
+
+    <!-- Profiles Menu -->
+    <menuitem id="menu_immigration_profiles"
+              name="Profiles"
+              parent="menu_immigration_root"
+              action="action_client_profile"
+              sequence="20"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_immigration_config"
+              name="Configuration"
+              parent="menu_immigration_root"
+              sequence="100"
+              groups="mm_immigration.group_immigration_manager"/>
+
+    <menuitem id="menu_immigration_stages"
+              name="Stages"
+              parent="menu_immigration_config"
+              action="action_immigration_stage"
+              sequence="10"/>
+
+    <menuitem id="menu_immigration_settings"
+              name="Settings"
+              parent="menu_immigration_config"
+              action="action_immigration_settings"
+              sequence="99"/>
+</odoo>

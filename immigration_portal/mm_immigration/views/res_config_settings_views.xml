@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend Settings Form -->
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.immigration</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Immigration" string="Immigration" name="mm_immigration" groups="mm_immigration.group_immigration_manager">
+                    <block title="Portal Branding" name="portal_branding">
+                        <setting string="Brand Name" help="The name displayed in the client portal">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="immigration_portal_name" class="col-lg-3"/>
+                                    <field name="immigration_portal_name" class="col-lg-9"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Contact Email" help="Contact email shown in portal">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="immigration_portal_email" class="col-lg-3"/>
+                                    <field name="immigration_portal_email" class="col-lg-9"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Contact Phone" help="Contact phone shown in portal">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="immigration_portal_phone" class="col-lg-3"/>
+                                    <field name="immigration_portal_phone" class="col-lg-9"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Website URL" help="Website URL shown in portal">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="immigration_portal_website" class="col-lg-3"/>
+                                    <field name="immigration_portal_website" class="col-lg-9"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Settings Action -->
+    <record id="action_immigration_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'mm_immigration'}</field>
+    </record>
+</odoo>

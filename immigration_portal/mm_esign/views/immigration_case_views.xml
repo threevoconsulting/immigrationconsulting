@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ================================= -->
+    <!-- Immigration Case View Extensions -->
+    <!-- ================================= -->
+    
+    <!-- Extend Case Form View - Add E-Sign and Payment Fields -->
+    <record id="view_immigration_case_form_esign" model="ir.ui.view">
+        <field name="name">mm.immigration.case.form.esign</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add button box items -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_quote" type="object" class="oe_stat_button"
+                        icon="fa-file-text-o" invisible="not has_quote">
+                    <div class="o_stat_info">
+                        <field name="sale_order_amount" widget="monetary" 
+                               options="{'currency_field': 'currency_id'}"/>
+                        <span class="o_stat_text">Quote</span>
+                    </div>
+                </button>
+                <button name="action_view_invoices" type="object" class="oe_stat_button"
+                        icon="fa-pencil-square-o" invisible="invoice_count == 0">
+                    <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                </button>
+                <button name="action_view_esign_requests" type="object" class="oe_stat_button"
+                        icon="fa-pencil" invisible="not esign_request_ids">
+                    <span class="o_stat_text">E-Signatures</span>
+                </button>
+            </xpath>
+            
+            <!-- Add Sales & Payment section after priority field -->
+            <xpath expr="//field[@name='priority']" position="after">
+                <field name="sale_order_id" readonly="1"/>
+                <field name="sale_order_state" invisible="not sale_order_id"/>
+                <field name="payment_confirmed" widget="boolean_toggle" readonly="1"/>
+                <field name="payment_date" invisible="not payment_confirmed"/>
+                <field name="service_agreement_id" readonly="1"/>
+                <field name="agreement_signed" widget="boolean_toggle" readonly="1"/>
+                <field name="currency_id" invisible="1"/>
+            </xpath>
+            
+            <!-- Add action buttons in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_create_quote" string="Create Quote" type="object"
+                        class="btn-secondary" invisible="not can_create_quote"/>
+                <button name="action_create_service_agreement" string="Send Service Agreement" 
+                        type="object" class="btn-secondary" invisible="not can_send_agreement"/>
+            </xpath>
+            
+            <!-- Add hidden fields for computed booleans -->
+            <xpath expr="//sheet" position="inside">
+                <field name="has_quote" invisible="1"/>
+                <field name="quote_confirmed" invisible="1"/>
+                <field name="can_create_quote" invisible="1"/>
+                <field name="can_send_agreement" invisible="1"/>
+                <field name="invoice_ids" invisible="1"/>
+                <field name="esign_request_ids" invisible="1"/>
+                <field name="roadmap_ack_id" invisible="1"/>
+            </xpath>
+            
+        </field>
+    </record>
+    
+    <!-- Extend Case List View - Add Payment Status -->
+    <record id="view_immigration_case_list_esign" model="ir.ui.view">
+        <field name="name">mm.immigration.case.list.esign</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="agreement_signed" widget="boolean" optional="hide"/>
+                <field name="payment_confirmed" widget="boolean" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Extend Case Kanban View - Add Payment Status -->
+    <record id="view_immigration_case_kanban_esign" model="ir.ui.view">
+        <field name="name">mm.immigration.case.kanban.esign</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_kanban"/>
+        <field name="arch" type="xml">
+            <!-- Add fields to kanban -->
+            <xpath expr="//kanban/field[@name='stage_id']" position="after">
+                <field name="agreement_signed"/>
+                <field name="payment_confirmed"/>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Extend Case Search View - Add Payment Filters -->
+    <record id="view_immigration_case_search_esign" model="ir.ui.view">
+        <field name="name">mm.immigration.case.search.esign</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter string="Awaiting Signature" name="filter_awaiting_signature"
+                        domain="[('state', '=', 'quoted'), ('agreement_signed', '=', False)]"/>
+                <filter string="Awaiting Payment" name="filter_awaiting_payment"
+                        domain="[('state', '=', 'paid'), ('payment_confirmed', '=', False)]"/>
+                <filter string="Payment Confirmed" name="filter_payment_confirmed"
+                        domain="[('payment_confirmed', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+    
+</odoo>

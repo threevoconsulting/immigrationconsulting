@@ -1,0 +1,781 @@
+// ============================================================================
+// The Migration Monitor - Portal Styles
+// ============================================================================
+// Main stylesheet for the Immigration Portal (mm_portal module)
+//
+// IMPORTANT - Odoo 19 Compliance:
+// - No @import statements (forbidden in Odoo 19)
+// - Variables are loaded via _variables.scss in manifest (comes before this file)
+// - All custom classes use .mm- prefix
+// - Styles scoped to .o_portal where possible to avoid global pollution
+// - BEM naming convention: .mm-block__element--modifier
+// ============================================================================
+
+// ============================================================================
+// BASE OVERRIDES - Scoped to Portal
+// ============================================================================
+
+.o_portal {
+    // Primary button override
+    .btn-primary {
+        background-color: $mm-primary;
+        border-color: $mm-primary;
+        
+        &:hover,
+        &:focus {
+            background-color: $mm-primary-dark;
+            border-color: $mm-primary-dark;
+        }
+        
+        &:focus {
+            box-shadow: $mm-focus-ring;
+        }
+        
+        &:active {
+            background-color: $mm-primary-dark;
+            border-color: $mm-primary-dark;
+        }
+    }
+    
+    .btn-outline-primary {
+        color: $mm-primary;
+        border-color: $mm-primary;
+        
+        &:hover,
+        &:focus {
+            background-color: $mm-primary;
+            border-color: $mm-primary;
+            color: $mm-white;
+        }
+        
+        &:focus {
+            box-shadow: $mm-focus-ring;
+        }
+    }
+    
+    // Success button (for completed actions)
+    .btn-success {
+        background-color: $mm-success;
+        border-color: $mm-success;
+        
+        &:hover,
+        &:focus {
+            background-color: $mm-success-dark;
+            border-color: $mm-success-dark;
+        }
+    }
+    
+    // Secondary button
+    .btn-secondary {
+        background-color: $mm-secondary;
+        border-color: $mm-secondary;
+        
+        &:hover,
+        &:focus {
+            background-color: $mm-secondary-dark;
+            border-color: $mm-secondary-dark;
+        }
+    }
+    
+    // Link styling
+    a:not(.btn) {
+        color: $mm-primary;
+        
+        &:hover {
+            color: $mm-primary-dark;
+        }
+    }
+    
+    // Badge overrides
+    .badge {
+        font-weight: $mm-font-weight-medium;
+        padding: $mm-badge-padding-y $mm-badge-padding-x;
+        border-radius: $mm-badge-border-radius;
+        
+        &.bg-primary {
+            background-color: $mm-primary !important;
+        }
+        
+        &.bg-secondary {
+            background-color: transparent !important;
+            color: $mm-gray-500 !important;
+            font-weight: $mm-font-weight-normal;
+            padding: 0;
+        }
+        
+        &.bg-success {
+            background-color: $mm-success !important;
+        }
+        
+        &.bg-warning {
+            background-color: $mm-warning !important;
+            color: $mm-white;
+        }
+        
+        &.bg-info {
+            background-color: $mm-info !important;
+        }
+    }
+    
+    // Immigration Goal Tags - text only, color-coded
+    .mm-goal-tag {
+        font-size: $mm-font-size-sm;
+        font-weight: $mm-font-weight-medium;
+        
+        // Permanent Residence - Green (positive/confirmed)
+        &--pr {
+            color: $mm-success;
+        }
+        
+        // Temporary - Blue (informational)
+        &--temporary {
+            color: $mm-info;
+        }
+        
+        // Undecided - Gray (neutral/pending)
+        &--undecided {
+            color: $mm-gray-500;
+        }
+    }
+    
+    // Card base styling
+    .card {
+        border: none;
+        border-radius: $mm-card-border-radius;
+        box-shadow: $mm-card-shadow;
+        overflow: hidden;
+        
+        .card-header {
+            background: linear-gradient(135deg, $mm-light 0%, $mm-gray-100 100%);
+            border-bottom: 1px solid $mm-border-color;
+            padding: $mm-spacing-4 $mm-spacing-5;
+            
+            &.bg-primary {
+                background: $mm-primary !important;
+            }
+            
+            h5, h6 {
+                color: $mm-secondary;
+                font-weight: $mm-font-weight-semibold;
+                margin-bottom: 0;
+                
+                a {
+                    color: $mm-primary;
+                    text-decoration: none;
+                    
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+        
+        .card-body {
+            padding: $mm-card-padding;
+        }
+        
+        .card-footer {
+            background-color: $mm-light;
+            border-top: 1px solid $mm-border-color;
+            padding: $mm-spacing-4 $mm-spacing-5;
+        }
+    }
+    
+    // Alert overrides
+    .alert {
+        border-radius: $mm-alert-border-radius;
+        border-width: $mm-alert-border-width;
+        padding: $mm-alert-padding;
+        
+        &.alert-info {
+            background-color: $mm-info-bg;
+            border-color: $mm-info-light;
+            color: $mm-info-dark;
+            
+            .alert-heading {
+                color: $mm-info-dark;
+            }
+            
+            i, .fa {
+                color: $mm-info;
+            }
+        }
+        
+        &.alert-success {
+            background-color: $mm-success-bg;
+            border-color: $mm-success-light;
+            color: $mm-success-dark;
+        }
+        
+        &.alert-warning {
+            background-color: $mm-warning-bg;
+            border-color: $mm-warning-light;
+            color: $mm-warning-dark;
+        }
+        
+        &.alert-danger {
+            background-color: $mm-danger-bg;
+            border-color: $mm-danger-light;
+            color: $mm-danger-dark;
+        }
+    }
+    
+    // Text color utilities
+    .text-primary {
+        color: $mm-primary !important;
+    }
+    
+    .text-secondary {
+        color: $mm-secondary !important;
+    }
+    
+    .text-success {
+        color: $mm-success !important;
+    }
+    
+    // Border utilities
+    .border-primary {
+        border-color: $mm-primary !important;
+    }
+}
+
+// ============================================================================
+// IMMIGRATION DASHBOARD
+// ============================================================================
+
+.immigration-dashboard {
+    // Welcome Banner
+    .alert-info {
+        border-left: 4px solid $mm-info;
+        
+        .alert-heading {
+            display: flex;
+            align-items: center;
+            gap: $mm-spacing-2;
+            
+            i {
+                color: $mm-info;
+            }
+        }
+    }
+    
+    // Case Cards
+    .card {
+        transition: transform $mm-transition-base, box-shadow $mm-transition-base;
+        
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: $mm-shadow-lg;
+        }
+        
+        .card-header {
+            background: $mm-white;
+            border-bottom: 1px solid $mm-border-color;
+            
+            h5 {
+                a {
+                    color: $mm-primary;
+                    font-weight: $mm-font-weight-semibold;
+                    
+                    &:hover {
+                        color: $mm-primary-dark;
+                    }
+                }
+            }
+        }
+    }
+    
+    // Current Stage Info Box
+    .current-stage-info {
+        background-color: rgba($mm-primary, 0.05);
+        border-left: 4px solid $mm-primary;
+        border-radius: 0 $mm-radius-lg $mm-radius-lg 0;
+        
+        h6 {
+            color: $mm-primary;
+            font-weight: $mm-font-weight-semibold;
+            
+            i {
+                color: $mm-primary;
+            }
+        }
+    }
+    
+    // Action Buttons Section
+    .mm-action-buttons {
+        display: flex;
+        gap: $mm-spacing-3;
+        flex-wrap: wrap;
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: $mm-spacing-2;
+        }
+    }
+}
+
+// ============================================================================
+// PROGRESS TRACKER
+// ============================================================================
+
+.immigration-progress-tracker {
+    padding: $mm-spacing-4 0;
+    
+    .progress-stages {
+        position: relative;
+        padding: 0 2%;
+    }
+    
+    // Progress Line (background)
+    .progress-line {
+        position: absolute;
+        top: 20px;
+        left: 5%;
+        right: 5%;
+        height: $mm-progress-line-height;
+        background: $mm-gray-200;
+        z-index: 0;
+        border-radius: $mm-radius-full;
+    }
+    
+    // Progress Line (filled portion)
+    .progress-line-fill {
+        position: absolute;
+        top: 20px;
+        left: 5%;
+        height: $mm-progress-line-height;
+        background: $mm-success;
+        z-index: 1;
+        border-radius: $mm-radius-full;
+        transition: width $mm-transition-slow;
+    }
+    
+    // Stage Items
+    .stage-item {
+        position: relative;
+        z-index: 2;
+        flex: 1;
+        min-width: 80px;
+        max-width: 140px;
+        text-align: center;
+        
+        .stage-circle {
+            width: $mm-progress-circle-size;
+            height: $mm-progress-circle-size;
+            margin: 0 auto $mm-spacing-2;
+            border-radius: $mm-radius-full;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: $mm-font-weight-bold;
+            font-size: $mm-font-size-sm;
+            transition: all $mm-transition-base;
+            border: 3px solid transparent;
+            
+            // Completed stage
+            &.bg-success {
+                background-color: $mm-success !important;
+                border-color: $mm-success !important;
+                color: $mm-white;
+            }
+            
+            // Current/Active stage
+            &.bg-primary {
+                background-color: $mm-primary !important;
+                border-color: $mm-primary !important;
+                color: $mm-white;
+                box-shadow: 0 0 0 4px rgba($mm-primary, 0.2);
+            }
+            
+            // Future stage
+            &.bg-light {
+                background-color: $mm-gray-100 !important;
+                border-color: $mm-gray-300 !important;
+                color: $mm-gray-400;
+            }
+        }
+        
+        .stage-label {
+            font-size: $mm-font-size-xs;
+            line-height: $mm-line-height-tight;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: $mm-text-muted;
+            
+            &.fw-bold {
+                color: $mm-primary;
+            }
+            
+            &.text-success {
+                color: $mm-success;
+            }
+            
+            &.text-muted {
+                color: $mm-gray-400;
+            }
+            
+            @media (min-width: $mm-breakpoint-md) {
+                font-size: $mm-font-size-sm;
+                white-space: normal;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// CASE DETAIL PAGE
+// ============================================================================
+
+.immigration-case-detail {
+    .card {
+        &.border-primary {
+            border: 2px solid $mm-primary !important;
+        }
+    }
+    
+    // Quick Actions List
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+        padding: $mm-spacing-4 $mm-spacing-5;
+        transition: background-color $mm-transition-fast;
+        
+        &:first-child {
+            border-top: none;
+            border-radius: $mm-radius-lg $mm-radius-lg 0 0;
+        }
+        
+        &:last-child {
+            border-radius: 0 0 $mm-radius-lg $mm-radius-lg;
+        }
+        
+        &:hover {
+            background-color: rgba($mm-primary, 0.05);
+        }
+        
+        // Action item styling
+        &.mm-action-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            
+            .mm-action-item__icon {
+                width: 40px;
+                height: 40px;
+                border-radius: $mm-radius-full;
+                background-color: $mm-light;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: $mm-spacing-3;
+                
+                i {
+                    color: $mm-primary;
+                    font-size: $mm-font-size-lg;
+                }
+            }
+            
+            .mm-action-item__content {
+                flex: 1;
+                
+                .mm-action-item__title {
+                    font-weight: $mm-font-weight-medium;
+                    color: $mm-text-primary;
+                    margin-bottom: $mm-spacing-1;
+                }
+                
+                .mm-action-item__desc {
+                    font-size: $mm-font-size-sm;
+                    color: $mm-text-muted;
+                    margin-bottom: 0;
+                }
+            }
+            
+            .mm-action-item__badge {
+                margin-left: $mm-spacing-3;
+            }
+        }
+    }
+    
+    // Case Summary Section
+    .mm-case-summary {
+        background-color: $mm-light;
+        border-radius: $mm-radius-xl;
+        padding: $mm-spacing-5;
+        
+        .mm-case-summary__item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: $mm-spacing-4;
+            
+            &:last-child {
+                margin-bottom: 0;
+            }
+            
+            .mm-case-summary__icon {
+                width: 32px;
+                height: 32px;
+                border-radius: $mm-radius-full;
+                background-color: $mm-white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: $mm-spacing-3;
+                flex-shrink: 0;
+                
+                i {
+                    color: $mm-secondary;
+                    font-size: $mm-font-size-sm;
+                }
+            }
+            
+            .mm-case-summary__label {
+                font-size: $mm-font-size-sm;
+                color: $mm-text-muted;
+                margin-bottom: $mm-spacing-1;
+            }
+            
+            .mm-case-summary__value {
+                font-weight: $mm-font-weight-medium;
+                color: $mm-text-primary;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// DOCUMENTS PAGE
+// ============================================================================
+
+.mm-documents {
+    .card {
+        height: 100%;
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: $mm-spacing-2;
+            color: $mm-secondary;
+            
+            i {
+                color: $mm-primary;
+            }
+        }
+    }
+    
+    // Document download buttons
+    .btn-outline-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: $mm-spacing-2;
+        
+        i {
+            font-size: $mm-font-size-sm;
+        }
+    }
+}
+
+// ============================================================================
+// CONTACT/SUPPORT SECTION
+// ============================================================================
+
+.mm-contact-card {
+    .card-header {
+        background: linear-gradient(135deg, $mm-secondary 0%, $mm-secondary-dark 100%) !important;
+        color: $mm-white;
+        
+        h5, h6 {
+            color: $mm-white !important;
+        }
+    }
+    
+    .mm-contact-item {
+        display: flex;
+        align-items: center;
+        gap: $mm-spacing-3;
+        padding: $mm-spacing-3 0;
+        border-bottom: 1px solid $mm-border-color;
+        
+        &:last-child {
+            border-bottom: none;
+        }
+        
+        i {
+            color: $mm-primary;
+            font-size: $mm-font-size-lg;
+            width: 24px;
+            text-align: center;
+        }
+        
+        a {
+            color: $mm-primary;
+            
+            &:hover {
+                color: $mm-primary-dark;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// PLACEHOLDER/COMING SOON PAGE
+// ============================================================================
+
+.mm-placeholder {
+    text-align: center;
+    padding: $mm-spacing-12 $mm-spacing-6;
+    
+    .mm-placeholder__icon {
+        font-size: 5rem;
+        color: $mm-gray-300;
+        margin-bottom: $mm-spacing-6;
+    }
+    
+    h3 {
+        color: $mm-secondary;
+        margin-bottom: $mm-spacing-3;
+    }
+    
+    .lead {
+        color: $mm-text-muted;
+        max-width: 500px;
+        margin: 0 auto $mm-spacing-6;
+    }
+}
+
+// ============================================================================
+// BREADCRUMBS
+// ============================================================================
+
+.o_portal .breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: $mm-spacing-4;
+    
+    .breadcrumb-item {
+        a {
+            color: $mm-primary;
+            
+            &:hover {
+                color: $mm-primary-dark;
+            }
+        }
+        
+        &.active {
+            color: $mm-text-muted;
+        }
+        
+        + .breadcrumb-item::before {
+            color: $mm-gray-400;
+        }
+    }
+}
+
+// ============================================================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================================================
+
+@media (max-width: $mm-breakpoint-md - 1px) {
+    .immigration-progress-tracker {
+        .stage-item {
+            min-width: 60px;
+            
+            .stage-circle {
+                width: $mm-progress-circle-size-sm;
+                height: $mm-progress-circle-size-sm;
+                font-size: $mm-font-size-xs;
+            }
+            
+            .stage-label {
+                font-size: 0.65rem;
+            }
+        }
+    }
+    
+    .immigration-dashboard {
+        .current-stage-info {
+            .row {
+                flex-direction: column;
+                
+                .text-md-end {
+                    text-align: left !important;
+                    margin-top: $mm-spacing-3;
+                }
+            }
+        }
+    }
+    
+    .immigration-case-detail {
+        .list-group-item.mm-action-item {
+            flex-direction: column;
+            align-items: flex-start;
+            
+            .mm-action-item__badge {
+                margin-left: 0;
+                margin-top: $mm-spacing-2;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// PRINT STYLES
+// ============================================================================
+
+@media print {
+    .immigration-progress-tracker {
+        .progress-line,
+        .progress-line-fill {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .stage-circle {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+    
+    .btn,
+    .mm-action-buttons {
+        display: none !important;
+    }
+}
+
+// ============================================================================
+// ACCESSIBILITY ENHANCEMENTS
+// ============================================================================
+
+.o_portal {
+    // Focus states for all interactive elements
+    .btn:focus,
+    .form-control:focus,
+    .form-select:focus,
+    .form-check-input:focus {
+        outline: none;
+        box-shadow: $mm-focus-ring;
+    }
+    
+    // Ensure sufficient color contrast for links
+    a:focus {
+        outline: 2px solid $mm-primary;
+        outline-offset: 2px;
+    }
+    
+    // Skip link styling (if present)
+    .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: $mm-primary;
+        color: $mm-white;
+        padding: $mm-spacing-2 $mm-spacing-4;
+        z-index: $mm-z-tooltip;
+        
+        &:focus {
+            top: 0;
+        }
+    }
+}

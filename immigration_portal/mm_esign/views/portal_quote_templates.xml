@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ====================== -->
+    <!-- Portal Quote Pages -->
+    <!-- ====================== -->
+    
+    <!-- Quote View Page -->
+    <template id="portal_quote_view" name="Immigration Quote">
+        <t t-call="portal.portal_layout">
+            <t t-set="o_portal_fullwidth_alert" t-value="True"/>
+            
+            <div class="container py-4">
+                
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/my/immigration">Immigration Portal</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a t-attf-href="/my/immigration/case/#{case.id}" t-field="case.name"/>
+                        </li>
+                        <li class="breadcrumb-item active">Quote</li>
+                    </ol>
+                </nav>
+                
+                <div class="row">
+                    <!-- Main Content -->
+                    <div class="col-lg-8">
+                        
+                        <!-- Quote Header -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-file-text-o me-2" 
+                                       title="Quote" role="img" aria-label="Quote"/>
+                                    Your Service Quote
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Quote Reference:</strong></p>
+                                        <p t-field="sale_order.name" class="text-muted"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="mb-1"><strong>Case Reference:</strong></p>
+                                        <p t-field="case.name" class="text-muted"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Service Details -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Services Included</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <table class="table table-striped mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Service</th>
+                                            <th class="text-center">Quantity</th>
+                                            <th class="text-end">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="order_lines" t-as="line">
+                                            <tr>
+                                                <td>
+                                                    <strong t-field="line.product_id.name"/>
+                                                    <t t-if="line.name and line.name != line.product_id.name">
+                                                        <br/><small class="text-muted" t-field="line.name"/>
+                                                    </t>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span t-field="line.product_uom_qty"/>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span t-field="line.price_subtotal" 
+                                                          t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    <tfoot class="table-light">
+                                        <tr>
+                                            <td colspan="2" class="text-end"><strong>Subtotal</strong></td>
+                                            <td class="text-end">
+                                                <span t-field="sale_order.amount_untaxed"
+                                                      t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                            </td>
+                                        </tr>
+                                        <t t-if="sale_order.amount_tax">
+                                            <tr>
+                                                <td colspan="2" class="text-end">Tax</td>
+                                                <td class="text-end">
+                                                    <span t-field="sale_order.amount_tax"
+                                                          t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <tr class="fw-bold">
+                                            <td colspan="2" class="text-end">Total</td>
+                                            <td class="text-end">
+                                                <span t-field="sale_order.amount_total"
+                                                      t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- What's Included -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">What's Included in Your Immigration Roadmap</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <i class="fa fa-check text-success me-2" 
+                                           title="Included" role="img" aria-label="Included"/>
+                                        Comprehensive eligibility assessment for all Canadian immigration pathways
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fa fa-check text-success me-2"
+                                           title="Included" role="img" aria-label="Included"/>
+                                        CRS score calculation and analysis
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fa fa-check text-success me-2"
+                                           title="Included" role="img" aria-label="Included"/>
+                                        Federal Skilled Worker 67-point grid assessment
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fa fa-check text-success me-2"
+                                           title="Included" role="img" aria-label="Included"/>
+                                        Provincial Nominee Program (PNP) eligibility analysis
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fa fa-check text-success me-2"
+                                           title="Included" role="img" aria-label="Included"/>
+                                        Personalized step-by-step immigration strategy
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fa fa-check text-success me-2"
+                                           title="Included" role="img" aria-label="Included"/>
+                                        Detailed timeline with target milestones
+                                    </li>
+                                    <li class="mb-0">
+                                        <i class="fa fa-check text-success me-2"
+                                           title="Included" role="img" aria-label="Included"/>
+                                        Consultation call with a Regulated Canadian Immigration Consultant (RCIC)
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Sidebar -->
+                    <div class="col-lg-4">
+                        
+                        <!-- Action Card -->
+                        <div class="card mb-4 sticky-top" style="top: 20px;">
+                            <div class="card-body text-center">
+                                
+                                <!-- Already Signed -->
+                                <t t-if="agreement_signed">
+                                    <div class="mb-3">
+                                        <i class="fa fa-check-circle text-success" style="font-size: 48px;"/>
+                                    </div>
+                                    <h5 class="text-success">Agreement Signed</h5>
+                                    <p class="text-muted small mb-3">
+                                        Your service agreement has been signed.
+                                    </p>
+                                    <a t-attf-href="/my/immigration/pay/#{case.id}" class="btn btn-success btn-lg w-100">
+                                        <i class="fa fa-credit-card me-2" 
+                                           title="Pay" role="img" aria-label="Pay"/>
+                                        Proceed to Payment
+                                    </a>
+                                </t>
+                                
+                                <!-- Pending Consultant Signature -->
+                                <t t-elif="pending_consultant">
+                                    <div class="mb-3">
+                                        <i class="fa fa-hourglass-half text-info" style="font-size: 48px;"/>
+                                    </div>
+                                    <h5 class="text-info">Awaiting Consultant Signature</h5>
+                                    <p class="text-muted small mb-3">
+                                        Thank you for signing! Your service agreement is now awaiting 
+                                        counter-signature from your immigration consultant.
+                                    </p>
+                                    <div class="alert alert-info small mb-0">
+                                        <i class="fa fa-info-circle me-1"/>
+                                        You'll receive an email notification once the agreement is fully executed.
+                                    </div>
+                                </t>
+                                
+                                <!-- Agreement Pending Client Signature -->
+                                <t t-elif="agreement_pending">
+                                    <div class="mb-3">
+                                        <i class="fa fa-clock-o text-warning" style="font-size: 48px;"/>
+                                    </div>
+                                    <h5>Agreement Ready for Signature</h5>
+                                    <p class="text-muted small mb-3">
+                                        Please sign your service agreement to proceed.
+                                    </p>
+                                    <a t-attf-href="/my/immigration/sign/#{service_agreement.access_token}" 
+                                       class="btn btn-primary btn-lg w-100">
+                                        <i class="fa fa-pencil me-2"
+                                           title="Sign" role="img" aria-label="Sign"/>
+                                        Sign Agreement
+                                    </a>
+                                </t>
+                                
+                                <!-- Can Request Agreement -->
+                                <t t-elif="can_sign">
+                                    <h4 class="text-primary mb-3">
+                                        <span t-field="sale_order.amount_total" 
+                                              t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </h4>
+                                    <p class="text-muted small mb-3">
+                                        Review the quote above and accept to proceed with your 
+                                        Immigration Roadmap assessment.
+                                    </p>
+                                    <form t-attf-action="/my/immigration/quote/#{case.id}/request-agreement" 
+                                          method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                                            <i class="fa fa-check me-2"
+                                               title="Accept" role="img" aria-label="Accept"/>
+                                            Accept &amp; Sign Agreement
+                                        </button>
+                                    </form>
+                                    <p class="text-muted small mt-2 mb-0">
+                                        You'll be asked to sign a service agreement.
+                                    </p>
+                                </t>
+                                
+                            </div>
+                        </div>
+                        
+                        <!-- Help Card -->
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="mb-3">
+                                    <i class="fa fa-question-circle text-info me-2"
+                                       title="Help" role="img" aria-label="Help"/>
+                                    Need Help?
+                                </h6>
+                                <p class="small text-muted mb-2">
+                                    If you have questions about this quote or the services included, 
+                                    please don't hesitate to contact us.
+                                </p>
+                                <a t-attf-href="mailto:#{case.company_id.email}" class="btn btn-outline-secondary btn-sm w-100">
+                                    <i class="fa fa-envelope me-1"
+                                       title="Email" role="img" aria-label="Email"/>
+                                    Contact Us
+                                </a>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+            
+        </t>
+    </template>
+    
+    <!-- No Quote Found -->
+    <template id="portal_quote_not_found" name="No Quote Found">
+        <t t-call="portal.portal_layout">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-file-text-o text-muted" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">No Quote Available</h2>
+                        <p class="text-muted mb-4">
+                            A quote has not yet been prepared for your case.
+                            Please complete the Pre-Consultation Questionnaire first, 
+                            then our team will prepare your personalized quote.
+                        </p>
+                        <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-primary">
+                            <i class="fa fa-arrow-left me-2"
+                               title="Back" role="img" aria-label="Back"/>
+                            Back to My Case
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+</odoo>

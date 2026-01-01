@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Consultant Sign Wizard Form View -->
+    <record id="view_consultant_sign_wizard_form" model="ir.ui.view">
+        <field name="name">mm.esign.consultant.sign.wizard.form</field>
+        <field name="model">mm.esign.consultant.sign.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Sign Document">
+                <group>
+                    <group string="Document Information">
+                        <field name="document_type" readonly="1"/>
+                        <field name="case_name" readonly="1"/>
+                        <field name="client_name" readonly="1"/>
+                        <field name="client_signed_date" readonly="1"/>
+                    </group>
+                </group>
+                
+                <separator string="Your Signature"/>
+                
+                <group>
+                    <field name="signature_type" widget="radio"/>
+                </group>
+                
+                <group invisible="signature_type != 'type'">
+                    <field name="typed_signature" placeholder="Type your full legal name"/>
+                </group>
+                
+                <group invisible="signature_type != 'draw'">
+                    <field name="signature_data" widget="signature"/>
+                </group>
+                
+                <footer>
+                    <button name="action_sign" string="Sign Document" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Wizard Action -->
+    <record id="action_consultant_sign_wizard" model="ir.actions.act_window">
+        <field name="name">Sign Document</field>
+        <field name="res_model">mm.esign.consultant.sign.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

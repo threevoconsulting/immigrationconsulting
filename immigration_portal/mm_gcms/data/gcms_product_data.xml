@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- 
+        GCMS Service Products
+        Phase 6: GCMS Notes Request Workflow
+        
+        Products for GCMS service fees:
+        1. GCMS Notes Request Service - upfront fee
+        2. GCMS Consultation Service - optional consultation fee
+        -->
+        
+        <!-- Product Category for GCMS Services -->
+        <record id="product_category_gcms" model="product.category">
+            <field name="name">GCMS Services</field>
+        </record>
+        
+        <!-- GCMS Notes Request Service Product -->
+        <record id="product_gcms_service" model="product.product">
+            <field name="name">GCMS Notes Request Service</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product_category_gcms"/>
+            <field name="list_price">150.00</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="description_sale">Complete GCMS (Global Case Management System) notes request service including:
+• Submission of Access to Information request to IRCC
+• Retrieval of your complete GCMS notes
+• Detailed breakdown and analysis of your immigration file
+• Summary of key findings and recommendations</field>
+            <field name="default_code">GCMS-SERVICE</field>
+        </record>
+        
+        <!-- GCMS Consultation Service Product -->
+        <record id="product_gcms_consultation" model="product.product">
+            <field name="name">GCMS Notes Consultation</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product_category_gcms"/>
+            <field name="list_price">100.00</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="description_sale">One-on-one consultation with a Regulated Canadian Immigration Consultant (RCIC) to discuss your GCMS notes including:
+• 30-minute video or phone consultation
+• Detailed explanation of your GCMS notes findings
+• Personalized strategy recommendations
+• Answers to your immigration questions</field>
+            <field name="default_code">GCMS-CONSULT</field>
+        </record>
+        
+    </data>
+</odoo>

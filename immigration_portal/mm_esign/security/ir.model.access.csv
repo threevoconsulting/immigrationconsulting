@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_esign_request_admin,access.esign.request.admin,model_mm_esign_request,base.group_system,1,1,1,1
+access_esign_request_manager,access.esign.request.manager,model_mm_esign_request,mm_immigration.group_immigration_manager,1,1,1,1
+access_esign_request_consultant,access.esign.request.consultant,model_mm_esign_request,mm_immigration.group_immigration_consultant,1,1,1,0
+access_esign_request_user,access.esign.request.user,model_mm_esign_request,mm_immigration.group_immigration_user,1,0,0,0
+access_esign_request_portal,access.esign.request.portal,model_mm_esign_request,base.group_portal,1,1,0,0
+access_consultant_sign_wizard_admin,access.consultant.sign.wizard.admin,model_mm_esign_consultant_sign_wizard,base.group_system,1,1,1,1
+access_consultant_sign_wizard_manager,access.consultant.sign.wizard.manager,model_mm_esign_consultant_sign_wizard,mm_immigration.group_immigration_manager,1,1,1,1
+access_consultant_sign_wizard_consultant,access.consultant.sign.wizard.consultant,model_mm_esign_consultant_sign_wizard,mm_immigration.group_immigration_consultant,1,1,1,1

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mm_immigration_case_gcms_admin,access.mm.immigration.case.gcms.admin,mm_immigration.model_mm_immigration_case,base.group_system,1,1,1,1
+access_mm_immigration_stage_gcms_admin,access.mm.immigration.stage.gcms.admin,mm_immigration.model_mm_immigration_stage,base.group_system,1,1,1,1

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- =========================== -->
+        <!-- Email: Signature Request -->
+        <!-- =========================== -->
+        <record id="email_template_signature_request" model="mail.template">
+            <field name="name">E-Sign: Signature Request</field>
+            <field name="model_id" ref="model_mm_esign_request"/>
+            <field name="email_from">{{ (object.company_id.email or object.case_id.consultant_id.email or user.email) }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="subject">Action Required: Sign Your {{ object.document_type.replace('_', ' ').title() }} - {{ object.case_id.name }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" style="padding-top: 16px; background-color: #F1F1F1; width: 100%;">
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="590" style="background-color: white; padding: 20px;">
+                    <!-- Header with Logo -->
+                    <tr>
+                        <td style="padding: 20px; text-align: center; border-bottom: 2px solid #875A7B;">
+                            <t t-if="object.company_id.logo">
+                                <img t-att-src="'data:image/png;base64,%s' % object.company_id.logo.decode('utf-8')" 
+                                     style="max-height: 60px; max-width: 200px;" alt="Company Logo"/>
+                            </t>
+                            <t t-else="">
+                                <h2 style="color: #875A7B; margin: 0;">{{ object.company_id.name }}</h2>
+                            </t>
+                        </td>
+                    </tr>
+                    
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding: 30px 20px;">
+                            <p style="margin: 0 0 15px 0; font-size: 16px;">
+                                Dear {{ object.partner_id.name }},
+                            </p>
+                            
+                            <p style="margin: 0 0 15px 0; font-size: 14px; line-height: 1.6;">
+                                Thank you for choosing {{ object.company_id.name }} for your immigration journey.
+                            </p>
+                            
+                            <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6;">
+                                Please review and sign your <strong>{{ object.document_type.replace('_', ' ').title() }}</strong> 
+                                to proceed with your assessment.
+                            </p>
+                            
+                            <!-- CTA Button -->
+                            <p style="text-align: center; margin: 30px 0;">
+                                <a href="{{ object._get_signing_url() }}" 
+                                   style="background-color: #875A7B; color: white; padding: 14px 28px; 
+                                          text-decoration: none; border-radius: 5px; font-weight: bold;
+                                          display: inline-block;">
+                                    Review &amp; Sign Document
+                                </a>
+                            </p>
+                            
+                            <!-- Important Notice -->
+                            <div style="background-color: #FFF3CD; border: 1px solid #FFEEBA; 
+                                        border-radius: 4px; padding: 15px; margin: 20px 0;">
+                                <p style="margin: 0; font-size: 13px; color: #856404;">
+                                    <strong>Important:</strong> This link will expire in 7 days 
+                                    ({{ object.expires_at.strftime('%B %d, %Y') }}).
+                                </p>
+                            </div>
+                            
+                            <!-- Case Reference -->
+                            <p style="margin: 20px 0 0 0; font-size: 13px; color: #666;">
+                                Case Reference: <strong>{{ object.case_id.name }}</strong>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px; background-color: #F8F9FA; border-top: 1px solid #E9ECEF;">
+                            <p style="margin: 0 0 10px 0; font-size: 12px; color: #666; text-align: center;">
+                                If you have any questions, please contact us at 
+                                <a href="mailto:{{ object.company_id.email }}" style="color: #875A7B;">
+                                    {{ object.company_id.email }}
+                                </a>
+                            </p>
+                            <p style="margin: 0; font-size: 11px; color: #999; text-align: center;">
+                                {{ object.company_id.name }}<br/>
+                                {{ object.company_id.street or '' }} {{ object.company_id.city or '' }}<br/>
+                                {{ object.company_id.country_id.name or '' }}
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+            </field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+        
+        <!-- =========================== -->
+        <!-- Email: Signature Complete -->
+        <!-- =========================== -->
+        <record id="email_template_signature_complete" model="mail.template">
+            <field name="name">E-Sign: Signature Complete</field>
+            <field name="model_id" ref="model_mm_esign_request"/>
+            <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="subject">Document Signed Successfully - {{ object.case_id.name }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" style="padding-top: 16px; background-color: #F1F1F1; width: 100%;">
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="590" style="background-color: white; padding: 20px;">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 20px; text-align: center; border-bottom: 2px solid #28A745;">
+                            <t t-if="object.company_id.logo">
+                                <img t-att-src="'data:image/png;base64,%s' % object.company_id.logo.decode('utf-8')" 
+                                     style="max-height: 60px; max-width: 200px;" alt="Company Logo"/>
+                            </t>
+                            <t t-else="">
+                                <h2 style="color: #28A745; margin: 0;">{{ object.company_id.name }}</h2>
+                            </t>
+                        </td>
+                    </tr>
+                    
+                    <!-- Success Banner -->
+                    <tr>
+                        <td style="padding: 20px; background-color: #D4EDDA; text-align: center;">
+                            <p style="margin: 0; color: #155724; font-size: 18px; font-weight: bold;">
+                                ✓ Document Signed Successfully
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding: 30px 20px;">
+                            <p style="margin: 0 0 15px 0; font-size: 16px;">
+                                Dear {{ object.partner_id.name }},
+                            </p>
+                            
+                            <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6;">
+                                Thank you for signing your {{ object.document_type.replace('_', ' ').title() }}.
+                            </p>
+                            
+                            <!-- Document Details -->
+                            <div style="background-color: #F8F9FA; border-radius: 4px; padding: 15px; margin: 20px 0;">
+                                <p style="margin: 0 0 8px 0; font-size: 14px;">
+                                    <strong>Document Details:</strong>
+                                </p>
+                                <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #666;">
+                                    <li>Document: {{ object.document_type.replace('_', ' ').title() }}</li>
+                                    <li>Signed: {{ object.signed_date.strftime('%B %d, %Y at %H:%M UTC') }}</li>
+                                    <li>Reference: {{ object.name }}</li>
+                                </ul>
+                            </div>
+                            
+                            <p style="margin: 20px 0; font-size: 14px; line-height: 1.6;">
+                                A copy of the signed document is attached to this email for your records.
+                            </p>
+                            
+                            <!-- Next Step -->
+                            <div style="background-color: #E7F3FF; border: 1px solid #B8DAFF; 
+                                        border-radius: 4px; padding: 15px; margin: 20px 0;">
+                                <p style="margin: 0 0 10px 0; font-size: 14px; color: #004085;">
+                                    <strong>Next Step:</strong>
+                                </p>
+                                <p style="margin: 0; font-size: 13px; color: #004085;">
+                                    Please complete your payment to unlock the detailed assessment questionnaire.
+                                </p>
+                            </div>
+                            
+                            <!-- CTA Button -->
+                            <p style="text-align: center; margin: 30px 0;">
+                                <a href="{{ object.case_id.get_portal_url() }}" 
+                                   style="background-color: #875A7B; color: white; padding: 14px 28px; 
+                                          text-decoration: none; border-radius: 5px; font-weight: bold;
+                                          display: inline-block;">
+                                    Go to Your Portal
+                                </a>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px; background-color: #F8F9FA; border-top: 1px solid #E9ECEF;">
+                            <p style="margin: 0; font-size: 11px; color: #999; text-align: center;">
+                                {{ object.company_id.name }} | {{ object.company_id.email }}
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+            </field>
+            <field name="report_template_ids" eval="[(4, ref('mm_esign.report_service_agreement'))]"/>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+        
+        <!-- =========================== -->
+        <!-- Email: Payment Received (Q2 Invitation) -->
+        <!-- =========================== -->
+        <record id="email_template_payment_received" model="mail.template">
+            <field name="name">E-Sign: Payment Received - Q2 Invitation</field>
+            <field name="model_id" ref="mm_immigration.model_mm_immigration_case"/>
+            <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="subject">Payment Received - Start Your Detailed Assessment - {{ object.name }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" style="padding-top: 16px; background-color: #F1F1F1; width: 100%;">
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="590" style="background-color: white; padding: 20px;">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 20px; text-align: center; border-bottom: 2px solid #28A745;">
+                            <t t-if="object.company_id.logo">
+                                <img t-att-src="'data:image/png;base64,%s' % object.company_id.logo.decode('utf-8')" 
+                                     style="max-height: 60px; max-width: 200px;" alt="Company Logo"/>
+                            </t>
+                            <t t-else="">
+                                <h2 style="color: #28A745; margin: 0;">{{ object.company_id.name }}</h2>
+                            </t>
+                        </td>
+                    </tr>
+                    
+                    <!-- Success Banner -->
+                    <tr>
+                        <td style="padding: 20px; background-color: #D4EDDA; text-align: center;">
+                            <p style="margin: 0; color: #155724; font-size: 18px; font-weight: bold;">
+                                ✓ Payment Received
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding: 30px 20px;">
+                            <p style="margin: 0 0 15px 0; font-size: 16px;">
+                                Dear {{ object.partner_id.name }},
+                            </p>
+                            
+                            <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6;">
+                                Great news! We've received your payment for the Immigration Roadmap service.
+                            </p>
+                            
+                            <!-- Payment Details -->
+                            <div style="background-color: #F8F9FA; border-radius: 4px; padding: 15px; margin: 20px 0;">
+                                <p style="margin: 0 0 8px 0; font-size: 14px;">
+                                    <strong>Payment Details:</strong>
+                                </p>
+                                <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #666;">
+                                    <li>Amount: {{ object.sale_order_id.amount_total }} {{ object.sale_order_id.currency_id.symbol }}</li>
+                                    <li>Date: {{ object.payment_date.strftime('%B %d, %Y') if object.payment_date else 'Today' }}</li>
+                                    <li>Case Reference: {{ object.name }}</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Next Step Highlight -->
+                            <div style="background-color: #E7F3FF; border: 1px solid #B8DAFF; 
+                                        border-radius: 4px; padding: 20px; margin: 20px 0;">
+                                <p style="margin: 0 0 10px 0; font-size: 16px; color: #004085; font-weight: bold;">
+                                    Next Step: Complete Your Detailed Assessment
+                                </p>
+                                <p style="margin: 0; font-size: 14px; color: #004085; line-height: 1.6;">
+                                    Please complete the Detailed Assessment Questionnaire. This comprehensive 
+                                    questionnaire will help us calculate your CRS score and create your 
+                                    personalized Immigration Roadmap.
+                                </p>
+                            </div>
+                            
+                            <!-- CTA Button -->
+                            <p style="text-align: center; margin: 30px 0;">
+                                <a href="/my/immigration/questionnaire/detailed" 
+                                   style="background-color: #28A745; color: white; padding: 16px 32px; 
+                                          text-decoration: none; border-radius: 5px; font-weight: bold;
+                                          display: inline-block; font-size: 16px;">
+                                    Start Detailed Assessment
+                                </a>
+                            </p>
+                            
+                            <p style="margin: 20px 0 0 0; font-size: 13px; color: #666; text-align: center;">
+                                Or log in to your portal at any time to continue.
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px; background-color: #F8F9FA; border-top: 1px solid #E9ECEF;">
+                            <p style="margin: 0 0 10px 0; font-size: 12px; color: #666; text-align: center;">
+                                Questions? Contact us at 
+                                <a href="mailto:{{ object.company_id.email }}" style="color: #875A7B;">
+                                    {{ object.company_id.email }}
+                                </a>
+                            </p>
+                            <p style="margin: 0; font-size: 11px; color: #999; text-align: center;">
+                                {{ object.company_id.name }}
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+            </field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+        
+    </data>
+</odoo>

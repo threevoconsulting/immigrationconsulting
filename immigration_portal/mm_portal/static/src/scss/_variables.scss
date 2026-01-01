@@ -1,0 +1,220 @@
+// ============================================================================
+// The Migration Monitor - Shared SCSS Variables
+// ============================================================================
+// This file contains all shared variables for the Immigration Portal.
+// It is loaded FIRST via mm_portal and available to all dependent modules
+// (mm_questionnaire, mm_esign, etc.)
+//
+// IMPORTANT - Odoo 19 Compliance:
+// - All variables use $mm- prefix to avoid Bootstrap/Odoo conflicts
+// - All variables use !default flag to allow overrides
+// - No @import statements (forbidden in Odoo 19)
+// - This file is loaded via manifest assets, not @import
+// ============================================================================
+
+// ============================================================================
+// BRAND COLORS - The Migration Monitor
+// ============================================================================
+
+// Primary Brand Color - Canadian Maple Red (from logo)
+$mm-primary: #C41E3A !default;
+$mm-primary-light: #E8374F !default;
+$mm-primary-dark: #9A1830 !default;
+
+// Secondary Color - Navy Blue (professional/government feel)
+$mm-secondary: #1A365D !default;
+$mm-secondary-light: #2D4A7C !default;
+$mm-secondary-dark: #0F2340 !default;
+
+// Accent Color - Gold (premium highlights)
+$mm-accent: #D4A84B !default;
+$mm-accent-light: #E4C06B !default;
+$mm-accent-dark: #B08A30 !default;
+
+// ============================================================================
+// SEMANTIC COLORS
+// ============================================================================
+
+// Success - Forest Green (approvals, completed stages)
+$mm-success: #047857 !default;
+$mm-success-light: #059669 !default;
+$mm-success-dark: #065F46 !default;
+$mm-success-bg: #ECFDF5 !default;
+
+// Warning - Amber (pending, attention needed)
+$mm-warning: #B45309 !default;
+$mm-warning-light: #D97706 !default;
+$mm-warning-dark: #92400E !default;
+$mm-warning-bg: #FFFBEB !default;
+
+// Danger - Red (errors, critical actions)
+$mm-danger: #DC2626 !default;
+$mm-danger-light: #EF4444 !default;
+$mm-danger-dark: #B91C1C !default;
+$mm-danger-bg: #FEF2F2 !default;
+
+// Info - Sky Blue (information, help)
+$mm-info: #0369A1 !default;
+$mm-info-light: #0284C7 !default;
+$mm-info-dark: #075985 !default;
+$mm-info-bg: #EBF8FF !default;
+
+// ============================================================================
+// NEUTRAL COLORS
+// ============================================================================
+
+$mm-white: #FFFFFF !default;
+$mm-light: #F8FAFC !default;
+$mm-gray-100: #F1F5F9 !default;
+$mm-gray-200: #E2E8F0 !default;
+$mm-gray-300: #CBD5E1 !default;
+$mm-gray-400: #94A3B8 !default;
+$mm-gray-500: #64748B !default;
+$mm-gray-600: #475569 !default;
+$mm-gray-700: #334155 !default;
+$mm-gray-800: #1E293B !default;
+$mm-dark: #0F172A !default;
+
+// Text Colors
+$mm-text-primary: $mm-dark !default;
+$mm-text-secondary: $mm-gray-600 !default;
+$mm-text-muted: $mm-gray-500 !default;
+$mm-text-light: $mm-gray-400 !default;
+
+// ============================================================================
+// TYPOGRAPHY
+// ============================================================================
+
+$mm-font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$mm-font-family-heading: $mm-font-family-base !default;
+$mm-font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !default;
+
+// Font Sizes
+$mm-font-size-xs: 0.75rem !default;    // 12px
+$mm-font-size-sm: 0.875rem !default;   // 14px
+$mm-font-size-base: 1rem !default;     // 16px
+$mm-font-size-lg: 1.125rem !default;   // 18px
+$mm-font-size-xl: 1.25rem !default;    // 20px
+$mm-font-size-2xl: 1.5rem !default;    // 24px
+$mm-font-size-3xl: 1.875rem !default;  // 30px
+
+// Font Weights
+$mm-font-weight-normal: 400 !default;
+$mm-font-weight-medium: 500 !default;
+$mm-font-weight-semibold: 600 !default;
+$mm-font-weight-bold: 700 !default;
+
+// Line Heights
+$mm-line-height-tight: 1.25 !default;
+$mm-line-height-normal: 1.5 !default;
+$mm-line-height-relaxed: 1.625 !default;
+
+// ============================================================================
+// SPACING
+// ============================================================================
+
+$mm-spacing-unit: 0.25rem !default;  // 4px base unit
+
+$mm-spacing-0: 0 !default;
+$mm-spacing-1: $mm-spacing-unit !default;       // 4px
+$mm-spacing-2: $mm-spacing-unit * 2 !default;   // 8px
+$mm-spacing-3: $mm-spacing-unit * 3 !default;   // 12px
+$mm-spacing-4: $mm-spacing-unit * 4 !default;   // 16px
+$mm-spacing-5: $mm-spacing-unit * 5 !default;   // 20px
+$mm-spacing-6: $mm-spacing-unit * 6 !default;   // 24px
+$mm-spacing-8: $mm-spacing-unit * 8 !default;   // 32px
+$mm-spacing-10: $mm-spacing-unit * 10 !default; // 40px
+$mm-spacing-12: $mm-spacing-unit * 12 !default; // 48px
+
+// ============================================================================
+// BORDERS & SHADOWS
+// ============================================================================
+
+// Border Radius
+$mm-radius-sm: 0.25rem !default;   // 4px
+$mm-radius-md: 0.375rem !default;  // 6px
+$mm-radius-lg: 0.5rem !default;    // 8px
+$mm-radius-xl: 0.75rem !default;   // 12px
+$mm-radius-2xl: 1rem !default;     // 16px
+$mm-radius-full: 9999px !default;
+
+// Border Colors
+$mm-border-color: $mm-gray-200 !default;
+$mm-border-color-dark: $mm-gray-300 !default;
+
+// Box Shadows
+$mm-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
+$mm-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !default;
+$mm-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !default;
+$mm-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !default;
+
+// Focus Ring - use color directly with rgba()
+$mm-focus-ring: 0 0 0 3px rgba($mm-primary, 0.3) !default;
+$mm-focus-ring-success: 0 0 0 3px rgba($mm-success, 0.3) !default;
+
+// ============================================================================
+// TRANSITIONS
+// ============================================================================
+
+$mm-transition-fast: 150ms ease !default;
+$mm-transition-base: 200ms ease !default;
+$mm-transition-slow: 300ms ease !default;
+
+// ============================================================================
+// Z-INDEX SCALE
+// ============================================================================
+
+$mm-z-dropdown: 1000 !default;
+$mm-z-sticky: 1020 !default;
+$mm-z-fixed: 1030 !default;
+$mm-z-modal-backdrop: 1040 !default;
+$mm-z-modal: 1050 !default;
+$mm-z-popover: 1060 !default;
+$mm-z-tooltip: 1070 !default;
+
+// ============================================================================
+// COMPONENT-SPECIFIC VARIABLES
+// ============================================================================
+
+// Cards
+$mm-card-border-radius: $mm-radius-xl !default;
+$mm-card-shadow: $mm-shadow-md !default;
+$mm-card-padding: $mm-spacing-6 !default;
+
+// Buttons
+$mm-btn-padding-y: $mm-spacing-2 !default;
+$mm-btn-padding-x: $mm-spacing-4 !default;
+$mm-btn-border-radius: $mm-radius-lg !default;
+$mm-btn-font-weight: $mm-font-weight-medium !default;
+
+// Forms
+$mm-input-padding-y: $mm-spacing-3 !default;
+$mm-input-padding-x: $mm-spacing-4 !default;
+$mm-input-border-radius: $mm-radius-md !default;
+$mm-input-border-color: $mm-gray-300 !default;
+$mm-input-focus-border-color: $mm-primary !default;
+
+// Progress Tracker
+$mm-progress-circle-size: 40px !default;
+$mm-progress-circle-size-sm: 32px !default;
+$mm-progress-line-height: 4px !default;
+
+// Badges
+$mm-badge-padding-y: 0.375em !default;
+$mm-badge-padding-x: 0.625em !default;
+$mm-badge-border-radius: $mm-radius-sm !default;
+
+// Alerts
+$mm-alert-padding: $mm-spacing-4 !default;
+$mm-alert-border-radius: $mm-radius-lg !default;
+$mm-alert-border-width: 1px !default;
+
+// ============================================================================
+// BREAKPOINTS (matching Bootstrap 5 - always in px)
+// ============================================================================
+
+$mm-breakpoint-sm: 576px !default;
+$mm-breakpoint-md: 768px !default;
+$mm-breakpoint-lg: 992px !default;
+$mm-breakpoint-xl: 1200px !default;
+$mm-breakpoint-xxl: 1400px !default;

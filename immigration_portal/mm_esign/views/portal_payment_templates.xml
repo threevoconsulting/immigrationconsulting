@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ====================== -->
+    <!-- Portal Payment Pages -->
+    <!-- ====================== -->
+    
+    <!-- Payment View Page -->
+    <template id="portal_payment_view" name="Immigration Payment">
+        <t t-call="portal.portal_layout">
+            
+            <div class="container py-4">
+                
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/my/immigration">Immigration Portal</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a t-attf-href="/my/immigration/case/#{case.id}" t-field="case.name"/>
+                        </li>
+                        <li class="breadcrumb-item active">Payment</li>
+                    </ol>
+                </nav>
+                
+                <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        
+                        <!-- Payment Card -->
+                        <div class="card">
+                            <div class="card-header bg-primary text-white text-center py-4">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-credit-card me-2"
+                                       title="Payment" role="img" aria-label="Payment"/>
+                                    Complete Your Payment
+                                </h4>
+                            </div>
+                            <div class="card-body text-center py-5">
+                                
+                                <!-- Amount Display -->
+                                <div class="mb-4">
+                                    <p class="text-muted mb-1">Amount Due</p>
+                                    <h1 class="display-4 text-primary mb-0">
+                                        <span t-esc="invoice.amount_residual" 
+                                              t-options="{'widget': 'monetary', 'display_currency': invoice.currency_id}"/>
+                                    </h1>
+                                </div>
+                                
+                                <!-- Invoice Reference -->
+                                <div class="mb-4">
+                                    <p class="text-muted small mb-0">
+                                        Invoice: <strong t-field="invoice.name"/>
+                                    </p>
+                                    <p class="text-muted small mb-0">
+                                        Case: <strong t-field="case.name"/>
+                                    </p>
+                                </div>
+                                
+                                <!-- Payment Button -->
+                                <a t-att-href="invoice_url" class="btn btn-success btn-lg px-5">
+                                    <i class="fa fa-lock me-2"
+                                       title="Secure Payment" role="img" aria-label="Secure Payment"/>
+                                    Pay Securely
+                                </a>
+                                
+                                <!-- Security Badge -->
+                                <div class="mt-4">
+                                    <p class="text-muted small mb-1">
+                                        <i class="fa fa-shield text-success me-1"
+                                           title="Secure" role="img" aria-label="Secure"/>
+                                        Secure payment powered by Stripe
+                                    </p>
+                                    <p class="text-muted small mb-0">
+                                        <i class="fa fa-credit-card me-1"
+                                           title="Cards Accepted" role="img" aria-label="Cards Accepted"/>
+                                        We accept Visa, Mastercard, and American Express
+                                    </p>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <!-- What Happens Next -->
+                        <div class="card mt-4">
+                            <div class="card-body">
+                                <h6 class="mb-3">
+                                    <i class="fa fa-info-circle text-info me-2"
+                                       title="Info" role="img" aria-label="Info"/>
+                                    What happens after payment?
+                                </h6>
+                                <ol class="small text-muted mb-0 ps-3">
+                                    <li class="mb-2">You'll receive a payment confirmation email with receipt</li>
+                                    <li class="mb-2">The Detailed Assessment Questionnaire will be unlocked</li>
+                                    <li class="mb-2">Complete the questionnaire to provide detailed information</li>
+                                    <li class="mb-0">We'll generate your personalized Immigration Roadmap</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <!-- Back Link -->
+                        <div class="text-center mt-4">
+                            <a t-attf-href="/my/immigration/case/#{case.id}" class="text-muted">
+                                <i class="fa fa-arrow-left me-1"
+                                   title="Back" role="img" aria-label="Back"/>
+                                Back to My Case
+                            </a>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+            
+        </t>
+    </template>
+    
+    <!-- Payment Already Completed -->
+    <template id="portal_payment_already_paid" name="Payment Already Completed">
+        <t t-call="portal.portal_layout">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-check-circle text-success" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">Payment Already Completed</h2>
+                        <p class="text-muted mb-4">
+                            Your payment has already been received. Thank you!
+                        </p>
+                        
+                        <t t-if="case.state == 'assessment'">
+                            <div class="alert alert-info mb-4">
+                                <h5 class="alert-heading">Next Step</h5>
+                                <p class="mb-0">
+                                    Please complete your Detailed Assessment Questionnaire.
+                                </p>
+                            </div>
+                            <a href="/my/immigration/questionnaire/detailed" class="btn btn-primary btn-lg mb-3">
+                                <i class="fa fa-edit me-2"
+                                   title="Continue" role="img" aria-label="Continue"/>
+                                Continue Assessment
+                            </a>
+                        </t>
+                        
+                        <div>
+                            <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-outline-secondary">
+                                <i class="fa fa-arrow-left me-2"
+                                   title="Back" role="img" aria-label="Back"/>
+                                Back to My Case
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    <!-- No Invoice Available -->
+    <template id="portal_payment_no_invoice" name="No Invoice Available">
+        <t t-call="portal.portal_layout">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 text-center">
+                        <div class="mb-4">
+                            <i class="fa fa-file-text-o text-muted" style="font-size: 80px;"/>
+                        </div>
+                        <h2 class="mb-3">Invoice Not Ready</h2>
+                        <p class="text-muted mb-4">
+                            Your invoice is being prepared. Please check back shortly or 
+                            contact us if you believe this is an error.
+                        </p>
+                        <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-primary">
+                            <i class="fa fa-arrow-left me-2"
+                               title="Back" role="img" aria-label="Back"/>
+                            Back to My Case
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+</odoo>

@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- 
+    GCMS Case Views
+    Phase 6: GCMS Notes Request Workflow
+    
+    Odoo 19 Compatibility:
+    - No attrs= or states= attributes (use invisible=, readonly=, required=)
+    - Use <list> not <tree>
+    - Use t-name="card" not "kanban-box"
+    - Escape XML operators (&gt;, &lt;)
+    - Use <chatter/> not oe_chatter div
+    - No invisible="1" without technical justification
+    -->
+    
+    <!-- ================================================================== -->
+    <!-- FORM VIEW EXTENSION                                                -->
+    <!-- ================================================================== -->
+    
+    <record id="mm_immigration_case_form_gcms" model="ir.ui.view">
+        <field name="name">mm.immigration.case.form.gcms</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Update stage_id statusbar to filter by case_type -->
+            <xpath expr="//field[@name='stage_id']" position="attributes">
+                <attribute name="domain">[('case_type', 'in', [case_type, False])]</attribute>
+            </xpath>
+            
+            <!-- Add case_type field after name -->
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="case_type" widget="radio" options="{'horizontal': true}"/>
+            </xpath>
+            
+            <!-- Add GCMS Information page (only visible for GCMS cases) -->
+            <xpath expr="//page[@name='documents']" position="after">
+                <page string="GCMS Information" name="gcms_info" invisible="case_type != 'gcms'">
+                    
+                    <!-- Client Information Section -->
+                    <group string="Client GCMS Information">
+                        <group>
+                            <field name="gcms_uci_number" 
+                                   placeholder="e.g., 1234567890"
+                                   required="case_type == 'gcms'"/>
+                            <field name="gcms_application_number" 
+                                   placeholder="e.g., E000123456"/>
+                        </group>
+                        <group>
+                            <field name="gcms_application_type"/>
+                            <field name="gcms_application_type_other" 
+                                   invisible="gcms_application_type != 'other'"
+                                   required="gcms_application_type == 'other'"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Consent Section -->
+                    <group string="Consent &amp; Authorization">
+                        <group>
+                            <field name="gcms_consent_given"/>
+                            <field name="gcms_consent_date" 
+                                   invisible="not gcms_consent_given"/>
+                        </group>
+                        <group>
+                            <field name="gcms_service_agreement_id" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Request Tracking Section -->
+                    <group string="Request Tracking">
+                        <group>
+                            <field name="gcms_request_date"/>
+                            <field name="gcms_received_date"/>
+                        </group>
+                        <group>
+                            <field name="gcms_service_paid" readonly="1" widget="boolean_toggle"/>
+                            <field name="gcms_service_order_id" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Documents Section -->
+                    <group string="GCMS Documents" invisible="not gcms_received_date">
+                        <group>
+                            <field name="gcms_notes_document" filename="gcms_notes_filename"/>
+                        </group>
+                        <group>
+                            <field name="gcms_breakdown_document" filename="gcms_breakdown_filename"/>
+                        </group>
+                    </group>
+                    
+                </page>
+                
+                <!-- Consultation Page (only visible for GCMS cases with consultation) -->
+                <page string="Consultation" name="gcms_consultation" 
+                      invisible="case_type != 'gcms' or not gcms_consultation_requested">
+                    
+                    <group string="Consultation Request">
+                        <group>
+                            <field name="gcms_consultation_requested"/>
+                            <field name="gcms_consultation_paid" readonly="1" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="gcms_consultation_agreement_id" readonly="1"/>
+                            <field name="gcms_consultation_order_id" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Scheduled Call" invisible="not gcms_consultation_paid">
+                        <group>
+                            <field name="gcms_consultation_date"/>
+                        </group>
+                        <group>
+                            <field name="consultant_id"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Consultation Notes" invisible="not gcms_consultation_date">
+                        <field name="gcms_consultation_notes" nolabel="1" 
+                               placeholder="Enter notes from consultation call..."/>
+                    </group>
+                    
+                </page>
+            </xpath>
+            
+            <!-- Add GCMS action buttons in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_submit_gcms_request" 
+                        string="Submit GCMS Request"
+                        type="object"
+                        class="btn-primary"
+                        invisible="case_type != 'gcms' or not gcms_service_paid or gcms_request_date"/>
+                
+                <button name="action_gcms_notes_received" 
+                        string="Mark Notes Received"
+                        type="object"
+                        class="btn-primary"
+                        invisible="case_type != 'gcms' or not gcms_request_date or gcms_received_date"/>
+                
+                <button name="action_complete_gcms_case" 
+                        string="Complete Case"
+                        type="object"
+                        class="btn-success"
+                        invisible="case_type != 'gcms' or not gcms_received_date"/>
+            </xpath>
+            
+            <!-- Add GCMS order creation buttons -->
+            <xpath expr="//header" position="inside">
+                <button name="action_create_gcms_service_order" 
+                        string="Create Service Order"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="case_type != 'gcms' or gcms_service_order_id"/>
+                
+                <button name="action_create_consultation_order" 
+                        string="Create Consultation Order"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="case_type != 'gcms' or not gcms_consultation_requested or gcms_consultation_order_id"/>
+            </xpath>
+            
+        </field>
+    </record>
+    
+    <!-- ================================================================== -->
+    <!-- LIST VIEW EXTENSION                                                -->
+    <!-- ================================================================== -->
+    
+    <record id="mm_immigration_case_list_gcms" model="ir.ui.view">
+        <field name="name">mm.immigration.case.list.gcms</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_tree"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add case_type after name -->
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="case_type" optional="show"/>
+            </xpath>
+            
+            <!-- Add GCMS-specific columns -->
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="gcms_uci_number" optional="hide"/>
+                <field name="gcms_request_date" optional="hide"/>
+                <field name="gcms_received_date" optional="hide"/>
+                <field name="gcms_service_paid" optional="hide"/>
+            </xpath>
+            
+        </field>
+    </record>
+    
+    <!-- ================================================================== -->
+    <!-- SEARCH VIEW EXTENSION                                              -->
+    <!-- ================================================================== -->
+    
+    <record id="mm_immigration_case_search_gcms" model="ir.ui.view">
+        <field name="name">mm.immigration.case.search.gcms</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_search"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add case_type filter -->
+            <xpath expr="//filter[@name='my_cases']" position="after">
+                <separator/>
+                <filter name="filter_pr_cases" 
+                        string="PR Strategy Cases" 
+                        domain="[('case_type', '=', 'pr')]"/>
+                <filter name="filter_gcms_cases" 
+                        string="GCMS Request Cases" 
+                        domain="[('case_type', '=', 'gcms')]"/>
+            </xpath>
+            
+            <!-- Add GCMS-specific filters -->
+            <xpath expr="//filter[@name='filter_gcms_cases']" position="after">
+                <separator/>
+                <filter name="filter_gcms_awaiting_payment" 
+                        string="GCMS: Awaiting Payment" 
+                        domain="[('case_type', '=', 'gcms'), ('gcms_service_paid', '=', False)]"/>
+                <filter name="filter_gcms_processing" 
+                        string="GCMS: Processing" 
+                        domain="[('case_type', '=', 'gcms'), ('gcms_request_date', '!=', False), ('gcms_received_date', '=', False)]"/>
+                <filter name="filter_gcms_notes_ready" 
+                        string="GCMS: Notes Ready" 
+                        domain="[('case_type', '=', 'gcms'), ('gcms_received_date', '!=', False)]"/>
+                <filter name="filter_gcms_consultation" 
+                        string="GCMS: Consultation Requested" 
+                        domain="[('case_type', '=', 'gcms'), ('gcms_consultation_requested', '=', True)]"/>
+            </xpath>
+            
+            <!-- Add group by case_type -->
+            <xpath expr="//filter[@name='group_consultant']" position="after">
+                <filter name="group_by_case_type" 
+                        string="Case Type" 
+                        context="{'group_by': 'case_type'}"/>
+            </xpath>
+            
+        </field>
+    </record>
+    
+    <!-- ================================================================== -->
+    <!-- STAGE FORM VIEW EXTENSION                                          -->
+    <!-- ================================================================== -->
+    
+    <record id="mm_immigration_stage_form_gcms" model="ir.ui.view">
+        <field name="name">mm.immigration.stage.form.gcms</field>
+        <field name="model">mm.immigration.stage</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_stage_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add case_type field -->
+            <xpath expr="//field[@name='sequence']" position="after">
+                <field name="case_type"/>
+            </xpath>
+            
+            <!-- Add GCMS-specific stage fields -->
+            <xpath expr="//field[@name='requires_payment']" position="after">
+                <field name="requires_gcms_consent"/>
+                <field name="requires_gcms_payment"/>
+                <field name="requires_consultation_payment"/>
+            </xpath>
+            
+        </field>
+    </record>
+    
+    <!-- ================================================================== -->
+    <!-- ACTIONS                                                            -->
+    <!-- ================================================================== -->
+    
+    <!-- Action for GCMS Cases Only -->
+    <record id="action_mm_immigration_case_gcms" model="ir.actions.act_window">
+        <field name="name">GCMS Requests</field>
+        <field name="res_model">mm.immigration.case</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('case_type', '=', 'gcms')]</field>
+        <field name="context">{
+            'default_case_type': 'gcms',
+            'search_default_filter_gcms_cases': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first GCMS Request
+            </p>
+            <p>
+                Track GCMS notes requests, manage payments, 
+                and schedule consultations with clients.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Action for PR Cases Only -->
+    <record id="action_mm_immigration_case_pr" model="ir.actions.act_window">
+        <field name="name">PR Strategy Cases</field>
+        <field name="res_model">mm.immigration.case</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('case_type', '=', 'pr')]</field>
+        <field name="context">{
+            'default_case_type': 'pr',
+            'search_default_filter_pr_cases': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first PR Strategy Case
+            </p>
+            <p>
+                Manage permanent residence strategy cases from 
+                questionnaire to application tracking.
+            </p>
+        </field>
+    </record>
+    
+    <!-- ================================================================== -->
+    <!-- MENU ITEMS                                                         -->
+    <!-- ================================================================== -->
+    
+    <!-- GCMS submenu under Immigration Cases -->
+    <menuitem id="menu_immigration_gcms"
+              name="GCMS Requests"
+              parent="mm_immigration.menu_immigration_cases"
+              action="action_mm_immigration_case_gcms"
+              sequence="20"/>
+    
+    <!-- PR Cases submenu -->
+    <menuitem id="menu_immigration_pr"
+              name="PR Strategy Cases"
+              parent="mm_immigration.menu_immigration_cases"
+              action="action_mm_immigration_case_pr"
+              sequence="10"/>
+    
+</odoo>

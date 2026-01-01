@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ====================== -->
+    <!-- E-Sign Menu Items -->
+    <!-- ====================== -->
+    
+    <!-- Add E-Sign submenu under Immigration root menu -->
+    <menuitem id="menu_esign_root"
+              name="E-Signatures"
+              parent="mm_immigration.menu_immigration_root"
+              sequence="30"/>
+    
+    <!-- E-Sign Requests menu item -->
+    <menuitem id="menu_esign_requests"
+              name="Signature Requests"
+              parent="menu_esign_root"
+              action="action_esign_request"
+              sequence="10"/>
+    
+    <!-- Pending Signatures (filtered view) -->
+    <record id="action_esign_pending" model="ir.actions.act_window">
+        <field name="name">Pending Signatures</field>
+        <field name="res_model">mm.esign.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state', 'in', ('sent', 'viewed'))]</field>
+        <field name="context">{'search_default_filter_pending': 1}</field>
+    </record>
+    
+    <menuitem id="menu_esign_pending"
+              name="Pending Signatures"
+              parent="menu_esign_root"
+              action="action_esign_pending"
+              sequence="20"/>
+    
+    <!-- Expired Signatures -->
+    <record id="action_esign_expired" model="ir.actions.act_window">
+        <field name="name">Expired Requests</field>
+        <field name="res_model">mm.esign.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'expired')]</field>
+    </record>
+    
+    <menuitem id="menu_esign_expired"
+              name="Expired Requests"
+              parent="menu_esign_root"
+              action="action_esign_expired"
+              sequence="30"/>
+    
+</odoo>

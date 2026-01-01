@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- User Group - Basic access to view cases -->
+    <record id="group_immigration_user" model="res.groups">
+        <field name="name">Immigration / User</field>
+        <field name="comment">Basic access to view immigration cases</field>
+    </record>
+
+    <!-- Consultant Group - Can manage assigned cases -->
+    <record id="group_immigration_consultant" model="res.groups">
+        <field name="name">Immigration / Consultant</field>
+        <field name="implied_ids" eval="[(4, ref('group_immigration_user'))]"/>
+        <field name="comment">Can manage immigration cases assigned to them</field>
+    </record>
+
+    <!-- Manager Group - Full access -->
+    <record id="group_immigration_manager" model="res.groups">
+        <field name="name">Immigration / Manager</field>
+        <field name="implied_ids" eval="[(4, ref('group_immigration_consultant'))]"/>
+        <field name="comment">Full access to all immigration cases and settings</field>
+    </record>
+
+    <!-- Record Rules -->
+    
+    <!-- Users can only see their own cases if they are clients -->
+    <record id="rule_case_portal_user" model="ir.rule">
+        <field name="name">Portal User: Own Cases Only</field>
+        <field name="model_id" ref="model_mm_immigration_case"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Consultants can see cases assigned to them or unassigned -->
+    <record id="rule_case_consultant" model="ir.rule">
+        <field name="name">Consultant: Assigned Cases</field>
+        <field name="model_id" ref="model_mm_immigration_case"/>
+        <field name="domain_force">['|', ('consultant_id', '=', user.id), ('consultant_id', '=', False)]</field>
+        <field name="groups" eval="[(4, ref('group_immigration_consultant'))]"/>
+    </record>
+
+    <!-- Managers can see all cases -->
+    <record id="rule_case_manager" model="ir.rule">
+        <field name="name">Manager: All Cases</field>
+        <field name="model_id" ref="model_mm_immigration_case"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_immigration_manager'))]"/>
+    </record>
+
+    <!-- Profile Rules - Portal users can see their own profiles -->
+    <record id="rule_profile_portal_user" model="ir.rule">
+        <field name="name">Portal User: Own Profile Only</field>
+        <field name="model_id" ref="model_mm_client_profile"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>

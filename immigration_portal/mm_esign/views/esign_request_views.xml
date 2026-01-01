@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ====================== -->
+    <!-- E-Sign Request Views -->
+    <!-- ====================== -->
+    
+    <!-- List View -->
+    <record id="view_esign_request_list" model="ir.ui.view">
+        <field name="name">mm.esign.request.list</field>
+        <field name="model">mm.esign.request</field>
+        <field name="arch" type="xml">
+            <list string="E-Sign Requests" decoration-danger="state == 'expired'" 
+                  decoration-success="state == 'signed'" decoration-muted="state == 'cancelled'"
+                  decoration-warning="state == 'pending_consultant'">
+                <field name="name"/>
+                <field name="document_type"/>
+                <field name="case_id"/>
+                <field name="partner_id"/>
+                <field name="consultant_id"/>
+                <field name="state" widget="badge" 
+                       decoration-info="state in ('draft', 'sent', 'viewed')"
+                       decoration-success="state == 'signed'"
+                       decoration-warning="state in ('client_signed', 'pending_consultant')"
+                       decoration-danger="state == 'expired'"
+                       decoration-muted="state == 'cancelled'"/>
+                <field name="expires_at"/>
+                <field name="signed_date"/>
+                <field name="consultant_signed_date"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- Form View -->
+    <record id="view_esign_request_form" model="ir.ui.view">
+        <field name="name">mm.esign.request.form</field>
+        <field name="model">mm.esign.request</field>
+        <field name="arch" type="xml">
+            <form string="E-Sign Request">
+                <header>
+                    <button name="action_generate_document" string="Generate Document" type="object"
+                            class="btn-secondary" invisible="state != 'draft' or document"/>
+                    <button name="action_send" string="Send for Signature" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_resend" string="Resend" type="object"
+                            class="btn-secondary" invisible="state not in ('sent', 'viewed', 'expired')"/>
+                    <button name="action_open_consultant_signing" string="Sign as Consultant" type="object"
+                            class="btn-primary" invisible="state != 'pending_consultant'"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            class="btn-secondary" invisible="state in ('signed', 'cancelled')"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="draft,sent,pending_consultant,signed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_document" type="object" class="oe_stat_button"
+                                icon="fa-file-pdf-o" invisible="not document">
+                            <span class="o_stat_text">View Document</span>
+                        </button>
+                        <button name="action_download_signed" type="object" class="oe_stat_button"
+                                icon="fa-download" invisible="not signed_document">
+                            <span class="o_stat_text">Download Signed</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Alert for pending consultant signature -->
+                    <div class="alert alert-warning" role="alert" invisible="state != 'pending_consultant'">
+                        <strong>Action Required:</strong> Client has signed. Consultant counter-signature is needed to complete this document.
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Document">
+                            <field name="document_type"/>
+                            <field name="case_id"/>
+                            <field name="partner_id" string="Client"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Workflow">
+                            <field name="consultant_id"/>
+                            <field name="requires_consultant_signature"/>
+                            <field name="expires_at" invisible="state == 'draft'"/>
+                            <field name="days_until_expiry" invisible="state not in ('sent', 'viewed')"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Document Attachment -->
+                    <group string="Document" invisible="not document">
+                        <field name="document" filename="document_filename" widget="binary"/>
+                        <field name="document_filename" invisible="1"/>
+                    </group>
+                    
+                    <!-- Client Signature Info -->
+                    <group string="Client Signature" invisible="not signature_data">
+                        <group>
+                            <field name="signature_type" string="Type"/>
+                            <field name="typed_signature" invisible="signature_type != 'type'"/>
+                            <field name="signed_date"/>
+                        </group>
+                        <group>
+                            <field name="ip_address"/>
+                            <field name="user_agent"/>
+                        </group>
+                        <group colspan="2">
+                            <field name="signature_data" widget="image" class="oe_avatar"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Consultant Signature Info -->
+                    <group string="Consultant Signature" invisible="not consultant_signature_data">
+                        <group>
+                            <field name="consultant_signature_type" string="Type"/>
+                            <field name="consultant_typed_signature" invisible="consultant_signature_type != 'type'"/>
+                            <field name="consultant_signed_date"/>
+                        </group>
+                        <group>
+                            <field name="consultant_ip_address"/>
+                        </group>
+                        <group colspan="2">
+                            <field name="consultant_signature_data" widget="image" class="oe_avatar"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Signed Document -->
+                    <group string="Signed Document" invisible="not signed_document">
+                        <field name="signed_document" filename="signed_filename" widget="binary"/>
+                        <field name="signed_filename" invisible="1"/>
+                    </group>
+                    
+                    <!-- Signing URL (for easy copying) -->
+                    <group string="Signing Link" invisible="state not in ('sent', 'viewed')">
+                        <field name="signing_url" widget="CopyClipboardChar"/>
+                    </group>
+                    
+                    <!-- Audit Info -->
+                    <group string="Audit Information" invisible="state == 'draft'">
+                        <group>
+                            <field name="viewed_at"/>
+                            <field name="email_sent"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Kanban View -->
+    <record id="view_esign_request_kanban" model="ir.ui.view">
+        <field name="name">mm.esign.request.kanban</field>
+        <field name="model">mm.esign.request</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="document_type"/>
+                <field name="partner_id"/>
+                <field name="case_id"/>
+                <field name="state"/>
+                <field name="signed_date"/>
+                <field name="consultant_signed_date"/>
+                <field name="expires_at"/>
+                <field name="consultant_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top mb-2">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                                <field name="state" widget="label_selection" 
+                                       options="{'classes': {'draft': 'secondary', 'sent': 'info', 
+                                                            'viewed': 'warning', 'client_signed': 'primary',
+                                                            'pending_consultant': 'warning',
+                                                            'signed': 'success', 
+                                                            'expired': 'danger', 'cancelled': 'dark'}}"/>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <field name="document_type"/>
+                                <div class="text-muted">
+                                    <i class="fa fa-user" title="Client" role="img" aria-label="Client"/> 
+                                    <field name="partner_id"/>
+                                </div>
+                                <div class="text-muted">
+                                    <i class="fa fa-folder-open" title="Case" role="img" aria-label="Case"/> 
+                                    <field name="case_id"/>
+                                </div>
+                                <div class="text-muted" t-if="record.consultant_id.raw_value">
+                                    <i class="fa fa-briefcase" title="Consultant" role="img" aria-label="Consultant"/> 
+                                    <field name="consultant_id"/>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <t t-if="record.consultant_signed_date.raw_value">
+                                        <span class="text-success">
+                                            <i class="fa fa-check-double" title="Fully Signed" role="img" aria-label="Fully Signed"/>
+                                            Completed
+                                        </span>
+                                    </t>
+                                    <t t-elif="record.signed_date.raw_value">
+                                        <span class="text-warning">
+                                            <i class="fa fa-check" title="Client Signed" role="img" aria-label="Client Signed"/>
+                                            Awaiting Consultant
+                                        </span>
+                                    </t>
+                                    <t t-elif="record.expires_at.raw_value">
+                                        <span class="text-muted">
+                                            <i class="fa fa-clock-o" title="Expires" role="img" aria-label="Expires"/>
+                                            Expires: <field name="expires_at" widget="date"/>
+                                        </span>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    
+    <!-- Search View -->
+    <record id="view_esign_request_search" model="ir.ui.view">
+        <field name="name">mm.esign.request.search</field>
+        <field name="model">mm.esign.request</field>
+        <field name="arch" type="xml">
+            <search string="Search E-Sign Requests">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="case_id"/>
+                <field name="document_type"/>
+                <field name="consultant_id"/>
+                <separator/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Awaiting Client" name="filter_awaiting_client" 
+                        domain="[('state', 'in', ('sent', 'viewed'))]"/>
+                <filter string="Awaiting Consultant" name="filter_awaiting_consultant" 
+                        domain="[('state', '=', 'pending_consultant')]"/>
+                <filter string="Fully Signed" name="filter_signed" domain="[('state', '=', 'signed')]"/>
+                <filter string="Expired" name="filter_expired" domain="[('state', '=', 'expired')]"/>
+                <separator/>
+                <filter string="My Requests (Consultant)" name="filter_my_consultant" 
+                        domain="[('consultant_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Service Agreements" name="filter_service_agreement" 
+                        domain="[('document_type', '=', 'service_agreement')]"/>
+                <filter string="Roadmap Acknowledgments" name="filter_roadmap_ack" 
+                        domain="[('document_type', '=', 'roadmap_ack')]"/>
+                <separator/>
+                <filter string="State" name="groupby_state" context="{'group_by': 'state'}"/>
+                <filter string="Document Type" name="groupby_type" context="{'group_by': 'document_type'}"/>
+                <filter string="Case" name="groupby_case" context="{'group_by': 'case_id'}"/>
+                <filter string="Consultant" name="groupby_consultant" context="{'group_by': 'consultant_id'}"/>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Action -->
+    <record id="action_esign_request" model="ir.actions.act_window">
+        <field name="name">E-Sign Requests</field>
+        <field name="res_model">mm.esign.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_esign_request_search"/>
+        <field name="context">{'search_default_filter_awaiting_client': 1, 'search_default_filter_awaiting_consultant': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No signature requests yet
+            </p>
+            <p>
+                Signature requests are automatically created when sending service agreements 
+                or roadmap acknowledgments to clients.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Action for Consultant's pending signatures -->
+    <record id="action_esign_pending_consultant" model="ir.actions.act_window">
+        <field name="name">Pending My Signature</field>
+        <field name="res_model">mm.esign.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_esign_request_search"/>
+        <field name="domain">[('state', '=', 'pending_consultant'), ('consultant_id', '=', uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No documents pending your signature
+            </p>
+            <p>
+                Documents awaiting your counter-signature will appear here.
+            </p>
+        </field>
+    </record>
+    
+</odoo>

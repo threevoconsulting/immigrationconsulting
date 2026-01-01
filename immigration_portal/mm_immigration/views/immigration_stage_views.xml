@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Stage Tree View -->
+    <record id="view_immigration_stage_tree" model="ir.ui.view">
+        <field name="name">mm.immigration.stage.tree</field>
+        <field name="model">mm.immigration.stage</field>
+        <field name="arch" type="xml">
+            <list string="Immigration Stages" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="portal_action_text"/>
+                <field name="requires_signature"/>
+                <field name="requires_payment"/>
+                <field name="fold"/>
+                <field name="case_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Stage Form View -->
+    <record id="view_immigration_stage_form" model="ir.ui.view">
+        <field name="name">mm.immigration.stage.form</field>
+        <field name="model">mm.immigration.stage</field>
+        <field name="arch" type="xml">
+            <form string="Immigration Stage">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Stage Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Stage Configuration">
+                            <field name="state"/>
+                            <field name="sequence"/>
+                            <field name="fold"/>
+                            <field name="is_closing_stage"/>
+                        </group>
+                        <group string="Requirements">
+                            <field name="requires_signature"/>
+                            <field name="requires_payment"/>
+                        </group>
+                    </group>
+                    <group string="Portal Configuration">
+                        <field name="portal_description"/>
+                        <field name="portal_action_text"/>
+                        <field name="portal_action_url"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Stage Action -->
+    <record id="action_immigration_stage" model="ir.actions.act_window">
+        <field name="name">Workflow Stages</field>
+        <field name="res_model">mm.immigration.stage</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define your immigration workflow stages
+            </p>
+            <p>
+                Stages represent the steps in your immigration case workflow.
+                Each stage can have portal actions and requirements.
+            </p>
+        </field>
+    </record>
+</odoo>

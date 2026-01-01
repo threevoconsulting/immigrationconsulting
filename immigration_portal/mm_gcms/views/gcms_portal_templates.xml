@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- 
+    GCMS Portal Templates
+    Phase 6: GCMS Notes Request Workflow
+    
+    Templates for GCMS case portal pages including:
+    - GCMS request form
+    - Service agreement signing
+    - Payment pages
+    - Document downloads
+    - Consultation scheduling
+    
+    Pattern from Phase 3 Lessons Learned:
+    - Dashboard AND detail template updates for consistent UI
+    - Conditional form sections with toggle
+    - Multi-stage signature workflow handling
+    - Proper state messaging patterns
+    -->
+    
+    <!-- ================================================================== -->
+    <!-- GCMS REQUEST FORM                                                  -->
+    <!-- ================================================================== -->
+    
+    <template id="gcms_request_form" name="GCMS Request Form">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-file-text-o me-2" title="GCMS Request" role="img" aria-label="GCMS Request"/>
+                                    Request GCMS Notes
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                
+                                <div class="alert alert-info mb-4">
+                                    <h5 class="alert-heading">
+                                        <i class="fa fa-info-circle me-2" title="Information" role="img" aria-label="Information"/>
+                                        What are GCMS Notes?
+                                    </h5>
+                                    <p class="mb-0">
+                                        GCMS (Global Case Management System) notes contain detailed information 
+                                        about your immigration application held by IRCC. Requesting these notes 
+                                        can help you understand the status and history of your application.
+                                    </p>
+                                </div>
+                                
+                                <form action="/my/immigration/gcms/request/submit" method="post" class="needs-validation" novalidate="">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    
+                                    <!-- Personal Information -->
+                                    <h5 class="border-bottom pb-2 mb-3">Your Information</h5>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="uci_number">UCI Number <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="uci_number" name="uci_number" 
+                                                   placeholder="e.g., 1234567890" required="" 
+                                                   pattern="[0-9\s\-]{8,12}"
+                                                   title="UCI number should be 8 or 10 digits"/>
+                                            <div class="form-text">Your Unique Client Identifier (8 or 10 digits)</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="application_number">Application/File Number</label>
+                                            <input type="text" class="form-control" id="application_number" name="application_number" 
+                                                   placeholder="e.g., E000123456"/>
+                                            <div class="form-text">If known, enter your application number</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Application Type -->
+                                    <h5 class="border-bottom pb-2 mb-3 mt-4">Application Details</h5>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="application_type">Application Type <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="application_type" name="application_type" required="">
+                                                <option value="">-- Select Application Type --</option>
+                                                <t t-foreach="application_types" t-as="app_type">
+                                                    <option t-att-value="app_type[0]"><t t-esc="app_type[1]"/></option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6" id="other_type_container" style="display: none;">
+                                            <label class="form-label" for="application_type_other">Please Specify</label>
+                                            <input type="text" class="form-control" id="application_type_other" name="application_type_other" 
+                                                   placeholder="Describe your application type"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Consent -->
+                                    <h5 class="border-bottom pb-2 mb-3 mt-4">Consent &amp; Authorization</h5>
+                                    
+                                    <div class="mb-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="consent" name="consent" required=""/>
+                                            <label class="form-check-label" for="consent">
+                                                I authorize The Migration Monitor to submit an Access to Information 
+                                                request on my behalf to obtain my GCMS notes from Immigration, 
+                                                Refugees and Citizenship Canada (IRCC). <span class="text-danger">*</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Submit -->
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                        <a href="/my/immigration" class="btn btn-outline-secondary">
+                                            <i class="fa fa-arrow-left me-1" title="Back" role="img" aria-label="Back"/>
+                                            Back
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            Continue to Agreement
+                                            <i class="fa fa-arrow-right ms-1" title="Continue" role="img" aria-label="Continue"/>
+                                        </button>
+                                    </div>
+                                    
+                                </form>
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- JavaScript for dynamic form -->
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    var appTypeSelect = document.getElementById('application_type');
+                    var otherContainer = document.getElementById('other_type_container');
+                    var otherInput = document.getElementById('application_type_other');
+                    
+                    appTypeSelect.addEventListener('change', function() {
+                        if (this.value === 'other') {
+                            otherContainer.style.display = 'block';
+                            otherInput.setAttribute('required', '');
+                        } else {
+                            otherContainer.style.display = 'none';
+                            otherInput.removeAttribute('required');
+                        }
+                    });
+                });
+            </script>
+            
+        </t>
+    </template>
+    
+    <!-- ================================================================== -->
+    <!-- SERVICE AGREEMENT PAGE                                             -->
+    <!-- ================================================================== -->
+    
+    <template id="gcms_service_agreement_page" name="GCMS Service Agreement">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-file-signature me-2" title="Agreement" role="img" aria-label="Agreement"/>
+                                    GCMS Service Agreement
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                
+                                <!-- Progress indicator -->
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between text-muted small mb-2">
+                                        <span class="text-primary fw-bold">1. Request</span>
+                                        <span class="text-primary fw-bold">2. Agreement</span>
+                                        <span>3. Payment</span>
+                                        <span>4. Processing</span>
+                                    </div>
+                                    <div class="progress" style="height: 4px;">
+                                        <div class="progress-bar" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"/>
+                                    </div>
+                                </div>
+                                
+                                <t t-if="signed">
+                                    <!-- Already signed -->
+                                    <div class="alert alert-success">
+                                        <i class="fa fa-check-circle me-2" title="Signed" role="img" aria-label="Signed"/>
+                                        <strong>Agreement Signed!</strong> Proceed to payment.
+                                    </div>
+                                    <div class="d-grid">
+                                        <a t-attf-href="/my/immigration/gcms/payment/#{case.id}" class="btn btn-primary btn-lg">
+                                            Continue to Payment
+                                            <i class="fa fa-arrow-right ms-2" title="Continue" role="img" aria-label="Continue"/>
+                                        </a>
+                                    </div>
+                                </t>
+                                
+                                <t t-elif="pending_consultant">
+                                    <!-- Awaiting consultant signature -->
+                                    <div class="alert alert-info">
+                                        <i class="fa fa-hourglass-half me-2" title="Pending" role="img" aria-label="Pending"/>
+                                        <strong>Awaiting Consultant Signature</strong>
+                                        <p class="mb-0 mt-2">Thank you for signing! Our consultant will review and counter-sign your agreement shortly.</p>
+                                    </div>
+                                </t>
+                                
+                                <t t-else="">
+                                    <!-- Agreement content and signature -->
+                                    <div class="border rounded p-4 mb-4 bg-light" style="max-height: 400px; overflow-y: auto;">
+                                        <h5>GCMS Notes Request Service Agreement</h5>
+                                        <p><strong>Case Reference:</strong> <t t-esc="case.name"/></p>
+                                        <p><strong>Client:</strong> <t t-esc="case.partner_id.name"/></p>
+                                        <p><strong>Date:</strong> <t t-esc="datetime.date.today()"/></p>
+                                        
+                                        <hr/>
+                                        
+                                        <h6>1. Services</h6>
+                                        <p>The Migration Monitor agrees to provide the following services:</p>
+                                        <ul>
+                                            <li>Submit an Access to Information request to IRCC for your GCMS notes</li>
+                                            <li>Retrieve and deliver your complete GCMS notes</li>
+                                            <li>Provide a detailed breakdown and analysis of your immigration file</li>
+                                            <li>Summary of key findings and recommendations</li>
+                                        </ul>
+                                        
+                                        <h6>2. Fees</h6>
+                                        <p>The service fee is $150.00 CAD, payable before processing begins.</p>
+                                        
+                                        <h6>3. Timeline</h6>
+                                        <p>GCMS notes typically take 30-45 days to be processed by IRCC. Processing times may vary.</p>
+                                        
+                                        <h6>4. Authorization</h6>
+                                        <p>By signing below, you authorize The Migration Monitor to act on your behalf in requesting your GCMS notes from IRCC.</p>
+                                    </div>
+                                    
+                                    <form t-attf-action="/my/immigration/gcms/agreement/#{case.id}/sign" method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        
+                                        <div class="mb-4">
+                                            <label class="form-label fw-bold">Your Signature</label>
+                                            <div class="border rounded bg-white" style="height: 150px;">
+                                                <canvas id="signature-pad" class="w-100 h-100"/>
+                                            </div>
+                                            <input type="hidden" name="signature" id="signature-input"/>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="clear-signature">
+                                                <i class="fa fa-eraser me-1" title="Clear" role="img" aria-label="Clear"/>
+                                                Clear Signature
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="form-check mb-4">
+                                            <input class="form-check-input" type="checkbox" id="agree_terms" required=""/>
+                                            <label class="form-check-label" for="agree_terms">
+                                                I have read and agree to the terms of this service agreement.
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-outline-secondary">
+                                                Back
+                                            </a>
+                                            <button type="submit" class="btn btn-primary" id="submit-signature">
+                                                <i class="fa fa-check me-1" title="Sign" role="img" aria-label="Sign"/>
+                                                Sign Agreement
+                                            </button>
+                                        </div>
+                                    </form>
+                                </t>
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Signature pad JavaScript -->
+            <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"/>
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    var canvas = document.getElementById('signature-pad');
+                    if (!canvas) return;
+                    
+                    var signaturePad = new SignaturePad(canvas, {
+                        backgroundColor: 'rgb(255, 255, 255)'
+                    });
+                    
+                    function resizeCanvas() {
+                        var ratio = Math.max(window.devicePixelRatio || 1, 1);
+                        canvas.width = canvas.offsetWidth * ratio;
+                        canvas.height = canvas.offsetHeight * ratio;
+                        canvas.getContext('2d').scale(ratio, ratio);
+                        signaturePad.clear();
+                    }
+                    
+                    window.addEventListener('resize', resizeCanvas);
+                    resizeCanvas();
+                    
+                    document.getElementById('clear-signature').addEventListener('click', function() {
+                        signaturePad.clear();
+                    });
+                    
+                    document.getElementById('submit-signature').closest('form').addEventListener('submit', function(e) {
+                        if (signaturePad.isEmpty()) {
+                            e.preventDefault();
+                            alert('Please provide your signature.');
+                            return false;
+                        }
+                        document.getElementById('signature-input').value = signaturePad.toDataURL();
+                    });
+                });
+            </script>
+            
+        </t>
+    </template>
+    
+    <!-- ================================================================== -->
+    <!-- PAYMENT PAGE                                                       -->
+    <!-- ================================================================== -->
+    
+    <template id="gcms_payment_page" name="GCMS Payment">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-credit-card me-2" title="Payment" role="img" aria-label="Payment"/>
+                                    GCMS Service Payment
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                
+                                <!-- Progress indicator -->
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between text-muted small mb-2">
+                                        <span class="text-success"><i class="fa fa-check" title="Complete" role="img" aria-label="Complete"/> Request</span>
+                                        <span class="text-success"><i class="fa fa-check" title="Complete" role="img" aria-label="Complete"/> Agreement</span>
+                                        <span class="text-primary fw-bold">3. Payment</span>
+                                        <span>4. Processing</span>
+                                    </div>
+                                    <div class="progress" style="height: 4px;">
+                                        <div class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"/>
+                                    </div>
+                                </div>
+                                
+                                <t t-if="payment_confirmed">
+                                    <!-- Payment complete -->
+                                    <div class="alert alert-success">
+                                        <i class="fa fa-check-circle me-2" title="Paid" role="img" aria-label="Paid"/>
+                                        <strong>Payment Confirmed!</strong> Your GCMS request is being processed.
+                                    </div>
+                                    <div class="d-grid">
+                                        <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-primary btn-lg">
+                                            View Your Case
+                                            <i class="fa fa-arrow-right ms-2" title="Continue" role="img" aria-label="Continue"/>
+                                        </a>
+                                    </div>
+                                </t>
+                                
+                                <t t-else="">
+                                    <!-- Payment required -->
+                                    <div class="card bg-light mb-4">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Order Summary</h5>
+                                            <table class="table table-borderless mb-0">
+                                                <tr>
+                                                    <td>GCMS Notes Request Service</td>
+                                                    <td class="text-end">
+                                                        <t t-esc="amount" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-top">
+                                                    <td><strong>Total</strong></td>
+                                                    <td class="text-end">
+                                                        <strong>
+                                                            <t t-esc="amount" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <t t-if="invoice">
+                                        <!-- Invoice exists - show payment button -->
+                                        <div class="d-grid gap-2">
+                                            <a t-attf-href="/my/invoices/#{invoice.id}" class="btn btn-primary btn-lg">
+                                                <i class="fa fa-credit-card me-2" title="Pay" role="img" aria-label="Pay"/>
+                                                Pay Now
+                                            </a>
+                                        </div>
+                                    </t>
+                                    <t t-elif="order">
+                                        <!-- Order exists but no invoice yet -->
+                                        <div class="alert alert-warning">
+                                            <i class="fa fa-clock-o me-2" title="Pending" role="img" aria-label="Pending"/>
+                                            Your invoice is being generated. Please refresh in a moment.
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <!-- No order yet -->
+                                        <div class="alert alert-warning">
+                                            <i class="fa fa-exclamation-triangle me-2" title="Warning" role="img" aria-label="Warning"/>
+                                            Unable to generate payment. Please contact support.
+                                        </div>
+                                    </t>
+                                </t>
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </t>
+    </template>
+    
+    <!-- ================================================================== -->
+    <!-- DOCUMENTS PAGE                                                     -->
+    <!-- ================================================================== -->
+    
+    <template id="gcms_documents_page" name="GCMS Documents">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-file-pdf-o me-2" title="Documents" role="img" aria-label="Documents"/>
+                                    Your GCMS Documents
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                
+                                <div class="alert alert-success mb-4">
+                                    <i class="fa fa-check-circle me-2" title="Ready" role="img" aria-label="Ready"/>
+                                    <strong>Your GCMS notes are ready!</strong> Download your documents below.
+                                </div>
+                                
+                                <div class="row g-4">
+                                    
+                                    <!-- GCMS Notes -->
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-body text-center">
+                                                <i class="fa fa-file-pdf-o fa-3x text-danger mb-3" title="PDF Document" role="img" aria-label="PDF Document"/>
+                                                <h5 class="card-title">GCMS Notes</h5>
+                                                <p class="card-text text-muted">Your complete GCMS notes from IRCC</p>
+                                                <t t-if="has_notes">
+                                                    <a t-attf-href="/my/immigration/gcms/download/#{case.id}/notes" class="btn btn-primary">
+                                                        <i class="fa fa-download me-1" title="Download" role="img" aria-label="Download"/>
+                                                        Download
+                                                    </a>
+                                                </t>
+                                                <t t-else="">
+                                                    <button class="btn btn-secondary" disabled="">Not Available</button>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Breakdown Document -->
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-body text-center">
+                                                <i class="fa fa-file-text-o fa-3x text-primary mb-3" title="Document" role="img" aria-label="Document"/>
+                                                <h5 class="card-title">Notes Breakdown</h5>
+                                                <p class="card-text text-muted">Our analysis and key findings</p>
+                                                <t t-if="has_breakdown">
+                                                    <a t-attf-href="/my/immigration/gcms/download/#{case.id}/breakdown" class="btn btn-primary">
+                                                        <i class="fa fa-download me-1" title="Download" role="img" aria-label="Download"/>
+                                                        Download
+                                                    </a>
+                                                </t>
+                                                <t t-else="">
+                                                    <button class="btn btn-secondary" disabled="">Not Available</button>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <!-- Consultation CTA -->
+                                <div class="card bg-light mt-4">
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-8">
+                                                <h5 class="mb-1">Need Help Understanding Your Notes?</h5>
+                                                <p class="text-muted mb-0">Book a consultation with one of our immigration consultants.</p>
+                                            </div>
+                                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                                <t t-if="not case.gcms_consultation_requested">
+                                                    <form t-attf-action="/my/immigration/gcms/consultation/request/#{case.id}" method="post" style="display: inline;">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                        <button type="submit" class="btn btn-outline-primary">
+                                                            <i class="fa fa-phone me-1" title="Consultation" role="img" aria-label="Consultation"/>
+                                                            Request Consultation
+                                                        </button>
+                                                    </form>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="badge bg-info">Consultation Requested</span>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-outline-secondary">
+                                        <i class="fa fa-arrow-left me-1" title="Back" role="img" aria-label="Back"/>
+                                        Back to Case
+                                    </a>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </t>
+    </template>
+    
+    <!-- ================================================================== -->
+    <!-- CONSULTATION AGREEMENT PAGE                                        -->
+    <!-- ================================================================== -->
+    
+    <template id="gcms_consultation_agreement_page" name="GCMS Consultation Agreement">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-file-signature me-2" title="Agreement" role="img" aria-label="Agreement"/>
+                                    Consultation Service Agreement
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                
+                                <t t-if="signed">
+                                    <div class="alert alert-success">
+                                        <i class="fa fa-check-circle me-2" title="Signed" role="img" aria-label="Signed"/>
+                                        <strong>Agreement Signed!</strong> Proceed to payment.
+                                    </div>
+                                    <div class="d-grid">
+                                        <a t-attf-href="/my/immigration/gcms/consultation/payment/#{case.id}" class="btn btn-primary btn-lg">
+                                            Continue to Payment
+                                            <i class="fa fa-arrow-right ms-2" title="Continue" role="img" aria-label="Continue"/>
+                                        </a>
+                                    </div>
+                                </t>
+                                
+                                <t t-elif="pending_consultant">
+                                    <div class="alert alert-info">
+                                        <i class="fa fa-hourglass-half me-2" title="Pending" role="img" aria-label="Pending"/>
+                                        <strong>Awaiting Consultant Signature</strong>
+                                    </div>
+                                </t>
+                                
+                                <t t-else="">
+                                    <div class="border rounded p-4 mb-4 bg-light" style="max-height: 400px; overflow-y: auto;">
+                                        <h5>GCMS Notes Consultation Agreement</h5>
+                                        <p><strong>Case Reference:</strong> <t t-esc="case.name"/></p>
+                                        
+                                        <hr/>
+                                        
+                                        <h6>1. Services</h6>
+                                        <p>30-minute consultation with a Regulated Canadian Immigration Consultant to discuss your GCMS notes.</p>
+                                        
+                                        <h6>2. Fees</h6>
+                                        <p>The consultation fee is $100.00 CAD.</p>
+                                        
+                                        <h6>3. Scheduling</h6>
+                                        <p>After payment, you will be able to schedule your consultation at a convenient time.</p>
+                                    </div>
+                                    
+                                    <form t-attf-action="/my/immigration/gcms/consultation/agreement/#{case.id}/sign" method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        
+                                        <div class="mb-4">
+                                            <label class="form-label fw-bold">Your Signature</label>
+                                            <div class="border rounded bg-white" style="height: 150px;">
+                                                <canvas id="signature-pad" class="w-100 h-100"/>
+                                            </div>
+                                            <input type="hidden" name="signature" id="signature-input"/>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="clear-signature">
+                                                Clear Signature
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="form-check mb-4">
+                                            <input class="form-check-input" type="checkbox" id="agree_terms" required=""/>
+                                            <label class="form-check-label" for="agree_terms">
+                                                I agree to the consultation terms.
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-outline-secondary">Back</a>
+                                            <button type="submit" class="btn btn-primary" id="submit-signature">
+                                                Sign Agreement
+                                            </button>
+                                        </div>
+                                    </form>
+                                </t>
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"/>
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    var canvas = document.getElementById('signature-pad');
+                    if (!canvas) return;
+                    
+                    var signaturePad = new SignaturePad(canvas, {
+                        backgroundColor: 'rgb(255, 255, 255)'
+                    });
+                    
+                    function resizeCanvas() {
+                        var ratio = Math.max(window.devicePixelRatio || 1, 1);
+                        canvas.width = canvas.offsetWidth * ratio;
+                        canvas.height = canvas.offsetHeight * ratio;
+                        canvas.getContext('2d').scale(ratio, ratio);
+                        signaturePad.clear();
+                    }
+                    
+                    window.addEventListener('resize', resizeCanvas);
+                    resizeCanvas();
+                    
+                    document.getElementById('clear-signature').addEventListener('click', function() {
+                        signaturePad.clear();
+                    });
+                    
+                    document.getElementById('submit-signature').closest('form').addEventListener('submit', function(e) {
+                        if (signaturePad.isEmpty()) {
+                            e.preventDefault();
+                            alert('Please provide your signature.');
+                            return false;
+                        }
+                        document.getElementById('signature-input').value = signaturePad.toDataURL();
+                    });
+                });
+            </script>
+            
+        </t>
+    </template>
+    
+    <!-- ================================================================== -->
+    <!-- CONSULTATION PAYMENT PAGE                                          -->
+    <!-- ================================================================== -->
+    
+    <template id="gcms_consultation_payment_page" name="GCMS Consultation Payment">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-credit-card me-2" title="Payment" role="img" aria-label="Payment"/>
+                                    Consultation Payment
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                
+                                <t t-if="payment_confirmed">
+                                    <div class="alert alert-success">
+                                        <i class="fa fa-check-circle me-2" title="Paid" role="img" aria-label="Paid"/>
+                                        <strong>Payment Confirmed!</strong> You can now schedule your consultation.
+                                    </div>
+                                    <div class="d-grid">
+                                        <a t-attf-href="/my/immigration/gcms/schedule/#{case.id}" class="btn btn-primary btn-lg">
+                                            Schedule Consultation
+                                            <i class="fa fa-calendar ms-2" title="Schedule" role="img" aria-label="Schedule"/>
+                                        </a>
+                                    </div>
+                                </t>
+                                
+                                <t t-else="">
+                                    <div class="card bg-light mb-4">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Order Summary</h5>
+                                            <table class="table table-borderless mb-0">
+                                                <tr>
+                                                    <td>GCMS Notes Consultation (30 min)</td>
+                                                    <td class="text-end">
+                                                        <t t-esc="amount" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr class="border-top">
+                                                    <td><strong>Total</strong></td>
+                                                    <td class="text-end">
+                                                        <strong>
+                                                            <t t-esc="amount" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <t t-if="invoice">
+                                        <div class="d-grid gap-2">
+                                            <a t-attf-href="/my/invoices/#{invoice.id}" class="btn btn-primary btn-lg">
+                                                <i class="fa fa-credit-card me-2" title="Pay" role="img" aria-label="Pay"/>
+                                                Pay Now
+                                            </a>
+                                        </div>
+                                    </t>
+                                </t>
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </t>
+    </template>
+    
+    <!-- ================================================================== -->
+    <!-- SCHEDULE PAGE                                                      -->
+    <!-- ================================================================== -->
+    
+    <template id="gcms_schedule_page" name="GCMS Schedule Consultation">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            
+            <div class="container py-4">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-success text-white">
+                                <h4 class="mb-0">
+                                    <i class="fa fa-calendar me-2" title="Schedule" role="img" aria-label="Schedule"/>
+                                    Schedule Your Consultation
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                
+                                <t t-if="scheduled">
+                                    <div class="alert alert-success">
+                                        <i class="fa fa-check-circle me-2" title="Scheduled" role="img" aria-label="Scheduled"/>
+                                        <strong>Consultation Scheduled!</strong>
+                                    </div>
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <p class="mb-1"><strong>Date &amp; Time:</strong></p>
+                                            <p class="h5"><t t-esc="consultation_date" t-options="{'widget': 'datetime'}"/></p>
+                                            <t t-if="consultant">
+                                                <p class="mb-0"><strong>Consultant:</strong> <t t-esc="consultant.name"/></p>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-primary">
+                                            Back to Case
+                                        </a>
+                                    </div>
+                                </t>
+                                
+                                <t t-else="">
+                                    <p>Select a date and time for your 30-minute consultation.</p>
+                                    
+                                    <form t-attf-action="/my/immigration/gcms/schedule/#{case.id}/confirm" method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="consultation_date">Date</label>
+                                                <input type="date" class="form-control" id="consultation_date" name="consultation_date" required=""
+                                                       t-att-min="datetime.date.today().isoformat()"/>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="consultation_time">Time</label>
+                                                <select class="form-select" id="consultation_time" name="consultation_time" required="">
+                                                    <option value="">Select a time...</option>
+                                                    <option value="09:00">9:00 AM</option>
+                                                    <option value="09:30">9:30 AM</option>
+                                                    <option value="10:00">10:00 AM</option>
+                                                    <option value="10:30">10:30 AM</option>
+                                                    <option value="11:00">11:00 AM</option>
+                                                    <option value="11:30">11:30 AM</option>
+                                                    <option value="13:00">1:00 PM</option>
+                                                    <option value="13:30">1:30 PM</option>
+                                                    <option value="14:00">2:00 PM</option>
+                                                    <option value="14:30">2:30 PM</option>
+                                                    <option value="15:00">3:00 PM</option>
+                                                    <option value="15:30">3:30 PM</option>
+                                                    <option value="16:00">4:00 PM</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="alert alert-info">
+                                            <i class="fa fa-info-circle me-2" title="Info" role="img" aria-label="Info"/>
+                                            All times are in Eastern Time (ET). You will receive a confirmation email with meeting details.
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-outline-secondary">
+                                                Back
+                                            </a>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fa fa-check me-1" title="Confirm" role="img" aria-label="Confirm"/>
+                                                Confirm Schedule
+                                            </button>
+                                        </div>
+                                    </form>
+                                </t>
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            
+        </t>
+    </template>
+    
+</odoo>
