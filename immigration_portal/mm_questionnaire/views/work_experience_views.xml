@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Work Experience Views -->
+    <!-- ===================== -->
+
+    <!-- List View -->
+    <record id="view_work_experience_list" model="ir.ui.view">
+        <field name="name">mm.work.experience.list</field>
+        <field name="model">mm.work.experience</field>
+        <field name="arch" type="xml">
+            <list string="Work Experience">
+                <field name="profile_id" column_invisible="True"/>
+                <field name="job_title"/>
+                <field name="employer_name"/>
+                <field name="employer_country_id" optional="show"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="is_current" widget="boolean_toggle"/>
+                <field name="duration_years" string="Years" optional="show"/>
+                <field name="noc_teer_category" optional="show"/>
+                <field name="is_full_time" widget="boolean_toggle" optional="show"/>
+                <field name="qualifies_for_crs" widget="boolean_toggle"/>
+                <field name="in_canada" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_work_experience_form" model="ir.ui.view">
+        <field name="name">mm.work.experience.form</field>
+        <field name="model">mm.work.experience</field>
+        <field name="arch" type="xml">
+            <form string="Work Experience">
+                <sheet>
+                    <widget name="web_ribbon" title="Current Position" bg_color="text-bg-primary" invisible="not is_current"/>
+                    <widget name="web_ribbon" title="Canadian Experience" bg_color="text-bg-success" invisible="not in_canada or is_current"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" placeholder="Work Experience"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Position">
+                            <field name="job_title" placeholder="e.g., Software Developer"/>
+                            <field name="noc_code" placeholder="e.g., 21234"/>
+                            <field name="noc_teer_category"/>
+                            <field name="is_skilled_work" readonly="1"/>
+                        </group>
+                        <group string="Employer">
+                            <field name="employer_name" placeholder="e.g., ABC Corporation"/>
+                            <field name="employer_country_id" options="{'no_create': True}"/>
+                            <field name="employer_city" placeholder="e.g., Toronto"/>
+                            <field name="employer_industry" placeholder="e.g., Technology"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Employment Period">
+                            <field name="start_date"/>
+                            <field name="end_date" invisible="is_current"/>
+                            <field name="is_current"/>
+                            <field name="duration_months" readonly="1"/>
+                            <field name="duration_years" readonly="1"/>
+                        </group>
+                        <group string="Employment Details">
+                            <field name="hours_per_week"/>
+                            <field name="is_full_time" readonly="1"/>
+                            <field name="is_paid"/>
+                            <field name="is_self_employed"/>
+                        </group>
+                    </group>
+                    <group invisible="not in_canada">
+                        <group string="Canadian Work Authorization">
+                            <field name="work_permit_type"/>
+                        </group>
+                    </group>
+                    <group string="CRS Qualification">
+                        <field name="qualifies_for_crs" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Job Duties" name="duties">
+                            <field name="main_duties" placeholder="Describe your main job responsibilities (3-5 duties)..."/>
+                        </page>
+                        <page string="Reference" name="reference">
+                            <group>
+                                <group>
+                                    <field name="reference_name" placeholder="John Smith"/>
+                                    <field name="reference_title" placeholder="Manager"/>
+                                </group>
+                                <group>
+                                    <field name="reference_email" placeholder="john.smith@example.com"/>
+                                    <field name="reference_phone" placeholder="+1 (555) 123-4567"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Additional notes..."/>
+                        </page>
+                    </notebook>
+                    <group string="Linked To" groups="mm_immigration.group_immigration_consultant">
+                        <field name="profile_id"/>
+                        <field name="partner_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_work_experience_search" model="ir.ui.view">
+        <field name="name">mm.work.experience.search</field>
+        <field name="model">mm.work.experience</field>
+        <field name="arch" type="xml">
+            <search string="Work Experience">
+                <field name="job_title"/>
+                <field name="employer_name"/>
+                <field name="noc_code"/>
+                <field name="profile_id"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter name="filter_current" string="Current Positions" domain="[('is_current', '=', True)]"/>
+                <filter name="filter_canadian" string="Canadian Experience" domain="[('in_canada', '=', True)]"/>
+                <filter name="filter_skilled" string="Skilled Work (TEER 0-3)" domain="[('is_skilled_work', '=', True)]"/>
+                <filter name="filter_crs_qualified" string="CRS Qualified" domain="[('qualifies_for_crs', '=', True)]"/>
+                <separator/>
+                <filter name="group_employer" string="Employer" context="{'group_by': 'employer_name'}"/>
+                <filter name="group_country" string="Country" context="{'group_by': 'employer_country_id'}"/>
+                <filter name="group_teer" string="TEER Category" context="{'group_by': 'noc_teer_category'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_work_experience" model="ir.actions.act_window">
+        <field name="name">Work Experience</field>
+        <field name="res_model">mm.work.experience</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_work_experience_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No work experience records yet
+            </p>
+            <p>
+                Work experience records are created when clients complete the detailed assessment questionnaire.
+            </p>
+        </field>
+    </record>
+
+</odoo>

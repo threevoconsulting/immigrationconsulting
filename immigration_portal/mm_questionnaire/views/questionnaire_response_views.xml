@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Questionnaire Response Views -->
+    <!-- ===================== -->
+
+    <!-- List View -->
+    <record id="view_questionnaire_response_list" model="ir.ui.view">
+        <field name="name">mm.questionnaire.response.list</field>
+        <field name="model">mm.questionnaire.response</field>
+        <field name="arch" type="xml">
+            <list string="Questionnaire Responses">
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="partner_id"/>
+                <field name="questionnaire_type"/>
+                <field name="state" widget="badge" decoration-info="state == 'not_started'" decoration-warning="state == 'in_progress'" decoration-success="state == 'completed'"/>
+                <field name="progress_percent" widget="progressbar"/>
+                <field name="started_at"/>
+                <field name="completed_at"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_questionnaire_response_form" model="ir.ui.view">
+        <field name="name">mm.questionnaire.response.form</field>
+        <field name="model">mm.questionnaire.response</field>
+        <field name="arch" type="xml">
+            <form string="Questionnaire Response">
+                <header>
+                    <button name="action_start" string="Start" type="object" class="btn-primary" invisible="state != 'not_started'"/>
+                    <button name="action_complete" string="Mark Complete" type="object" class="btn-success" invisible="state != 'in_progress'"/>
+                    <button name="action_export_pdf" string="Export PDF" type="object" class="btn-secondary" icon="fa-file-pdf-o"/>
+                    <field name="state" widget="statusbar" statusbar_visible="not_started,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_profile" type="object" class="oe_stat_button" icon="fa-user">
+                            <span class="o_stat_text">View Full Profile</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Details">
+                            <field name="case_id" readonly="state != 'not_started'"/>
+                            <field name="partner_id"/>
+                            <field name="questionnaire_type" readonly="state != 'not_started'"/>
+                        </group>
+                        <group string="Progress">
+                            <field name="current_section"/>
+                            <field name="total_sections"/>
+                            <field name="progress_percent" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <!-- Q1 Pre-Consultation Responses -->
+                        <page string="Client Responses" name="responses_q1" 
+                              invisible="state == 'not_started' or questionnaire_type != 'pre_consultation'">
+                            <group string="Personal Information">
+                                <group>
+                                    <field name="profile_id" invisible="1"/>
+                                    <field name="profile_date_of_birth" string="Date of Birth" readonly="1"/>
+                                    <field name="profile_citizenship" string="Citizenship" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="profile_residence" string="Current Residence" readonly="1"/>
+                                    <field name="profile_marital_status" string="Marital Status" readonly="1"/>
+                                    <field name="profile_has_children" string="Has Dependent Children" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Immigration Intent">
+                                <group>
+                                    <field name="profile_immigration_goal" string="Immigration Goal" readonly="1"/>
+                                    <field name="profile_target_year" string="Target Year" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Education">
+                                <group>
+                                    <field name="profile_highest_education" string="Highest Education Level" readonly="1"/>
+                                    <field name="profile_eca_status" string="ECA Status" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Work Experience">
+                                <group>
+                                    <field name="profile_current_occupation" string="Current/Recent Occupation" readonly="1"/>
+                                    <field name="profile_years_experience" string="Years of Experience" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Language Ability">
+                                <group>
+                                    <field name="profile_first_language" string="First Official Language" readonly="1"/>
+                                    <field name="profile_second_language" string="Second Language Proficiency" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Canada Connections">
+                                <group>
+                                    <field name="profile_has_family_canada" string="Has Family in Canada" readonly="1"/>
+                                    <field name="profile_family_relationship" string="Relationship" readonly="1" invisible="not profile_has_family_canada"/>
+                                    <field name="profile_family_province" string="Province" readonly="1" invisible="not profile_has_family_canada"/>
+                                    <field name="profile_family_is_citizen_pr" string="Citizen/PR" readonly="1" invisible="not profile_has_family_canada"/>
+                                </group>
+                                <group>
+                                    <field name="profile_studied_canada" string="Studied in Canada" readonly="1"/>
+                                    <field name="profile_worked_canada" string="Worked in Canada" readonly="1"/>
+                                    <field name="profile_previous_visa" string="Previous Visa Application" readonly="1"/>
+                                </group>
+                            </group>
+                            <group string="Financial &amp; Risk">
+                                <group>
+                                    <field name="profile_currency_id" invisible="1"/>
+                                    <field name="profile_settlement_funds" string="Settlement Funds" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="profile_visa_refusal" string="Visa Refusal History" readonly="1"/>
+                                    <field name="profile_criminal_history" string="Criminal History" readonly="1"/>
+                                    <field name="profile_medical_conditions" string="Medical Conditions" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Q2 Detailed Assessment Responses -->
+                        <page string="Client Responses" name="responses_q2" 
+                              invisible="state == 'not_started' or questionnaire_type != 'detailed_assessment'">
+                            <group string="Education Records">
+                                <field name="profile_education_ids" string="" readonly="1" nolabel="1">
+                                    <list>
+                                        <field name="institution_name"/>
+                                        <field name="credential_type"/>
+                                        <field name="field_of_study"/>
+                                        <field name="institution_country_id"/>
+                                        <field name="eca_status"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Work Experience">
+                                <field name="profile_experience_ids" string="" readonly="1" nolabel="1">
+                                    <list>
+                                        <field name="job_title"/>
+                                        <field name="employer_name"/>
+                                        <field name="employer_country_id"/>
+                                        <field name="start_date"/>
+                                        <field name="end_date"/>
+                                        <field name="noc_code"/>
+                                        <field name="noc_teer_category"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group string="Language Proficiency">
+                                <field name="profile_language_ids" string="" readonly="1" nolabel="1">
+                                    <list>
+                                        <field name="language"/>
+                                        <field name="test_type"/>
+                                        <field name="test_date"/>
+                                        <field name="clb_listening"/>
+                                        <field name="clb_reading"/>
+                                        <field name="clb_writing"/>
+                                        <field name="clb_speaking"/>
+                                        <field name="clb_minimum"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Section Completion" name="sections">
+                            <group invisible="questionnaire_type != 'pre_consultation'">
+                                <group string="Pre-Consultation Sections">
+                                    <field name="q1_section_personal" widget="boolean_toggle"/>
+                                    <field name="q1_section_intent" widget="boolean_toggle"/>
+                                    <field name="q1_section_education" widget="boolean_toggle"/>
+                                    <field name="q1_section_work" widget="boolean_toggle"/>
+                                    <field name="q1_section_language" widget="boolean_toggle"/>
+                                    <field name="q1_section_canada" widget="boolean_toggle"/>
+                                    <field name="q1_section_financial" widget="boolean_toggle"/>
+                                </group>
+                            </group>
+                            <group invisible="questionnaire_type != 'detailed_assessment'">
+                                <group string="Detailed Assessment Sections">
+                                    <field name="q2_section_principal" widget="boolean_toggle"/>
+                                    <field name="q2_section_spouse" widget="boolean_toggle"/>
+                                    <field name="q2_section_children" widget="boolean_toggle"/>
+                                    <field name="q2_section_education" widget="boolean_toggle"/>
+                                    <field name="q2_section_experience" widget="boolean_toggle"/>
+                                    <field name="q2_section_language" widget="boolean_toggle"/>
+                                    <field name="q2_section_funds" widget="boolean_toggle"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Timestamps" name="timestamps">
+                            <group>
+                                <field name="started_at"/>
+                                <field name="completed_at"/>
+                                <field name="last_saved_at"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_questionnaire_response_search" model="ir.ui.view">
+        <field name="name">mm.questionnaire.response.search</field>
+        <field name="model">mm.questionnaire.response</field>
+        <field name="arch" type="xml">
+            <search string="Questionnaire Responses">
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter name="filter_pre_consultation" string="Pre-Consultation (Q1)" domain="[('questionnaire_type', '=', 'pre_consultation')]"/>
+                <filter name="filter_detailed_assessment" string="Detailed Assessment (Q2)" domain="[('questionnaire_type', '=', 'detailed_assessment')]"/>
+                <separator/>
+                <filter name="filter_not_started" string="Not Started" domain="[('state', '=', 'not_started')]"/>
+                <filter name="filter_in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter name="filter_completed" string="Completed" domain="[('state', '=', 'completed')]"/>
+                <separator/>
+                <filter name="group_type" string="Type" context="{'group_by': 'questionnaire_type'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_case" string="Case" context="{'group_by': 'case_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_questionnaire_response" model="ir.actions.act_window">
+        <field name="name">Questionnaire Responses</field>
+        <field name="res_model">mm.questionnaire.response</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_questionnaire_response_search"/>
+        <field name="context">{'search_default_filter_in_progress': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No questionnaire responses yet
+            </p>
+            <p>
+                Questionnaire responses are created automatically when clients access the portal questionnaires.
+            </p>
+        </field>
+    </record>
+
+</odoo>

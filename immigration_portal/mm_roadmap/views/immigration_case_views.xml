@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Immigration Case Roadmap Extension -->
+    <!-- ===================== -->
+
+    <!-- Extend Immigration Case Form View with Roadmap -->
+    <record id="view_immigration_case_form_roadmap" model="ir.ui.view">
+        <field name="name">mm.immigration.case.form.roadmap</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Roadmap button box -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_roadmaps"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-map">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="roadmap_count" nolabel="1"/>
+                        </span>
+                        <span class="o_stat_text">Roadmaps</span>
+                    </div>
+                </button>
+            </xpath>
+            
+            <!-- Add Create Roadmap button in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_create_roadmap"
+                        string="Create Roadmap"
+                        type="object"
+                        invisible="q2_state != 'completed' or not current_crs_calculation_id"/>
+                <button name="action_view_current_roadmap"
+                        string="View Roadmap"
+                        type="object"
+                        invisible="not current_roadmap_id"/>
+            </xpath>
+            
+            <!-- Add Roadmap Status to form -->
+            <xpath expr="//field[@name='fsw_total_points']" position="after">
+                <field name="roadmap_state" widget="badge" readonly="1" 
+                       invisible="not current_roadmap_id"
+                       decoration-info="roadmap_state == 'draft'"
+                       decoration-warning="roadmap_state == 'review'"
+                       decoration-success="roadmap_state in ('approved', 'delivered', 'acknowledged')"/>
+            </xpath>
+            
+
+        </field>
+    </record>
+    
+    <!-- Extend Immigration Case List View with Roadmap -->
+    <record id="view_immigration_case_list_roadmap" model="ir.ui.view">
+        <field name="name">mm.immigration.case.list.roadmap</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='fsw_eligible']" position="after">
+                <field name="roadmap_state" widget="badge" optional="hide"
+                       decoration-info="roadmap_state == 'draft'"
+                       decoration-warning="roadmap_state == 'review'"
+                       decoration-success="roadmap_state in ('approved', 'delivered', 'acknowledged')"/>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Extend Immigration Case Search View -->
+    <record id="view_immigration_case_search_roadmap" model="ir.ui.view">
+        <field name="name">mm.immigration.case.search.roadmap</field>
+        <field name="model">mm.immigration.case</field>
+        <field name="inherit_id" ref="mm_immigration.view_immigration_case_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="filter_roadmap_pending" string="Roadmap Pending" 
+                        domain="[('roadmap_state', 'in', ('draft', 'review'))]"/>
+                <filter name="filter_roadmap_delivered" string="Roadmap Delivered" 
+                        domain="[('roadmap_state', 'in', ('delivered', 'acknowledged'))]"/>
+                <filter name="filter_no_roadmap" string="No Roadmap" 
+                        domain="[('roadmap_count', '=', 0)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

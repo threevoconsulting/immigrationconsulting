@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Education Record Views -->
+    <!-- ===================== -->
+
+    <!-- List View -->
+    <record id="view_education_record_list" model="ir.ui.view">
+        <field name="name">mm.education.record.list</field>
+        <field name="model">mm.education.record</field>
+        <field name="arch" type="xml">
+            <list string="Education Records" editable="bottom">
+                <field name="profile_id" column_invisible="True"/>
+                <field name="institution_name"/>
+                <field name="institution_country_id" optional="show"/>
+                <field name="credential_type"/>
+                <field name="field_of_study"/>
+                <field name="end_date" optional="show"/>
+                <field name="is_completed" widget="boolean_toggle" optional="show"/>
+                <field name="eca_status" widget="badge" decoration-muted="eca_status == 'not_needed'" decoration-warning="eca_status == 'in_progress'" decoration-success="eca_status == 'completed'" decoration-danger="eca_status == 'not_started'"/>
+                <field name="is_primary_credential" widget="boolean_toggle"/>
+                <field name="in_canada" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_education_record_form" model="ir.ui.view">
+        <field name="name">mm.education.record.form</field>
+        <field name="model">mm.education.record</field>
+        <field name="arch" type="xml">
+            <form string="Education Record">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_mark_primary" type="object" class="oe_stat_button" icon="fa-star" invisible="is_primary_credential">
+                            <span>Mark as Primary</span>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Primary Credential" bg_color="text-bg-success" invisible="not is_primary_credential"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" placeholder="Education Record"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Institution">
+                            <field name="institution_name" placeholder="e.g., University of Toronto"/>
+                            <field name="institution_country_id" options="{'no_create': True}"/>
+                            <field name="institution_city" placeholder="e.g., Toronto"/>
+                            
+                        </group>
+                        <group string="Credential">
+                            <field name="credential_type"/>
+                            <field name="field_of_study" placeholder="e.g., Computer Science"/>
+                            <field name="credential_name" placeholder="e.g., Bachelor of Science"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Program Details">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="is_completed"/>
+                            <field name="was_full_time"/>
+                            <field name="program_duration_years"/>
+                        </group>
+                        <group string="ECA Assessment">
+                            <field name="eca_status" widget="radio" options="{'horizontal': True}"/>
+                            <field name="eca_organization" invisible="eca_status not in ('in_progress', 'completed')"/>
+                            <field name="eca_reference" invisible="eca_status != 'completed'"/>
+                            <field name="eca_date" invisible="eca_status != 'completed'"/>
+                            <field name="eca_canadian_equivalent" invisible="eca_status != 'completed'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Linked To">
+                            <field name="profile_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group string="CRS">
+                            <field name="is_primary_credential" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1" placeholder="Additional notes about this credential..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_education_record_search" model="ir.ui.view">
+        <field name="name">mm.education.record.search</field>
+        <field name="model">mm.education.record</field>
+        <field name="arch" type="xml">
+            <search string="Education Records">
+                <field name="institution_name"/>
+                <field name="field_of_study"/>
+                <field name="profile_id"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter name="filter_primary" string="Primary Credentials" domain="[('is_primary_credential', '=', True)]"/>
+                <filter name="filter_in_canada" string="Canadian Education" domain="[('in_canada', '=', True)]"/>
+                <separator/>
+                <filter name="filter_eca_needed" string="ECA Needed" domain="[('eca_status', '=', 'not_started'), ('in_canada', '=', False)]"/>
+                <filter name="filter_eca_progress" string="ECA In Progress" domain="[('eca_status', '=', 'in_progress')]"/>
+                <filter name="filter_eca_complete" string="ECA Complete" domain="[('eca_status', '=', 'completed')]"/>
+                <separator/>
+                <filter name="group_credential" string="Credential Type" context="{'group_by': 'credential_type'}"/>
+                <filter name="group_country" string="Country" context="{'group_by': 'institution_country_id'}"/>
+                <filter name="group_eca" string="ECA Status" context="{'group_by': 'eca_status'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_education_record" model="ir.actions.act_window">
+        <field name="name">Education Records</field>
+        <field name="res_model">mm.education.record</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_education_record_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No education records yet
+            </p>
+            <p>
+                Education records are created when clients complete the detailed assessment questionnaire.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- ================================================================= -->
+        <!-- Email Templates for Contact Inquiries                              -->
+        <!-- ================================================================= -->
+        
+        <!-- Admin Notification - New Inquiry -->
+        <record id="mail_template_inquiry_notification" model="mail.template">
+            <field name="name">Contact Inquiry - Admin Notification</field>
+            <field name="model_id" ref="model_mm_contact_inquiry"/>
+            <field name="subject">New Website Inquiry from {{ object.first_name }} {{ object.last_name }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+            <field name="email_to">ask@themigrationmonitor.ca</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse;">
+        <tr>
+            <td style="background-color: #1e3a5f; padding: 20px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">New Website Inquiry</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 30px; background-color: #ffffff;">
+                <p style="margin: 0 0 20px 0; font-size: 16px; color: #333;">
+                    A new inquiry has been submitted through the website contact form:
+                </p>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; width: 30%; font-weight: bold; color: #666;">Name:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">{{ object.first_name }} {{ object.last_name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: #666;">Email:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                            <a href="mailto:{{ object.email }}" style="color: #1e3a5f;">{{ object.email }}</a>
+                        </td>
+                    </tr>
+                    <tr t-if="object.country_id">
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: #666;">Country:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">{{ object.country_id.name }}</td>
+                    </tr>
+                    <tr t-if="object.service_interest">
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: #666;">Service Interest:</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                            <t t-if="object.service_interest == 'roadmap'">Immigration Roadmap</t>
+                            <t t-if="object.service_interest == 'gcms'">GCMS Notes Review</t>
+                            <t t-if="object.service_interest == 'application'">Application Assistance</t>
+                            <t t-if="object.service_interest == 'unsure'">Not Sure Yet</t>
+                        </td>
+                    </tr>
+                </table>
+                
+                <t t-if="object.message">
+                    <p style="margin: 0 0 10px 0; font-weight: bold; color: #666;">Message:</p>
+                    <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                        <p style="margin: 0; color: #333; white-space: pre-wrap;">{{ object.message }}</p>
+                    </div>
+                </t>
+                
+                <p style="margin: 20px 0 0 0; text-align: center;">
+                    <a href="{{ object.env['ir.config_parameter'].sudo().get_param('web.base.url') }}/web#id={{ object.id }}&amp;model=mm.contact.inquiry&amp;view_type=form" 
+                       style="display: inline-block; background-color: #c41e3a; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        View Inquiry in Odoo
+                    </a>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color: #f5f5f5; padding: 15px; text-align: center; font-size: 12px; color: #666;">
+                <p style="margin: 0;">The Migration Monitor - Immigration Consulting</p>
+                <p style="margin: 5px 0 0 0;">Edmonton, Alberta, Canada</p>
+            </td>
+        </tr>
+    </table>
+</div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+        
+        <!-- Visitor Confirmation Email -->
+        <record id="mail_template_inquiry_confirmation" model="mail.template">
+            <field name="name">Contact Inquiry - Visitor Confirmation</field>
+            <field name="model_id" ref="model_mm_contact_inquiry"/>
+            <field name="subject">Thank you for contacting The Migration Monitor</field>
+            <field name="email_from">ask@themigrationmonitor.ca</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table style="width: 100%; max-width: 600px; margin: 0 auto; border-collapse: collapse;">
+        <tr>
+            <td style="background-color: #1e3a5f; padding: 20px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">The Migration Monitor</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 30px; background-color: #ffffff;">
+                <p style="margin: 0 0 20px 0; font-size: 18px; color: #333;">
+                    Hi {{ object.first_name }},
+                </p>
+                
+                <p style="margin: 0 0 20px 0; font-size: 16px; color: #333; line-height: 1.6;">
+                    Thank you for reaching out to The Migration Monitor. We've received your inquiry 
+                    and will review it carefully.
+                </p>
+                
+                <p style="margin: 0 0 20px 0; font-size: 16px; color: #333; line-height: 1.6;">
+                    <strong>What happens next?</strong>
+                </p>
+                
+                <ul style="margin: 0 0 20px 0; padding-left: 20px; font-size: 16px; color: #333; line-height: 1.8;">
+                    <li>We'll review your information within 24-48 hours</li>
+                    <li>If we can assist with your immigration journey, we'll send you an invitation to our client portal</li>
+                    <li>The portal allows you to complete a detailed assessment and track your progress</li>
+                </ul>
+                
+                <div style="background-color: #faf8f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin: 0 0 10px 0; font-size: 16px; color: #333; font-weight: bold;">
+                        While you wait, stay informed:
+                    </p>
+                    <p style="margin: 0; font-size: 14px; color: #666; line-height: 1.6;">
+                        Subscribe to our bi-weekly newsletter for the latest Express Entry draws, 
+                        PNP updates, and immigration policy changes.
+                    </p>
+                </div>
+                
+                <p style="margin: 20px 0 0 0; font-size: 16px; color: #333; line-height: 1.6;">
+                    If you have any urgent questions, feel free to reply to this email.
+                </p>
+                
+                <p style="margin: 20px 0 0 0; font-size: 16px; color: #333;">
+                    Best regards,<br/>
+                    <strong>The Migration Monitor Team</strong>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color: #1e3a5f; padding: 20px; text-align: center;">
+                <p style="margin: 0 0 10px 0; color: #ffffff; font-size: 14px;">
+                    The Migration Monitor - Immigration Consulting
+                </p>
+                <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 12px;">
+                    Edmonton, Alberta, Canada
+                </p>
+                <p style="margin: 10px 0 0 0;">
+                    <a href="https://www.themigrationmonitor.ca" style="color: #ffffff; text-decoration: none; font-size: 12px;">
+                        www.themigrationmonitor.ca
+                    </a>
+                </p>
+            </td>
+        </tr>
+    </table>
+</div>
+            </field>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

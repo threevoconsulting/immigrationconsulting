@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_contact_inquiry_admin,access.contact.inquiry.admin,model_mm_contact_inquiry,base.group_system,1,1,1,1
+access_contact_inquiry_user,access.contact.inquiry.user,model_mm_contact_inquiry,base.group_user,1,1,1,0

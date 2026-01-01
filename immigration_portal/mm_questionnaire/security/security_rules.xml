@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ===================== -->
+        <!-- Questionnaire Response Rules -->
+        <!-- ===================== -->
+
+        <!-- Portal users can only see their own questionnaire responses -->
+        <record id="rule_questionnaire_response_portal" model="ir.rule">
+            <field name="name">Portal: Own Questionnaire Responses</field>
+            <field name="model_id" ref="model_mm_questionnaire_response"/>
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Consultants can see responses for their assigned cases -->
+        <record id="rule_questionnaire_response_consultant" model="ir.rule">
+            <field name="name">Consultant: Assigned Case Responses</field>
+            <field name="model_id" ref="model_mm_questionnaire_response"/>
+            <field name="domain_force">[('case_id.consultant_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('mm_immigration.group_immigration_consultant'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Managers can see all responses -->
+        <record id="rule_questionnaire_response_manager" model="ir.rule">
+            <field name="name">Manager: All Questionnaire Responses</field>
+            <field name="model_id" ref="model_mm_questionnaire_response"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('mm_immigration.group_immigration_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- ===================== -->
+        <!-- Education Record Rules -->
+        <!-- ===================== -->
+
+        <!-- Portal users can only see their own education records -->
+        <record id="rule_education_record_portal" model="ir.rule">
+            <field name="name">Portal: Own Education Records</field>
+            <field name="model_id" ref="model_mm_education_record"/>
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Consultants can see education records for their assigned cases -->
+        <record id="rule_education_record_consultant" model="ir.rule">
+            <field name="name">Consultant: Assigned Case Education Records</field>
+            <field name="model_id" ref="model_mm_education_record"/>
+            <field name="domain_force">[('profile_id.case_id.consultant_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('mm_immigration.group_immigration_consultant'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Managers can see all education records -->
+        <record id="rule_education_record_manager" model="ir.rule">
+            <field name="name">Manager: All Education Records</field>
+            <field name="model_id" ref="model_mm_education_record"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('mm_immigration.group_immigration_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- ===================== -->
+        <!-- Work Experience Rules -->
+        <!-- ===================== -->
+
+        <!-- Portal users can only see their own work experience -->
+        <record id="rule_work_experience_portal" model="ir.rule">
+            <field name="name">Portal: Own Work Experience</field>
+            <field name="model_id" ref="model_mm_work_experience"/>
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Consultants can see work experience for their assigned cases -->
+        <record id="rule_work_experience_consultant" model="ir.rule">
+            <field name="name">Consultant: Assigned Case Work Experience</field>
+            <field name="model_id" ref="model_mm_work_experience"/>
+            <field name="domain_force">[('profile_id.case_id.consultant_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('mm_immigration.group_immigration_consultant'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Managers can see all work experience -->
+        <record id="rule_work_experience_manager" model="ir.rule">
+            <field name="name">Manager: All Work Experience</field>
+            <field name="model_id" ref="model_mm_work_experience"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('mm_immigration.group_immigration_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- ===================== -->
+        <!-- Language Proficiency Rules -->
+        <!-- ===================== -->
+
+        <!-- Portal users can only see their own language records -->
+        <record id="rule_language_proficiency_portal" model="ir.rule">
+            <field name="name">Portal: Own Language Proficiency</field>
+            <field name="model_id" ref="model_mm_language_proficiency"/>
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Consultants can see language records for their assigned cases -->
+        <record id="rule_language_proficiency_consultant" model="ir.rule">
+            <field name="name">Consultant: Assigned Case Language Proficiency</field>
+            <field name="model_id" ref="model_mm_language_proficiency"/>
+            <field name="domain_force">[('profile_id.case_id.consultant_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('mm_immigration.group_immigration_consultant'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Managers can see all language records -->
+        <record id="rule_language_proficiency_manager" model="ir.rule">
+            <field name="name">Manager: All Language Proficiency</field>
+            <field name="model_id" ref="model_mm_language_proficiency"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('mm_immigration.group_immigration_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

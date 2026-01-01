@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!--
+        Questionnaire Data File
+        
+        The questionnaire structure (sections, questions, field mappings) is defined
+        directly in the QWeb templates (questionnaire_templates.xml and questionnaire_templates_q2.xml).
+        
+        This approach was chosen because:
+        1. Questions map directly to mm.client.profile fields
+        2. Section structure is fixed (7 sections for each questionnaire)
+        3. No need for admin-configurable question definitions
+        
+        If future requirements need configurable questions, this file would contain
+        records for mm.questionnaire.section and mm.questionnaire.question models.
+        -->
+    </data>
+</odoo>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- PNP Opportunity Views -->
+    <!-- ===================== -->
+
+    <!-- PNP Opportunity Form View -->
+    <record id="view_pnp_opportunity_form" model="ir.ui.view">
+        <field name="name">mm.pnp.opportunity.form</field>
+        <field name="model">mm.pnp.opportunity</field>
+        <field name="arch" type="xml">
+            <form string="PNP Opportunity">
+                <sheet>
+                    <group>
+                        <group string="Province/Program">
+                            <field name="roadmap_id" readonly="1"/>
+                            <field name="province_id"/>
+                            <field name="program_name"/>
+                            <field name="program_stream"/>
+                        </group>
+                        <group string="Fit Assessment">
+                            <field name="fit_rating"/>
+                            <field name="fit_rating_display" readonly="1"/>
+                            <field name="estimated_processing_months"/>
+                            <field name="current_draw_score"/>
+                            <field name="draw_frequency"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Eligibility Factors">
+                        <group>
+                            <field name="meets_education_requirement"/>
+                            <field name="meets_language_requirement"/>
+                            <field name="meets_experience_requirement"/>
+                        </group>
+                        <group>
+                            <field name="meets_settlement_funds"/>
+                            <field name="has_job_offer"/>
+                            <field name="has_connection"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Analysis" name="analysis">
+                            <group string="Key Advantages">
+                                <field name="key_advantages" nolabel="1"
+                                       placeholder="Why this province/program is a good fit..."/>
+                            </group>
+                            <group string="Key Challenges">
+                                <field name="key_challenges" nolabel="1"
+                                       placeholder="Potential obstacles or considerations..."/>
+                            </group>
+                            <group string="Consultant Notes">
+                                <field name="consultant_notes" nolabel="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- PNP Opportunity List View -->
+    <record id="view_pnp_opportunity_list" model="ir.ui.view">
+        <field name="name">mm.pnp.opportunity.list</field>
+        <field name="model">mm.pnp.opportunity</field>
+        <field name="arch" type="xml">
+            <list string="PNP Opportunities" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="province_id"/>
+                <field name="program_name"/>
+                <field name="program_stream"/>
+                <field name="fit_rating" widget="badge"
+                       decoration-success="fit_rating in ('4', '5')"
+                       decoration-warning="fit_rating == '3'"
+                       decoration-danger="fit_rating in ('0', '1', '2')"/>
+                <field name="meets_education_requirement" widget="boolean_toggle"/>
+                <field name="meets_language_requirement" widget="boolean_toggle"/>
+                <field name="meets_experience_requirement" widget="boolean_toggle"/>
+                <field name="estimated_processing_months"/>
+                <field name="current_draw_score" optional="hide"/>
+            </list>
+        </field>
+    </record>
+    
+
+</odoo>

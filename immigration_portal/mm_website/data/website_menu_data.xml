@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        
+        <!-- ================================================================= -->
+        <!-- Website Menu Items                                                 -->
+        <!-- ================================================================= -->
+        
+        <!-- Home Menu (already exists in Odoo, but we update the URL) -->
+        
+        <!-- Services Menu -->
+        <record id="menu_services" model="website.menu">
+            <field name="name">Services</field>
+            <field name="url">/services</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">20</field>
+            <field name="website_id" ref="website.default_website"/>
+        </record>
+        
+        <!-- How It Works Menu -->
+        <record id="menu_how_it_works" model="website.menu">
+            <field name="name">How It Works</field>
+            <field name="url">/how-it-works</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">30</field>
+            <field name="website_id" ref="website.default_website"/>
+        </record>
+        
+        <!-- Contact Menu -->
+        <record id="menu_contact" model="website.menu">
+            <field name="name">Contact</field>
+            <field name="url">/contact</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">40</field>
+            <field name="website_id" ref="website.default_website"/>
+        </record>
+        
+        <!-- Client Portal Menu (login link) -->
+        <record id="menu_portal" model="website.menu">
+            <field name="name">Client Portal</field>
+            <field name="url">/my/home</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">50</field>
+            <field name="website_id" ref="website.default_website"/>
+        </record>
+
+    </data>
+</odoo>

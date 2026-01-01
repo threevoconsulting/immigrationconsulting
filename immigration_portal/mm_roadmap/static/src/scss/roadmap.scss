@@ -1,0 +1,448 @@
+// ============================================================================
+// The Migration Monitor - Roadmap Portal Styles
+// ============================================================================
+// Stylesheet for the Roadmap Module (mm_roadmap)
+//
+// IMPORTANT - Odoo 19 Compliance:
+// - No @import statements (forbidden in Odoo 19)
+// - Variables are loaded via mm_portal/_variables.scss (dependency loads first)
+// - All custom classes use .mm- prefix
+// - BEM naming convention: .mm-block__element--modifier
+// ============================================================================
+
+// ============================================================================
+// ROADMAP VIEW CONTAINER
+// ============================================================================
+
+.mm-roadmap-view {
+    // Timeline styles
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: $mm-primary;
+        }
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-bottom: $mm-spacing-5;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            left: -27px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: $mm-primary;
+            border-radius: $mm-radius-full;
+            border: 2px solid $mm-white;
+            box-shadow: 0 0 0 2px $mm-primary;
+        }
+        
+        &.is-critical::before {
+            background: $mm-danger;
+            box-shadow: 0 0 0 2px $mm-danger;
+        }
+        
+        &.is-completed::before {
+            background: $mm-success;
+            box-shadow: 0 0 0 2px $mm-success;
+        }
+    }
+    
+    // Score display
+    .mm-score-display {
+        text-align: center;
+        padding: $mm-spacing-5;
+        
+        .mm-score-display__value {
+            font-size: $mm-font-size-3xl;
+            font-weight: $mm-font-weight-bold;
+            color: $mm-primary;
+        }
+        
+        .mm-score-display__label {
+            font-size: $mm-font-size-sm;
+            color: $mm-text-muted;
+        }
+    }
+    
+    // PNP fit rating badges
+    .mm-badge-fit {
+        padding: $mm-badge-padding-y $mm-badge-padding-x;
+        font-size: $mm-font-size-sm;
+        border-radius: $mm-badge-border-radius;
+        font-weight: $mm-font-weight-medium;
+        
+        &--excellent {
+            background-color: $mm-success;
+            color: $mm-white;
+        }
+        
+        &--good {
+            background-color: $mm-success-light;
+            color: $mm-white;
+        }
+        
+        &--moderate {
+            background-color: $mm-warning;
+            color: $mm-white;
+        }
+        
+        &--limited {
+            background-color: $mm-warning-dark;
+            color: $mm-white;
+        }
+        
+        &--poor {
+            background-color: $mm-danger;
+            color: $mm-white;
+        }
+    }
+    
+    // Strategy cards
+    .mm-strategy-card {
+        border-left: 4px solid $mm-primary;
+        background: $mm-light;
+        padding: $mm-spacing-4 $mm-spacing-5;
+        margin-bottom: $mm-spacing-4;
+        border-radius: 0 $mm-radius-lg $mm-radius-lg 0;
+        
+        &--primary {
+            border-left-color: $mm-primary;
+        }
+        
+        &--backup {
+            border-left-color: $mm-gray-500;
+        }
+        
+        h4 {
+            margin-bottom: $mm-spacing-2;
+            font-size: $mm-font-size-lg;
+            color: $mm-secondary;
+        }
+        
+        .mm-strategy-card__name {
+            font-size: $mm-font-size-xl;
+            font-weight: $mm-font-weight-semibold;
+            color: $mm-primary;
+        }
+    }
+    
+    // Section headers
+    .mm-section-header {
+        border-bottom: 2px solid $mm-primary;
+        padding-bottom: $mm-spacing-2;
+        margin-bottom: $mm-spacing-4;
+        
+        h5 {
+            color: $mm-primary;
+            margin-bottom: 0;
+            font-weight: $mm-font-weight-semibold;
+        }
+    }
+}
+
+// ============================================================================
+// SIGNATURE PAD (Roadmap Acknowledgment)
+// ============================================================================
+
+.mm-roadmap-signature {
+    border: 2px solid $mm-border-color;
+    border-radius: $mm-radius-lg;
+    background: $mm-white;
+    padding: $mm-spacing-2;
+    transition: border-color $mm-transition-base, box-shadow $mm-transition-base;
+    
+    canvas {
+        display: block;
+        width: 100%;
+        max-width: 600px;
+        touch-action: none;
+    }
+    
+    &:hover,
+    &:focus-within {
+        border-color: $mm-primary;
+        box-shadow: 0 0 0 3px rgba($mm-primary, 0.15);
+    }
+}
+
+// ============================================================================
+// ROADMAP DOWNLOAD BUTTON
+// ============================================================================
+
+.mm-btn-download-roadmap {
+    background: linear-gradient(135deg, $mm-primary 0%, $mm-primary-dark 100%);
+    border: none;
+    color: $mm-white;
+    padding: $mm-spacing-3 $mm-spacing-6;
+    font-size: $mm-font-size-lg;
+    font-weight: $mm-font-weight-medium;
+    border-radius: $mm-btn-border-radius;
+    transition: all $mm-transition-base;
+    
+    &:hover {
+        background: linear-gradient(135deg, $mm-primary-dark 0%, darken($mm-primary-dark, 5%) 100%);
+        color: $mm-white;
+        transform: translateY(-1px);
+        box-shadow: $mm-shadow-md;
+    }
+    
+    i {
+        margin-right: $mm-spacing-2;
+    }
+}
+
+// ============================================================================
+// ACKNOWLEDGMENT SECTION
+// ============================================================================
+
+.mm-acknowledgment-section {
+    background: $mm-light;
+    border-radius: $mm-radius-xl;
+    padding: $mm-spacing-6;
+    margin-top: $mm-spacing-8;
+    border: 1px solid $mm-border-color;
+    
+    .mm-acknowledgment-section__header {
+        color: $mm-primary;
+        margin-bottom: $mm-spacing-4;
+        font-weight: $mm-font-weight-semibold;
+        display: flex;
+        align-items: center;
+        gap: $mm-spacing-2;
+        
+        i {
+            color: $mm-primary;
+        }
+    }
+    
+    .form-check {
+        padding: $mm-spacing-4;
+        background: $mm-white;
+        border-radius: $mm-radius-lg;
+        margin-bottom: $mm-spacing-4;
+        
+        .form-check-input {
+            &:checked {
+                background-color: $mm-primary;
+                border-color: $mm-primary;
+            }
+            
+            &:focus {
+                box-shadow: $mm-focus-ring;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// PNP OPPORTUNITIES TABLE
+// ============================================================================
+
+.mm-pnp-table {
+    .table {
+        th {
+            background: $mm-light;
+            color: $mm-secondary;
+            font-weight: $mm-font-weight-semibold;
+            border-bottom: 2px solid $mm-border-color;
+        }
+        
+        td {
+            vertical-align: middle;
+        }
+    }
+}
+
+// ============================================================================
+// MILESTONE TIMELINE
+// ============================================================================
+
+.mm-milestone-timeline {
+    .mm-milestone {
+        display: flex;
+        align-items: flex-start;
+        padding: $mm-spacing-4 0;
+        border-left: 3px solid $mm-gray-200;
+        padding-left: $mm-spacing-5;
+        margin-left: $mm-spacing-3;
+        position: relative;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: $mm-spacing-4;
+            width: 14px;
+            height: 14px;
+            border-radius: $mm-radius-full;
+            background: $mm-gray-300;
+            border: 2px solid $mm-white;
+        }
+        
+        &--pending::before {
+            background: $mm-gray-400;
+        }
+        
+        &--in-progress {
+            border-left-color: $mm-primary;
+            
+            &::before {
+                background: $mm-primary;
+                box-shadow: 0 0 0 4px rgba($mm-primary, 0.2);
+            }
+        }
+        
+        &--completed {
+            border-left-color: $mm-success;
+            
+            &::before {
+                background: $mm-success;
+            }
+        }
+        
+        &--critical::before {
+            background: $mm-danger;
+        }
+        
+        .mm-milestone__marker {
+            min-width: 50px;
+            text-align: center;
+            
+            .badge {
+                font-size: $mm-font-size-xs;
+            }
+        }
+        
+        .mm-milestone__content {
+            flex: 1;
+            
+            h6 {
+                color: $mm-text-primary;
+                font-weight: $mm-font-weight-medium;
+                margin-bottom: $mm-spacing-1;
+            }
+            
+            p {
+                color: $mm-text-muted;
+                font-size: $mm-font-size-sm;
+                margin-bottom: 0;
+            }
+            
+            .mm-milestone__date {
+                font-size: $mm-font-size-xs;
+                color: $mm-text-light;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================================================
+
+@media (max-width: $mm-breakpoint-md - 1px) {
+    .mm-roadmap-view {
+        .timeline {
+            padding-left: 20px;
+        }
+        
+        .timeline-item::before {
+            left: -17px;
+            width: 10px;
+            height: 10px;
+        }
+        
+        .mm-strategy-card {
+            padding: $mm-spacing-3 $mm-spacing-4;
+        }
+    }
+    
+    .mm-roadmap-signature {
+        canvas {
+            height: 120px;
+        }
+    }
+    
+    .mm-acknowledgment-section {
+        padding: $mm-spacing-4;
+    }
+    
+    .mm-milestone-timeline {
+        .mm-milestone {
+            flex-direction: column;
+            
+            .mm-milestone__marker {
+                margin-bottom: $mm-spacing-2;
+            }
+        }
+    }
+}
+
+// ============================================================================
+// PRINT STYLES
+// ============================================================================
+
+@media print {
+    .mm-roadmap-view {
+        .no-print,
+        .mm-btn-download-roadmap,
+        .mm-acknowledgment-section {
+            display: none !important;
+        }
+        
+        .card {
+            border: 1px solid $mm-gray-300 !important;
+            box-shadow: none !important;
+        }
+        
+        .timeline::before {
+            background: $mm-dark !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .timeline-item::before {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+}
+
+// ============================================================================
+// ACCESSIBILITY ENHANCEMENTS
+// ============================================================================
+
+.mm-roadmap-view {
+    .mm-btn-download-roadmap:focus {
+        outline: none;
+        box-shadow: $mm-focus-ring;
+    }
+    
+    .timeline-item:focus-within {
+        outline: 2px solid $mm-primary;
+        outline-offset: 4px;
+    }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+    .mm-roadmap-signature {
+        border-width: 3px;
+    }
+    
+    .mm-milestone-timeline .mm-milestone {
+        border-left-width: 4px;
+    }
+}

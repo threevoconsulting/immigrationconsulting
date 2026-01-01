@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Roadmap Document Form View -->
+    <record id="view_roadmap_document_form" model="ir.ui.view">
+        <field name="name">mm.roadmap.document.form</field>
+        <field name="model">mm.roadmap.document</field>
+        <field name="arch" type="xml">
+            <form string="Immigration Roadmap">
+                <header>
+                    <button name="action_submit_for_review" 
+                            string="Submit for Review" 
+                            type="object" 
+                            class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve" 
+                            string="Approve" 
+                            type="object" 
+                            class="oe_highlight"
+                            invisible="state != 'review'"/>
+                    <button name="action_deliver" 
+                            string="Deliver to Client" 
+                            type="object" 
+                            class="oe_highlight"
+                            invisible="state != 'approved'"/>
+                    <button name="action_return_to_draft" 
+                            string="Return to Draft" 
+                            type="object"
+                            invisible="state not in ('review', 'approved')"/>
+                    <button name="action_generate_pdf" 
+                            string="Generate PDF" 
+                            type="object"
+                            invisible="state == 'draft'"/>
+                    <button name="action_download_pdf" 
+                            string="Download PDF" 
+                            type="object"
+                            invisible="not pdf_document"/>
+                    <button name="action_create_new_version" 
+                            string="Create New Version" 
+                            type="object"
+                            invisible="state not in ('delivered', 'acknowledged')"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="draft,review,approved,delivered,acknowledged"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_populate_from_profile"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-refresh"
+                                invisible="state != 'draft'">
+                            <span class="o_stat_text">Refresh from Profile</span>
+                        </button>
+                        <button name="action_add_default_milestones"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-calendar"
+                                invisible="state != 'draft'">
+                            <span class="o_stat_text">Add Milestones</span>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Acknowledged" bg_color="text-bg-success"
+                            invisible="state != 'acknowledged'"/>
+                    <widget name="web_ribbon" title="Delivered" bg_color="text-bg-info"
+                            invisible="state != 'delivered'"/>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Case Information">
+                            <field name="case_id" readonly="state != 'draft'"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="profile_id" readonly="1"/>
+                            <field name="crs_calculation_id" 
+                                   domain="[('case_id', '=', case_id), ('is_scenario', '=', False)]"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Document Details">
+                            <field name="version" readonly="1"/>
+                            <field name="document_date" readonly="state != 'draft'"/>
+                            <field name="consultant_id" readonly="state != 'draft'"/>
+                            <field name="generated_date" readonly="1" 
+                                   invisible="not generated_date"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <!-- Executive Summary -->
+                        <page string="Executive Summary" name="executive_summary">
+                            <field name="executive_summary" 
+                                   placeholder="Provide a high-level overview of the client's situation, goals, and recommended immigration strategy..."
+                                   readonly="state not in ('draft', 'review')"/>
+                        </page>
+                        
+                        <!-- Profile Overview -->
+                        <page string="Profile Overview" name="profile_overview">
+                            <group>
+                                <group string="Personal Information">
+                                    <field name="client_full_name" readonly="1"/>
+                                    <field name="client_citizenship" readonly="1"/>
+                                    <field name="profile_age" readonly="1"/>
+                                    <field name="profile_marital_status" readonly="1"/>
+                                    <field name="profile_children_count" readonly="1"/>
+                                </group>
+                                <group string="Qualifications">
+                                    <field name="profile_education" readonly="1"/>
+                                    <field name="profile_english_clb" readonly="1"/>
+                                    <field name="profile_french_clb" readonly="1"/>
+                                    <field name="profile_experience_years" readonly="1"/>
+                                    <field name="profile_canadian_exp_months" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- CRS/FSW Assessment -->
+                        <page string="Assessment" name="assessment">
+                            <group>
+                                <group string="CRS Score">
+                                    <field name="crs_total_score" readonly="1"/>
+                                    <field name="crs_tier" widget="badge" readonly="1"
+                                           decoration-danger="crs_tier == 'low'"
+                                           decoration-warning="crs_tier == 'medium'"
+                                           decoration-success="crs_tier in ('competitive', 'high')"/>
+                                </group>
+                                <group string="FSW Eligibility">
+                                    <field name="fsw_total_points" readonly="1"/>
+                                    <field name="fsw_eligible" widget="boolean_toggle" readonly="1"/>
+                                </group>
+                            </group>
+                            
+                            <group string="FSW Analysis">
+                                <field name="fsw_analysis" nolabel="1" 
+                                       placeholder="Detailed breakdown of FSW 67-point grid..."
+                                       readonly="state not in ('draft', 'review')"/>
+                            </group>
+                            
+                            <group string="CRS Simulation Notes">
+                                <field name="crs_simulation_notes" nolabel="1"
+                                       placeholder="Analysis of potential score improvements..."
+                                       readonly="state not in ('draft', 'review')"/>
+                            </group>
+                        </page>
+                        
+                        <!-- PNP Opportunities -->
+                        <page string="PNP Opportunities" name="pnp">
+                            <field name="pnp_opportunity_ids" nolabel="1"
+                                   readonly="state not in ('draft', 'review')">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="province_id"/>
+                                    <field name="program_name"/>
+                                    <field name="program_stream"/>
+                                    <field name="fit_rating" widget="badge"
+                                           decoration-success="fit_rating in ('4', '5')"
+                                           decoration-warning="fit_rating == '3'"
+                                           decoration-danger="fit_rating in ('0', '1', '2')"/>
+                                    <field name="meets_education_requirement" widget="boolean_toggle"/>
+                                    <field name="meets_language_requirement" widget="boolean_toggle"/>
+                                    <field name="meets_experience_requirement" widget="boolean_toggle"/>
+                                    <field name="estimated_processing_months"/>
+                                </list>
+                            </field>
+                            
+                            <group string="PNP Analysis Summary">
+                                <field name="pnp_analysis" nolabel="1"
+                                       placeholder="Overall analysis of PNP opportunities..."
+                                       readonly="state not in ('draft', 'review')"/>
+                            </group>
+                        </page>
+                        
+                        <!-- Strategy -->
+                        <page string="Strategy" name="strategy">
+                            <group>
+                                <group string="Primary Strategy">
+                                    <field name="primary_strategy" 
+                                           readonly="state not in ('draft', 'review')"/>
+                                </group>
+                                <group string="Backup Strategy">
+                                    <field name="backup_strategy"
+                                           readonly="state not in ('draft', 'review')"/>
+                                </group>
+                            </group>
+                            
+                            <group string="Primary Strategy Rationale">
+                                <field name="primary_strategy_rationale" nolabel="1"
+                                       placeholder="Explain why this strategy is recommended..."
+                                       readonly="state not in ('draft', 'review')"/>
+                            </group>
+                            
+                            <group string="Backup Strategy Rationale" 
+                                   invisible="backup_strategy == 'none'">
+                                <field name="backup_strategy_rationale" nolabel="1"
+                                       readonly="state not in ('draft', 'review')"/>
+                            </group>
+                        </page>
+                        
+                        <!-- Timeline -->
+                        <page string="Timeline" name="timeline">
+                            <group>
+                                <group>
+                                    <field name="timeline_start_date"
+                                           readonly="state not in ('draft', 'review')"/>
+                                    <field name="estimated_pr_date"
+                                           readonly="state not in ('draft', 'review')"/>
+                                </group>
+                            </group>
+                            
+                            <field name="milestone_ids" nolabel="1"
+                                   readonly="state not in ('draft', 'review')">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="target_date"/>
+                                    <field name="estimated_duration_days" readonly="1"/>
+                                    <field name="milestone_type"/>
+                                    <field name="is_critical" widget="boolean_toggle"/>
+                                    <field name="status" widget="badge"
+                                           decoration-info="status == 'pending'"
+                                           decoration-warning="status == 'in_progress'"
+                                           decoration-success="status == 'completed'"
+                                           decoration-danger="status == 'delayed'"/>
+                                    <field name="description"/>
+                                </list>
+                            </field>
+                            
+                            <group string="Timeline Notes">
+                                <field name="timeline_notes" nolabel="1"
+                                       readonly="state not in ('draft', 'review')"/>
+                            </group>
+                        </page>
+                        
+                        <!-- Next Steps -->
+                        <page string="Next Steps" name="next_steps">
+                            <group string="Immediate Action Items">
+                                <field name="next_steps" nolabel="1"
+                                       placeholder="List the immediate next steps for the client..."
+                                       readonly="state not in ('draft', 'review')"/>
+                            </group>
+                            
+                            <group string="ECA Guidance">
+                                <field name="eca_guidance" nolabel="1"
+                                       placeholder="Specific guidance on Educational Credential Assessment..."
+                                       readonly="state not in ('draft', 'review')"/>
+                            </group>
+                            
+                            <group string="Language Test Guidance">
+                                <field name="language_guidance" nolabel="1"
+                                       placeholder="Guidance on language testing requirements and preparation..."
+                                       readonly="state not in ('draft', 'review')"/>
+                            </group>
+                        </page>
+                        
+                        <!-- Appendices -->
+                        <page string="Appendices" name="appendices">
+                            <field name="appendix_notes"
+                                   placeholder="Additional reference material, links, or documents..."
+                                   readonly="state not in ('draft', 'review')"/>
+                        </page>
+                        
+                        <!-- Client Acknowledgment -->
+                        <page string="Acknowledgment" name="acknowledgment"
+                              invisible="state not in ('delivered', 'acknowledged')">
+                            <group>
+                                <group string="Client Signature">
+                                    <field name="client_signature" widget="image" 
+                                           readonly="1"
+                                           invisible="not client_signature"/>
+                                    <field name="acknowledged_date" readonly="1"/>
+                                    <field name="acknowledged_ip" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Roadmap Document List View -->
+    <record id="view_roadmap_document_list" model="ir.ui.view">
+        <field name="name">mm.roadmap.document.list</field>
+        <field name="model">mm.roadmap.document</field>
+        <field name="arch" type="xml">
+            <list string="Immigration Roadmaps" default_order="create_date desc">
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="partner_id"/>
+                <field name="version"/>
+                <field name="primary_strategy"/>
+                <field name="crs_total_score"/>
+                <field name="consultant_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'review'"
+                       decoration-success="state in ('approved', 'delivered', 'acknowledged')"/>
+                <field name="document_date"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- Roadmap Document Search View -->
+    <record id="view_roadmap_document_search" model="ir.ui.view">
+        <field name="name">mm.roadmap.document.search</field>
+        <field name="model">mm.roadmap.document</field>
+        <field name="arch" type="xml">
+            <search string="Search Roadmaps">
+                <field name="name"/>
+                <field name="case_id"/>
+                <field name="partner_id"/>
+                <field name="consultant_id"/>
+                <filter name="filter_draft" string="Draft" 
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_review" string="Under Review" 
+                        domain="[('state', '=', 'review')]"/>
+                <filter name="filter_approved" string="Approved" 
+                        domain="[('state', '=', 'approved')]"/>
+                <filter name="filter_delivered" string="Delivered" 
+                        domain="[('state', 'in', ('delivered', 'acknowledged'))]"/>
+                <separator/>
+                <filter name="filter_my_roadmaps" string="My Roadmaps"
+                        domain="[('consultant_id', '=', uid)]"/>
+                <separator/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="group_consultant" string="Consultant" context="{'group_by': 'consultant_id'}"/>
+                <filter name="group_strategy" string="Strategy" context="{'group_by': 'primary_strategy'}"/>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Roadmap Document Action -->
+    <record id="action_roadmap_document" model="ir.actions.act_window">
+        <field name="name">Immigration Roadmaps</field>
+        <field name="res_model">mm.roadmap.document</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_roadmap_document_search"/>
+        <field name="context">{'search_default_filter_my_roadmaps': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No roadmaps yet
+            </p>
+            <p>
+                Roadmaps are created from immigration cases after the detailed questionnaire and CRS calculation are complete.
+            </p>
+        </field>
+    </record>
+    
+
+</odoo>

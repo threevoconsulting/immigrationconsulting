@@ -1,0 +1,996 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Q2: Detailed Assessment Sections -->
+    <!-- ===================== -->
+
+    <!-- Q2 Section 1: Principal Applicant Details -->
+    <template id="questionnaire_detailed_section_1" name="Q2 Section 1: Principal Details">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-user me-2" aria-hidden="true"></i>
+                        Section 1: Principal Applicant Details
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <h5 class="mb-3">Legal Name (as shown on passport)</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <t t-call="mm_questionnaire.field_text">
+                                    <t t-set="field_id">legal_first_name</t>
+                                    <t t-set="field_name">legal_first_name</t>
+                                    <t t-set="label">First Name(s)</t>
+                                    <t t-set="value" t-value="profile.legal_first_name"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                            <div class="col-md-4">
+                                <t t-call="mm_questionnaire.field_text">
+                                    <t t-set="field_id">legal_middle_name</t>
+                                    <t t-set="field_name">legal_middle_name</t>
+                                    <t t-set="label">Middle Name(s)</t>
+                                    <t t-set="value" t-value="profile.legal_middle_name"/>
+                                </t>
+                            </div>
+                            <div class="col-md-4">
+                                <t t-call="mm_questionnaire.field_text">
+                                    <t t-set="field_id">legal_last_name</t>
+                                    <t t-set="field_name">legal_last_name</t>
+                                    <t t-set="label">Last Name / Family Name</t>
+                                    <t t-set="value" t-value="profile.legal_last_name"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Personal Details</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <t t-call="mm_questionnaire.field_text">
+                                    <t t-set="field_id">date_of_birth</t>
+                                    <t t-set="field_name">date_of_birth</t>
+                                    <t t-set="label">Date of Birth</t>
+                                    <t t-set="input_type">date</t>
+                                    <t t-set="value" t-value="profile.date_of_birth"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                            <div class="col-md-4">
+                                <t t-call="mm_questionnaire.field_select">
+                                    <t t-set="field_id">gender</t>
+                                    <t t-set="field_name">gender</t>
+                                    <t t-set="label">Gender</t>
+                                    <t t-set="value" t-value="profile.gender"/>
+                                    <t t-set="options" t-value="[('male', 'Male'), ('female', 'Female'), ('other', 'Other'), ('prefer_not_to_say', 'Prefer not to say')]"/>
+                                </t>
+                            </div>
+                            <div class="col-md-4">
+                                <t t-call="mm_questionnaire.field_select">
+                                    <t t-set="field_id">marital_status</t>
+                                    <t t-set="field_name">marital_status</t>
+                                    <t t-set="label">Marital Status</t>
+                                    <t t-set="value" t-value="profile.marital_status"/>
+                                    <t t-set="required" t-value="True"/>
+                                    <t t-set="options" t-value="[('single', 'Single'), ('married', 'Married'), ('common_law', 'Common-Law Partner'), ('divorced', 'Divorced'), ('separated', 'Separated'), ('widowed', 'Widowed')]"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Passport Information</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <t t-call="mm_questionnaire.field_text">
+                                    <t t-set="field_id">passport_number</t>
+                                    <t t-set="field_name">passport_number</t>
+                                    <t t-set="label">Passport Number</t>
+                                    <t t-set="value" t-value="profile.passport_number"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                            <div class="col-md-4">
+                                <t t-call="mm_questionnaire.field_country">
+                                    <t t-set="field_id">passport_country_id</t>
+                                    <t t-set="field_name">passport_country_id</t>
+                                    <t t-set="label">Passport Country</t>
+                                    <t t-set="value" t-value="profile.passport_country_id"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                            <div class="col-md-4">
+                                <t t-call="mm_questionnaire.field_text">
+                                    <t t-set="field_id">passport_expiry</t>
+                                    <t t-set="field_name">passport_expiry</t>
+                                    <t t-set="label">Passport Expiry Date</t>
+                                    <t t-set="input_type">date</t>
+                                    <t t-set="value" t-value="profile.passport_expiry"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Current Status</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_country">
+                                    <t t-set="field_id">residence_country_id</t>
+                                    <t t-set="field_name">residence_country_id</t>
+                                    <t t-set="label">Current Country of Residence</t>
+                                    <t t-set="value" t-value="profile.residence_country_id"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_select">
+                                    <t t-set="field_id">current_legal_status</t>
+                                    <t t-set="field_name">current_legal_status</t>
+                                    <t t-set="label">Current Legal Status</t>
+                                    <t t-set="value" t-value="profile.current_legal_status"/>
+                                    <t t-set="options" t-value="[('citizen', 'Citizen'), ('permanent_resident', 'Permanent Resident'), ('work_permit', 'Work Permit Holder'), ('study_permit', 'Study Permit Holder'), ('visitor', 'Visitor/Tourist'), ('other', 'Other')]"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q2 Section 2: Spouse Details -->
+    <template id="questionnaire_detailed_section_2" name="Q2 Section 2: Spouse Details">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-users me-2" aria-hidden="true"></i>
+                        Section 2: Spouse/Partner Details
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <t t-if="not show_spouse_section">
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                                Based on your marital status, this section is not applicable.
+                                Please proceed to the next section.
+                            </div>
+                        </t>
+
+                        <t t-if="show_spouse_section">
+                            <h5 class="mb-3">Spouse Basic Information</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <t t-call="mm_questionnaire.field_text">
+                                        <t t-set="field_id">spouse_first_name</t>
+                                        <t t-set="field_name">spouse_first_name</t>
+                                        <t t-set="label">First Name</t>
+                                        <t t-set="value" t-value="profile.spouse_first_name"/>
+                                        <t t-set="required" t-value="True"/>
+                                    </t>
+                                </div>
+                                <div class="col-md-4">
+                                    <t t-call="mm_questionnaire.field_text">
+                                        <t t-set="field_id">spouse_last_name</t>
+                                        <t t-set="field_name">spouse_last_name</t>
+                                        <t t-set="label">Last Name</t>
+                                        <t t-set="value" t-value="profile.spouse_last_name"/>
+                                        <t t-set="required" t-value="True"/>
+                                    </t>
+                                </div>
+                                <div class="col-md-4">
+                                    <t t-call="mm_questionnaire.field_text">
+                                        <t t-set="field_id">spouse_date_of_birth</t>
+                                        <t t-set="field_name">spouse_date_of_birth</t>
+                                        <t t-set="label">Date of Birth</t>
+                                        <t t-set="input_type">date</t>
+                                        <t t-set="value" t-value="profile.spouse_date_of_birth"/>
+                                        <t t-set="required" t-value="True"/>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <t t-call="mm_questionnaire.field_country">
+                                        <t t-set="field_id">spouse_citizenship_country_id</t>
+                                        <t t-set="field_name">spouse_citizenship_country_id</t>
+                                        <t t-set="label">Citizenship Country</t>
+                                        <t t-set="value" t-value="profile.spouse_citizenship_country_id"/>
+                                    </t>
+                                </div>
+                                <div class="col-md-6">
+                                    <t t-call="mm_questionnaire.field_boolean">
+                                        <t t-set="field_id">spouse_is_accompanying</t>
+                                        <t t-set="field_name">spouse_is_accompanying</t>
+                                        <t t-set="label">Will your spouse accompany you to Canada?</t>
+                                        <t t-set="value" t-value="profile.spouse_is_accompanying"/>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <h5 class="mb-3 mt-4">Spouse Education &amp; Work</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <t t-call="mm_questionnaire.field_select">
+                                        <t t-set="field_id">spouse_highest_education</t>
+                                        <t t-set="field_name">spouse_highest_education</t>
+                                        <t t-set="label">Highest Education</t>
+                                        <t t-set="value" t-value="profile.spouse_highest_education"/>
+                                        <t t-set="options" t-value="[('secondary', 'Secondary School'), ('one_year', 'One-year Program'), ('two_year', 'Two-year Program'), ('bachelors', 'Bachelor\'s Degree'), ('two_or_more', 'Two or More Credentials'), ('masters', 'Master\'s Degree'), ('phd', 'Doctoral (PhD)')]"/>
+                                    </t>
+                                </div>
+                                <div class="col-md-6">
+                                    <t t-call="mm_questionnaire.field_boolean">
+                                        <t t-set="field_id">spouse_has_eca</t>
+                                        <t t-set="field_name">spouse_has_eca</t>
+                                        <t t-set="label">Does your spouse have an ECA?</t>
+                                        <t t-set="value" t-value="profile.spouse_has_eca"/>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <t t-call="mm_questionnaire.field_text">
+                                        <t t-set="field_id">spouse_current_occupation</t>
+                                        <t t-set="field_name">spouse_current_occupation</t>
+                                        <t t-set="label">Current Occupation</t>
+                                        <t t-set="value" t-value="profile.spouse_current_occupation"/>
+                                    </t>
+                                </div>
+                                <div class="col-md-6">
+                                    <t t-call="mm_questionnaire.field_text">
+                                        <t t-set="field_id">spouse_work_experience_years</t>
+                                        <t t-set="field_name">spouse_work_experience_years</t>
+                                        <t t-set="label">Years of Work Experience</t>
+                                        <t t-set="input_type">number</t>
+                                        <t t-set="value" t-value="profile.spouse_work_experience_years"/>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <h5 class="mb-3 mt-4">Spouse Language (CLB Scores)</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <t t-call="mm_questionnaire.field_text">
+                                        <t t-set="field_id">spouse_english_clb</t>
+                                        <t t-set="field_name">spouse_english_clb</t>
+                                        <t t-set="label">English CLB (minimum across all abilities)</t>
+                                        <t t-set="input_type">number</t>
+                                        <t t-set="value" t-value="profile.spouse_english_clb"/>
+                                        <t t-set="help">Leave blank if no English test taken</t>
+                                    </t>
+                                </div>
+                                <div class="col-md-6">
+                                    <t t-call="mm_questionnaire.field_text">
+                                        <t t-set="field_id">spouse_french_clb</t>
+                                        <t t-set="field_name">spouse_french_clb</t>
+                                        <t t-set="label">French CLB (minimum across all abilities)</t>
+                                        <t t-set="input_type">number</t>
+                                        <t t-set="value" t-value="profile.spouse_french_clb"/>
+                                        <t t-set="help">Leave blank if no French test taken</t>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q2 Section 3: Dependent Children -->
+    <template id="questionnaire_detailed_section_3" name="Q2 Section 3: Dependent Children">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-child me-2" aria-hidden="true"></i>
+                        Section 3: Dependent Children
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <t t-call="mm_questionnaire.field_boolean">
+                            <t t-set="field_id">has_children</t>
+                            <t t-set="field_name">has_children</t>
+                            <t t-set="label">Do you have dependent children under 22 years old?</t>
+                            <t t-set="value" t-value="profile.has_children"/>
+                        </t>
+
+                        <!-- Children Repeater Section -->
+                        <div id="children-container" class="mm-repeater-section mt-4">
+                            <h5 class="mb-3">Children Details</h5>
+
+                            <t t-foreach="profile.children_ids" t-as="child">
+                                <div class="mm-repeater-item card mb-3" t-att-data-child-id="child.id">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h6 class="mb-0">Child <t t-esc="child_index + 1"/></h6>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mm-delete-child"
+                                                    t-att-data-child-id="child.id"
+                                                    title="Remove child" aria-label="Remove child">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Full Name</label>
+                                                    <input type="text" class="form-control mm-child-field"
+                                                           t-att-data-child-id="child.id"
+                                                           data-field="name"
+                                                           t-att-value="child.name"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Date of Birth</label>
+                                                    <input type="date" class="form-control mm-child-field"
+                                                           t-att-data-child-id="child.id"
+                                                           data-field="date_of_birth"
+                                                           t-att-value="child.date_of_birth"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Accompanying to Canada?</label>
+                                                    <select class="form-select mm-child-field"
+                                                            t-att-data-child-id="child.id"
+                                                            data-field="is_accompanying">
+                                                        <option value="true" t-att-selected="'selected' if child.is_accompanying else None">Yes</option>
+                                                        <option value="false" t-att-selected="'selected' if not child.is_accompanying else None">No</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <button type="button" class="btn btn-outline-primary mm-add-child" id="btn-add-child">
+                                <i class="fa fa-plus me-2" aria-hidden="true"></i> Add Child
+                            </button>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q2 Section 4: Education Details -->
+    <template id="questionnaire_detailed_section_4" name="Q2 Section 4: Education Details">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-graduation-cap me-2" aria-hidden="true"></i>
+                        Section 4: Education Details
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <div class="alert alert-info mb-4">
+                            <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                            Add all post-secondary education credentials. Mark one as "Primary" for CRS calculation.
+                        </div>
+
+                        <!-- Education Repeater Section -->
+                        <div id="education-container" class="mm-repeater-section">
+                            <t t-foreach="profile.education_ids" t-as="edu">
+                                <div class="mm-repeater-item card mb-3" t-att-data-education-id="edu.id">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h6 class="mb-0">
+                                                <t t-if="edu.is_primary_credential">
+                                                    <span class="badge bg-success me-2">Primary</span>
+                                                </t>
+                                                Education <t t-esc="edu_index + 1"/>
+                                            </h6>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mm-delete-education"
+                                                    t-att-data-education-id="edu.id"
+                                                    title="Remove education" aria-label="Remove education">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Institution Name</label>
+                                                    <input type="text" class="form-control mm-education-field"
+                                                           t-att-data-education-id="edu.id"
+                                                           data-field="institution_name"
+                                                           t-att-value="edu.institution_name"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Country</label>
+                                                    <select class="form-select mm-education-field"
+                                                            t-att-data-education-id="edu.id"
+                                                            data-field="institution_country_id">
+                                                        <option value="">-- Select --</option>
+                                                        <t t-foreach="countries" t-as="country">
+                                                            <option t-att-value="country.id"
+                                                                    t-att-selected="'selected' if edu.institution_country_id.id == country.id else None">
+                                                                <t t-esc="country.name"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Credential Type</label>
+                                                    <select class="form-select mm-education-field"
+                                                            t-att-data-education-id="edu.id"
+                                                            data-field="credential_type">
+                                                        <option value="secondary" t-att-selected="'selected' if edu.credential_type == 'secondary' else None">Secondary School Diploma</option>
+                                                        <option value="one_year" t-att-selected="'selected' if edu.credential_type == 'one_year' else None">One-year Diploma/Certificate</option>
+                                                        <option value="two_year" t-att-selected="'selected' if edu.credential_type == 'two_year' else None">Two-year Diploma/Degree</option>
+                                                        <option value="bachelors" t-att-selected="'selected' if edu.credential_type == 'bachelors' else None">Bachelor's Degree</option>
+                                                        <option value="post_grad_diploma" t-att-selected="'selected' if edu.credential_type == 'post_grad_diploma' else None">Post-graduate Diploma</option>
+                                                        <option value="masters" t-att-selected="'selected' if edu.credential_type == 'masters' else None">Master's Degree</option>
+                                                        <option value="phd" t-att-selected="'selected' if edu.credential_type == 'phd' else None">Doctoral Degree (PhD)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Field of Study</label>
+                                                    <input type="text" class="form-control mm-education-field"
+                                                           t-att-data-education-id="edu.id"
+                                                           data-field="field_of_study"
+                                                           t-att-value="edu.field_of_study"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">ECA Status</label>
+                                                    <select class="form-select mm-education-field"
+                                                            t-att-data-education-id="edu.id"
+                                                            data-field="eca_status">
+                                                        <option value="not_needed" t-att-selected="'selected' if edu.eca_status == 'not_needed' else None">Not Needed (Canadian)</option>
+                                                        <option value="not_started" t-att-selected="'selected' if edu.eca_status == 'not_started' else None">Not Started</option>
+                                                        <option value="in_progress" t-att-selected="'selected' if edu.eca_status == 'in_progress' else None">In Progress</option>
+                                                        <option value="completed" t-att-selected="'selected' if edu.eca_status == 'completed' else None">Completed</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mt-4">
+                                                    <input type="checkbox" class="form-check-input mm-education-field"
+                                                           t-att-data-education-id="edu.id"
+                                                           data-field="is_primary_credential"
+                                                           t-att-checked="'checked' if edu.is_primary_credential else None"/>
+                                                    <label class="form-check-label">
+                                                        <strong>Yes</strong>, this is my primary credential for immigration purposes
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <button type="button" class="btn btn-outline-primary mm-add-education" id="btn-add-education">
+                                <i class="fa fa-plus me-2" aria-hidden="true"></i> Add Education
+                            </button>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q2 Section 5: Work Experience -->
+    <template id="questionnaire_detailed_section_5" name="Q2 Section 5: Work Experience">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-briefcase me-2" aria-hidden="true"></i>
+                        Section 5: Work Experience
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <div class="alert alert-info mb-4">
+                            <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                            Add all relevant work experience. Only full-time (30+ hours/week), paid, skilled work (TEER 0-3) qualifies for CRS points.
+                        </div>
+
+                        <!-- Work Experience Repeater Section -->
+                        <div id="experience-container" class="mm-repeater-section">
+                            <t t-foreach="profile.experience_ids" t-as="exp">
+                                <div class="mm-repeater-item card mb-3" t-att-data-experience-id="exp.id">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h6 class="mb-0">
+                                                <t t-if="exp.is_current">
+                                                    <span class="badge bg-primary me-2">Current</span>
+                                                </t>
+                                                <t t-if="exp.in_canada">
+                                                    <span class="badge bg-success me-2">Canadian</span>
+                                                </t>
+                                                Position <t t-esc="exp_index + 1"/>
+                                            </h6>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mm-delete-experience"
+                                                    t-att-data-experience-id="exp.id"
+                                                    title="Remove experience" aria-label="Remove experience">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Job Title</label>
+                                                    <input type="text" class="form-control mm-experience-field"
+                                                           t-att-data-experience-id="exp.id"
+                                                           data-field="job_title"
+                                                           t-att-value="exp.job_title"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Employer Name</label>
+                                                    <input type="text" class="form-control mm-experience-field"
+                                                           t-att-data-experience-id="exp.id"
+                                                           data-field="employer_name"
+                                                           t-att-value="exp.employer_name"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Country</label>
+                                                    <select class="form-select mm-experience-field"
+                                                            t-att-data-experience-id="exp.id"
+                                                            data-field="employer_country_id">
+                                                        <option value="">-- Select --</option>
+                                                        <t t-foreach="countries" t-as="country">
+                                                            <option t-att-value="country.id"
+                                                                    t-att-selected="'selected' if exp.employer_country_id.id == country.id else None">
+                                                                <t t-esc="country.name"/>
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Start Date</label>
+                                                    <input type="date" class="form-control mm-experience-field"
+                                                           t-att-data-experience-id="exp.id"
+                                                           data-field="start_date"
+                                                           t-att-value="exp.start_date"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">End Date</label>
+                                                    <input type="date" class="form-control mm-experience-field"
+                                                           t-att-data-experience-id="exp.id"
+                                                           data-field="end_date"
+                                                           t-att-value="exp.end_date"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">NOC TEER Category</label>
+                                                    <select class="form-select mm-experience-field"
+                                                            t-att-data-experience-id="exp.id"
+                                                            data-field="noc_teer_category">
+                                                        <option value="">-- Select --</option>
+                                                        <option value="0" t-att-selected="'selected' if exp.noc_teer_category == '0' else None">TEER 0 - Management</option>
+                                                        <option value="1" t-att-selected="'selected' if exp.noc_teer_category == '1' else None">TEER 1 - Professional</option>
+                                                        <option value="2" t-att-selected="'selected' if exp.noc_teer_category == '2' else None">TEER 2 - Technical/Skilled Trades</option>
+                                                        <option value="3" t-att-selected="'selected' if exp.noc_teer_category == '3' else None">TEER 3 - Intermediate</option>
+                                                        <option value="4" t-att-selected="'selected' if exp.noc_teer_category == '4' else None">TEER 4 - Labour</option>
+                                                        <option value="5" t-att-selected="'selected' if exp.noc_teer_category == '5' else None">TEER 5 - No formal education</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Hours per Week</label>
+                                                    <input type="number" class="form-control mm-experience-field"
+                                                           t-att-data-experience-id="exp.id"
+                                                           data-field="hours_per_week"
+                                                           t-att-value="exp.hours_per_week"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mt-4">
+                                                    <input type="checkbox" class="form-check-input mm-experience-field"
+                                                           t-att-data-experience-id="exp.id"
+                                                           data-field="is_current"
+                                                           t-att-checked="'checked' if exp.is_current else None"/>
+                                                    <label class="form-check-label">
+                                                        <strong>Yes</strong>, I am currently employed in this position
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <button type="button" class="btn btn-outline-primary mm-add-experience" id="btn-add-experience">
+                                <i class="fa fa-plus me-2" aria-hidden="true"></i> Add Work Experience
+                            </button>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q2 Section 6: Language Proficiency -->
+    <template id="questionnaire_detailed_section_6" name="Q2 Section 6: Language Proficiency">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-language me-2" aria-hidden="true"></i>
+                        Section 6: Language Proficiency
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <div class="alert alert-info mb-4">
+                            <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                            Enter your language test scores. Results are automatically converted to CLB levels.
+                        </div>
+
+                        <!-- Language Repeater Section -->
+                        <div id="language-container" class="mm-repeater-section">
+                            <t t-foreach="profile.language_ids" t-as="lang">
+                                <div class="mm-repeater-item card mb-3" t-att-data-language-id="lang.id">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h6 class="mb-0">
+                                                <t t-if="lang.is_first_official">
+                                                    <span class="badge bg-primary me-2">First Official</span>
+                                                </t>
+                                                <t t-esc="lang.language.title()"/> Test
+                                            </h6>
+                                            <button type="button" class="btn btn-sm btn-outline-danger mm-delete-language"
+                                                    t-att-data-language-id="lang.id"
+                                                    title="Remove language test" aria-label="Remove language test">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Language</label>
+                                                    <select class="form-select mm-language-field"
+                                                            t-att-data-language-id="lang.id"
+                                                            data-field="language">
+                                                        <option value="english" t-att-selected="'selected' if lang.language == 'english' else None">English</option>
+                                                        <option value="french" t-att-selected="'selected' if lang.language == 'french' else None">French</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Test Type</label>
+                                                    <select class="form-select mm-language-field"
+                                                            t-att-data-language-id="lang.id"
+                                                            data-field="test_type">
+                                                        <option value="ielts_general" t-att-selected="'selected' if lang.test_type == 'ielts_general' else None">IELTS General</option>
+                                                        <option value="celpip_general" t-att-selected="'selected' if lang.test_type == 'celpip_general' else None">CELPIP General</option>
+                                                        <option value="tef_canada" t-att-selected="'selected' if lang.test_type == 'tef_canada' else None">TEF Canada</option>
+                                                        <option value="tcf_canada" t-att-selected="'selected' if lang.test_type == 'tcf_canada' else None">TCF Canada</option>
+                                                        <option value="none" t-att-selected="'selected' if lang.test_type == 'none' else None">No Test</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Test Date</label>
+                                                    <input type="date" class="form-control mm-language-field"
+                                                           t-att-data-language-id="lang.id"
+                                                           data-field="test_date"
+                                                           t-att-value="lang.test_date"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-check mt-4">
+                                                    <input type="checkbox" class="form-check-input mm-language-field"
+                                                           t-att-data-language-id="lang.id"
+                                                           data-field="is_first_official"
+                                                           t-att-checked="'checked' if lang.is_first_official else None"/>
+                                                    <label class="form-check-label">
+                                                        <strong>Yes</strong>, this is my first official language test
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- IELTS Scores -->
+                                        <div class="row mm-ielts-scores" t-att-style="'' if lang.test_type == 'ielts_general' else 'display: none;'">
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Listening</label>
+                                                    <input type="number" step="0.5" min="0" max="9" class="form-control mm-language-field"
+                                                           t-att-data-language-id="lang.id"
+                                                           data-field="ielts_listening"
+                                                           t-att-value="lang.ielts_listening"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Reading</label>
+                                                    <input type="number" step="0.5" min="0" max="9" class="form-control mm-language-field"
+                                                           t-att-data-language-id="lang.id"
+                                                           data-field="ielts_reading"
+                                                           t-att-value="lang.ielts_reading"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Writing</label>
+                                                    <input type="number" step="0.5" min="0" max="9" class="form-control mm-language-field"
+                                                           t-att-data-language-id="lang.id"
+                                                           data-field="ielts_writing"
+                                                           t-att-value="lang.ielts_writing"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Speaking</label>
+                                                    <input type="number" step="0.5" min="0" max="9" class="form-control mm-language-field"
+                                                           t-att-data-language-id="lang.id"
+                                                           data-field="ielts_speaking"
+                                                           t-att-value="lang.ielts_speaking"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- CLB Results -->
+                                        <div class="row bg-light p-2 rounded mt-2">
+                                            <div class="col-12">
+                                                <strong>CLB Equivalents:</strong>
+                                                Listening: <span class="badge bg-secondary"><t t-esc="lang.clb_listening"/></span>
+                                                Reading: <span class="badge bg-secondary"><t t-esc="lang.clb_reading"/></span>
+                                                Writing: <span class="badge bg-secondary"><t t-esc="lang.clb_writing"/></span>
+                                                Speaking: <span class="badge bg-secondary"><t t-esc="lang.clb_speaking"/></span>
+                                                | Minimum: <span class="badge bg-primary"><t t-esc="lang.clb_minimum"/></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <button type="button" class="btn btn-outline-primary mm-add-language" id="btn-add-language">
+                                <i class="fa fa-plus me-2" aria-hidden="true"></i> Add Language Test
+                            </button>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q2 Section 7: Settlement Funds -->
+    <template id="questionnaire_detailed_section_7" name="Q2 Section 7: Settlement Funds">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-dollar me-2" aria-hidden="true"></i>
+                        Section 7: Settlement Funds
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <div class="alert alert-info mb-4">
+                            <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                            You must prove you have enough money to support yourself and your family after you arrive in Canada,
+                            unless you have a valid job offer.
+                        </div>
+
+                        <t t-call="mm_questionnaire.field_text">
+                            <t t-set="field_id">settlement_funds</t>
+                            <t t-set="field_name">settlement_funds</t>
+                            <t t-set="label">Total Settlement Funds (CAD)</t>
+                            <t t-set="input_type">number</t>
+                            <t t-set="value" t-value="profile.settlement_funds"/>
+                            <t t-set="required" t-value="True"/>
+                        </t>
+
+                        <t t-call="mm_questionnaire.field_select">
+                            <t t-set="field_id">funds_source</t>
+                            <t t-set="field_name">funds_source</t>
+                            <t t-set="label">Primary Source of Funds</t>
+                            <t t-set="value" t-value="profile.funds_source"/>
+                            <t t-set="options" t-value="[('savings', 'Personal Savings'), ('investments', 'Investments'), ('property', 'Property Sale'), ('family', 'Family Support'), ('business', 'Business Income'), ('multiple', 'Multiple Sources')]"/>
+                        </t>
+
+                        <t t-call="mm_questionnaire.field_boolean">
+                            <t t-set="field_id">funds_liquid</t>
+                            <t t-set="field_name">funds_liquid</t>
+                            <t t-set="label">These funds are readily available (liquid)</t>
+                            <t t-set="value" t-value="profile.funds_liquid"/>
+                            <t t-set="help">Can you show 6 months of bank statements proving these funds?</t>
+                        </t>
+
+                        <t t-call="mm_questionnaire.field_radio">
+                            <t t-set="field_id">can_prove_funds</t>
+                            <t t-set="field_name">can_prove_funds</t>
+                            <t t-set="label">Can you provide documentary proof of these funds?</t>
+                            <t t-set="value" t-value="profile.can_prove_funds"/>
+                            <t t-set="options" t-value="[('yes', 'Yes'), ('no', 'No'), ('unsure', 'Not Sure')]"/>
+                        </t>
+
+                        <!-- Canada Connections Details (if has_family_in_canada was checked in Q1) -->
+                        <t t-if="profile.has_family_in_canada">
+                            <hr class="my-4"/>
+                            <h5 class="mb-3">
+                                <i class="fa fa-users me-2" aria-hidden="true"></i>
+                                Family in Canada Details
+                            </h5>
+                            <div class="alert alert-light border mb-4">
+                                <i class="fa fa-info-circle me-2 text-muted" aria-hidden="true"></i>
+                                <span class="text-muted">You indicated you have family in Canada. Please provide more details about your closest family member there.</span>
+                            </div>
+
+                            <t t-call="mm_questionnaire.field_select">
+                                <t t-set="field_id">family_in_canada_relationship</t>
+                                <t t-set="field_name">family_in_canada_relationship</t>
+                                <t t-set="label">Relationship to Family Member</t>
+                                <t t-set="value" t-value="profile.family_in_canada_relationship"/>
+                                <t t-set="options" t-value="[('none', 'No family in Canada'), ('parent', 'Parent'), ('sibling', 'Sibling (Brother/Sister)'), ('grandparent', 'Grandparent'), ('aunt_uncle', 'Aunt/Uncle'), ('cousin', 'Cousin'), ('child', 'Adult Child (18+)'), ('other', 'Other Relative')]"/>
+                                <t t-set="help">Select your closest family relationship in Canada</t>
+                            </t>
+
+                            <div class="mb-3">
+                                <label for="family_member_province_id" class="form-label">Province/Territory Where Family Lives</label>
+                                <select class="form-select mm-auto-save" id="family_member_province_id" 
+                                        name="family_member_province_id" data-field="family_member_province_id">
+                                    <option value="">-- Select Province/Territory --</option>
+                                    <t t-foreach="canada_provinces" t-as="prov">
+                                        <option t-att-value="prov.id"
+                                                t-att-selected="'selected' if profile.family_member_province_id.id == prov.id else None">
+                                            <t t-esc="prov.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                                <div class="form-text text-muted">This may affect Provincial Nominee Program eligibility</div>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" id="family_member_is_citizen_pr" name="family_member_is_citizen_pr"
+                                       class="form-check-input mm-auto-save"
+                                       data-field="family_member_is_citizen_pr"
+                                       t-att-checked="profile.family_member_is_citizen_pr"/>
+                                <label for="family_member_is_citizen_pr" class="form-check-label">
+                                    <strong>Yes</strong>, my family member is a Canadian Citizen or Permanent Resident
+                                </label>
+                                <div class="form-text text-muted">Having family who are citizens/PRs may provide additional CRS points</div>
+                            </div>
+                        </t>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ===================== -->
+    <!-- Review & Submit Page -->
+    <!-- ===================== -->
+
+    <template id="questionnaire_review" name="Questionnaire Review">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <div class="mm-questionnaire-container container py-4">
+                <div class="mm-questionnaire-header mb-4">
+                    <h2>
+                        <i class="fa fa-check-circle me-2" aria-hidden="true"></i>
+                        Review &amp; Submit
+                    </h2>
+                    <p class="text-muted">
+                        Please review your responses before submitting.
+                    </p>
+                </div>
+
+                <!-- Progress Summary -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Completion Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="progress mb-3" style="height: 20px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                 t-attf-style="width: #{response.progress_percent}%"
+                                 t-att-aria-valuenow="response.progress_percent"
+                                 aria-valuemin="0" aria-valuemax="100">
+                                <t t-esc="response.progress_percent"/>%
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <t t-foreach="section_config.items()" t-as="sec">
+                                <div class="col-md-4 mb-2">
+                                    <t t-if="sec[0] in completed_sections">
+                                        <i class="fa fa-check-circle text-success me-2" aria-hidden="true"></i>
+                                    </t>
+                                    <t t-else="">
+                                        <i class="fa fa-circle-o text-muted me-2" aria-hidden="true"></i>
+                                    </t>
+                                    <a t-attf-href="/my/immigration/questionnaire/#{qtype}/section/#{sec[0]}?case_id=#{case.id}">
+                                        <t t-esc="sec[1]['name']"/>
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="button" class="btn btn-lg btn-success mm-submit-questionnaire"
+                            t-att-data-case-id="case.id"
+                            t-att-data-qtype="qtype">
+                        <i class="fa fa-paper-plane me-2" aria-hidden="true"></i>
+                        Submit Questionnaire
+                    </button>
+                    <p class="text-muted mt-3">
+                        <small>
+                            You can still edit your responses after submitting by contacting your consultant.
+                        </small>
+                    </p>
+                </div>
+
+                <!-- Back Link -->
+                <div class="mt-4">
+                    <a t-attf-href="/my/immigration/questionnaire/#{qtype}/section/#{total_sections}?case_id=#{case.id}"
+                       class="btn btn-outline-secondary">
+                        <i class="fa fa-arrow-left me-2" aria-hidden="true"></i>
+                        Back to Last Section
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

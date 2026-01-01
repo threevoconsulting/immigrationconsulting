@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===================================================================== -->
+    <!-- HOMEPAGE TEMPLATE                                                      -->
+    <!-- ===================================================================== -->
+    <template id="homepage" name="Migration Monitor Homepage">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Canadian Immigration Consulting</t>
+            
+            <div id="wrap" class="mm-website">
+                <!-- Hero Section -->
+                <section class="mm-hero">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6 mm-hero-content">
+                                <h1 class="mm-hero-title">
+                                    Your Clear Path to 
+                                    <span class="mm-highlight">Canada</span> 
+                                    Starts Here
+                                </h1>
+                                <p class="mm-hero-subtitle">
+                                    Navigate your Canadian immigration journey with expert guidance, 
+                                    cutting-edge technology, and a personalized roadmap designed for your success.
+                                </p>
+                                <div class="mm-hero-buttons">
+                                    <a href="/contact" class="btn btn-primary mm-btn-primary">
+                                        <i class="fa fa-paper-plane me-2" title="Send" role="img" aria-label="Send"></i>
+                                        Get Started
+                                    </a>
+                                    <a href="#services" class="btn btn-outline-primary mm-btn-outline">
+                                        Explore Services
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mm-hero-visual">
+                                <div class="mm-portal-preview">
+                                    <div class="mm-portal-header">
+                                        <div class="mm-portal-dots">
+                                            <span class="mm-dot mm-dot-red"></span>
+                                            <span class="mm-dot mm-dot-yellow"></span>
+                                            <span class="mm-dot mm-dot-green"></span>
+                                        </div>
+                                        <span class="mm-portal-title">Client Portal</span>
+                                    </div>
+                                    <div class="mm-portal-content">
+                                        <div class="mm-progress-tracker">
+                                            <div class="mm-progress-step">
+                                                <div class="mm-step-circle mm-completed">
+                                                    <i class="fa fa-check" title="Completed" role="img" aria-label="Completed"></i>
+                                                </div>
+                                                <span class="mm-step-label">Profile</span>
+                                            </div>
+                                            <div class="mm-progress-step">
+                                                <div class="mm-step-circle mm-completed">
+                                                    <i class="fa fa-check" title="Completed" role="img" aria-label="Completed"></i>
+                                                </div>
+                                                <span class="mm-step-label">Quote</span>
+                                            </div>
+                                            <div class="mm-progress-step">
+                                                <div class="mm-step-circle mm-completed">
+                                                    <i class="fa fa-check" title="Completed" role="img" aria-label="Completed"></i>
+                                                </div>
+                                                <span class="mm-step-label">Payment</span>
+                                            </div>
+                                            <div class="mm-progress-step">
+                                                <div class="mm-step-circle mm-active">4</div>
+                                                <span class="mm-step-label">Assessment</span>
+                                            </div>
+                                            <div class="mm-progress-step">
+                                                <div class="mm-step-circle">5</div>
+                                                <span class="mm-step-label">Roadmap</span>
+                                            </div>
+                                        </div>
+                                        <div class="mm-crs-card">
+                                            <div class="mm-crs-header">
+                                                <span class="mm-crs-title">Your CRS Score</span>
+                                                <span class="mm-crs-score">478</span>
+                                            </div>
+                                            <div class="mm-crs-bar">
+                                                <div class="mm-crs-fill" style="width: 65%;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mm-portal-action">
+                                            <i class="fa fa-file-text-o me-2" title="Assessment" role="img" aria-label="Assessment"></i>
+                                            Complete Detailed Assessment
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Services Section -->
+                <section id="services" class="mm-services">
+                    <div class="container">
+                        <div class="mm-section-header text-center">
+                            <span class="mm-section-tag">Our Services</span>
+                            <h2 class="mm-section-title">Comprehensive Immigration Support</h2>
+                            <p class="mm-section-subtitle">
+                                From initial assessment to permanent residence, we provide expert guidance 
+                                at every step of your Canadian immigration journey.
+                            </p>
+                        </div>
+                        <div class="row">
+                            <!-- Immigration Roadmaps - Featured -->
+                            <div class="col-lg-4 mb-4">
+                                <div class="mm-service-card mm-featured">
+                                    <span class="mm-featured-badge">Most Popular</span>
+                                    <div class="mm-service-icon mm-icon-featured">
+                                        <i class="fa fa-map-signs" title="Roadmap" role="img" aria-label="Roadmap"></i>
+                                    </div>
+                                    <h3 class="mm-service-name">Immigration Roadmaps</h3>
+                                    <p class="mm-service-desc">
+                                        Personalized strategy documents that map your optimal path to Canada 
+                                        based on your unique profile and goals.
+                                    </p>
+                                    <ul class="mm-service-features">
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Automated CRS Score Calculation
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            FSW 67-Point Grid Assessment
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Provincial Nominee Analysis
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Custom Timeline &amp; Action Plan
+                                        </li>
+                                    </ul>
+                                    <a href="/contact" class="mm-service-link">
+                                        Learn More <i class="fa fa-arrow-right ms-1" title="Arrow" role="img" aria-label="Arrow"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- GCMS Notes Review -->
+                            <div class="col-lg-4 mb-4">
+                                <div class="mm-service-card">
+                                    <div class="mm-service-icon">
+                                        <i class="fa fa-search" title="Review" role="img" aria-label="Review"></i>
+                                    </div>
+                                    <h3 class="mm-service-name">GCMS Notes Review</h3>
+                                    <p class="mm-service-desc">
+                                        Access your IRCC application file and receive expert analysis to 
+                                        understand decisions and avoid future delays.
+                                    </p>
+                                    <ul class="mm-service-features">
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            GCMS Notes Request
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Expert File Analysis
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Refusal Reason Breakdown
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Strategic Recommendations
+                                        </li>
+                                    </ul>
+                                    <a href="/contact" class="mm-service-link">
+                                        Learn More <i class="fa fa-arrow-right ms-1" title="Arrow" role="img" aria-label="Arrow"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- Application Assistance -->
+                            <div class="col-lg-4 mb-4">
+                                <div class="mm-service-card">
+                                    <div class="mm-service-icon">
+                                        <i class="fa fa-pencil-square-o" title="Application" role="img" aria-label="Application"></i>
+                                    </div>
+                                    <h3 class="mm-service-name">Application Assistance</h3>
+                                    <p class="mm-service-desc">
+                                        End-to-end support to prepare, review, and submit strong applications 
+                                        with milestone tracking from ECA to PR landing.
+                                    </p>
+                                    <ul class="mm-service-features">
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Document Preparation
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Form Review &amp; Submission
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Real-Time Progress Tracking
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Milestone Notifications
+                                        </li>
+                                    </ul>
+                                    <a href="/contact" class="mm-service-link">
+                                        Learn More <i class="fa fa-arrow-right ms-1" title="Arrow" role="img" aria-label="Arrow"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- How It Works Section -->
+                <section id="process" class="mm-process">
+                    <div class="container">
+                        <div class="mm-section-header text-center">
+                            <span class="mm-section-tag">How It Works</span>
+                            <h2 class="mm-section-title">Your Journey in Four Steps</h2>
+                            <p class="mm-section-subtitle">
+                                Our streamlined process takes you from initial consultation to 
+                                achieving your Canadian immigration goals.
+                            </p>
+                        </div>
+                        <div class="row mm-process-grid">
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="mm-process-step">
+                                    <div class="mm-process-number">1</div>
+                                    <h3 class="mm-process-title">Reach Out</h3>
+                                    <p class="mm-process-desc">
+                                        Contact us through our form. We'll review your situation and 
+                                        send a portal invitation to get started.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="mm-process-step">
+                                    <div class="mm-process-number">2</div>
+                                    <h3 class="mm-process-title">Complete Profile</h3>
+                                    <p class="mm-process-desc">
+                                        Our smart questionnaire captures your background, education, 
+                                        work experience, and language abilities.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="mm-process-step">
+                                    <div class="mm-process-number">3</div>
+                                    <h3 class="mm-process-title">Get Your Roadmap</h3>
+                                    <p class="mm-process-desc">
+                                        Receive your personalized immigration strategy with CRS score, 
+                                        pathway analysis, and timeline.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="mm-process-step">
+                                    <div class="mm-process-number">4</div>
+                                    <h3 class="mm-process-title">Track Progress</h3>
+                                    <p class="mm-process-desc">
+                                        Monitor every milestone from ECA to PR landing through your 
+                                        personal dashboard.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Technology Section -->
+                <section id="technology" class="mm-technology">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6 mm-tech-content">
+                                <h2>Technology-Powered Immigration Services</h2>
+                                <p>
+                                    Our custom-built client portal brings transparency and efficiency to 
+                                    your immigration journey. Track every step, access documents, and 
+                                    stay informed—all in one place.
+                                </p>
+                                <div class="row mm-tech-features">
+                                    <div class="col-6 mb-4">
+                                        <div class="mm-tech-feature">
+                                            <div class="mm-tech-feature-icon">
+                                                <i class="fa fa-calculator" title="Calculator" role="img" aria-label="Calculator"></i>
+                                            </div>
+                                            <div>
+                                                <h4>CRS Calculator</h4>
+                                                <p>Instant score calculation with breakdown</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-4">
+                                        <div class="mm-tech-feature">
+                                            <div class="mm-tech-feature-icon">
+                                                <i class="fa fa-tasks" title="Progress" role="img" aria-label="Progress"></i>
+                                            </div>
+                                            <div>
+                                                <h4>Progress Tracking</h4>
+                                                <p>Real-time status updates &amp; milestones</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-4">
+                                        <div class="mm-tech-feature">
+                                            <div class="mm-tech-feature-icon">
+                                                <i class="fa fa-pencil" title="Signature" role="img" aria-label="Signature"></i>
+                                            </div>
+                                            <div>
+                                                <h4>Digital Signatures</h4>
+                                                <p>Sign documents securely online</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-4">
+                                        <div class="mm-tech-feature">
+                                            <div class="mm-tech-feature-icon">
+                                                <i class="fa fa-credit-card" title="Payment" role="img" aria-label="Payment"></i>
+                                            </div>
+                                            <div>
+                                                <h4>Secure Payments</h4>
+                                                <p>Stripe-powered checkout</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mm-tech-card">
+                                    <div class="mm-tech-card-header">
+                                        <span class="mm-tech-card-title">CRS Score Breakdown</span>
+                                        <span class="mm-tech-card-badge">FSW Eligible</span>
+                                    </div>
+                                    <div class="mm-score-display">
+                                        <div class="mm-score-number">478</div>
+                                        <div class="mm-score-label">Total CRS Points (out of 1200)</div>
+                                    </div>
+                                    <div class="row mm-score-breakdown">
+                                        <div class="col-6 mb-2">
+                                            <div class="mm-breakdown-item">
+                                                <div class="mm-breakdown-label">Age</div>
+                                                <div class="mm-breakdown-value">100 pts</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mb-2">
+                                            <div class="mm-breakdown-item">
+                                                <div class="mm-breakdown-label">Education</div>
+                                                <div class="mm-breakdown-value">120 pts</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mb-2">
+                                            <div class="mm-breakdown-item">
+                                                <div class="mm-breakdown-label">Language</div>
+                                                <div class="mm-breakdown-value">124 pts</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mb-2">
+                                            <div class="mm-breakdown-item">
+                                                <div class="mm-breakdown-label">Experience</div>
+                                                <div class="mm-breakdown-value">70 pts</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mb-2">
+                                            <div class="mm-breakdown-item">
+                                                <div class="mm-breakdown-label">Spouse</div>
+                                                <div class="mm-breakdown-value">14 pts</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mb-2">
+                                            <div class="mm-breakdown-item">
+                                                <div class="mm-breakdown-label">Bonuses</div>
+                                                <div class="mm-breakdown-value">50 pts</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Newsletter Section -->
+                <section id="newsletter" class="mm-newsletter">
+                    <div class="container">
+                        <div class="mm-newsletter-container text-center">
+                            <div class="mm-newsletter-icon">
+                                <i class="fa fa-envelope-open-o" title="Newsletter" role="img" aria-label="Newsletter"></i>
+                            </div>
+                            <h2>Stay Ahead of Immigration Changes</h2>
+                            <p>
+                                Get bi-weekly updates on Express Entry draws, PNP changes, and program updates. 
+                                Insights and impact analysis for visitors, students, workers, PRs, and citizens.
+                            </p>
+                            <form class="mm-newsletter-form" id="newsletterForm">
+                                <div class="input-group">
+                                    <input type="email" 
+                                           class="form-control mm-newsletter-input" 
+                                           placeholder="Enter your email address"
+                                           id="newsletterEmail"
+                                           required="required"/>
+                                    <button type="submit" class="btn btn-primary mm-btn-primary">
+                                        Subscribe
+                                    </button>
+                                </div>
+                            </form>
+                            <div id="newsletterMessage" class="mm-newsletter-message mt-3"></div>
+                            <div class="mm-newsletter-features">
+                                <span class="mm-newsletter-feature">
+                                    <i class="fa fa-check" title="Check" role="img" aria-label="Check"></i> Express Entry Updates
+                                </span>
+                                <span class="mm-newsletter-feature">
+                                    <i class="fa fa-check" title="Check" role="img" aria-label="Check"></i> PNP Draw Alerts
+                                </span>
+                                <span class="mm-newsletter-feature">
+                                    <i class="fa fa-check" title="Check" role="img" aria-label="Check"></i> Policy Impact Analysis
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contact Section -->
+                <section id="contact" class="mm-contact">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-5 mb-4">
+                                <div class="mm-contact-info">
+                                    <h2>Let's Start Your Journey</h2>
+                                    <p>
+                                        Tell us about your immigration goals and we'll reach out with next steps. 
+                                        After reviewing your inquiry, we'll invite you to our client portal where 
+                                        you can complete a detailed assessment.
+                                    </p>
+                                    <div class="mm-contact-details">
+                                        <div class="mm-contact-item">
+                                            <div class="mm-contact-item-icon">
+                                                <i class="fa fa-envelope" title="Email" role="img" aria-label="Email"></i>
+                                            </div>
+                                            <div class="mm-contact-item-text">
+                                                <strong>Email Us</strong>
+                                                <span>ask@themigrationmonitor.ca</span>
+                                            </div>
+                                        </div>
+                                        <div class="mm-contact-item">
+                                            <div class="mm-contact-item-icon">
+                                                <i class="fa fa-map-marker" title="Location" role="img" aria-label="Location"></i>
+                                            </div>
+                                            <div class="mm-contact-item-text">
+                                                <strong>Location</strong>
+                                                <span>Edmonton, Alberta, Canada</span>
+                                            </div>
+                                        </div>
+                                        <div class="mm-contact-item">
+                                            <div class="mm-contact-item-icon">
+                                                <i class="fa fa-clock-o" title="Response Time" role="img" aria-label="Response Time"></i>
+                                            </div>
+                                            <div class="mm-contact-item-text">
+                                                <strong>Response Time</strong>
+                                                <span>Within 24-48 hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-7">
+                                <div class="mm-contact-form-card">
+                                    <t t-call="mm_website.contact_form"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </t>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- CONTACT FORM PARTIAL                                                   -->
+    <!-- ===================================================================== -->
+    <template id="contact_form" name="Contact Form">
+        <form action="/contact/submit" method="post" class="mm-contact-form">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label mm-form-label">First Name *</label>
+                    <input type="text" 
+                           class="form-control mm-form-input" 
+                           name="first_name" 
+                           placeholder="John"
+                           required="required"/>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label mm-form-label">Last Name *</label>
+                    <input type="text" 
+                           class="form-control mm-form-input" 
+                           name="last_name" 
+                           placeholder="Doe"
+                           required="required"/>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label mm-form-label">Email Address *</label>
+                <input type="email" 
+                       class="form-control mm-form-input" 
+                       name="email" 
+                       placeholder="john@example.com"
+                       required="required"/>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label mm-form-label">Country of Residence</label>
+                    <select class="form-select mm-form-select" name="country_id">
+                        <option value="">Select country...</option>
+                        <t t-foreach="request.env['res.country'].sudo().search([])" t-as="country">
+                            <option t-att-value="country.id" t-esc="country.name"/>
+                        </t>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label mm-form-label">Service Interest</label>
+                    <select class="form-select mm-form-select" name="service_interest">
+                        <option value="">Select service...</option>
+                        <option value="roadmap">Immigration Roadmap</option>
+                        <option value="gcms">GCMS Notes Review</option>
+                        <option value="application">Application Assistance</option>
+                        <option value="unsure">Not Sure Yet</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="form-label mm-form-label">Tell us about your immigration goals</label>
+                <textarea class="form-control mm-form-textarea" 
+                          name="message" 
+                          rows="4"
+                          placeholder="Share your current situation, goals, and any questions you have..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mm-btn-primary w-100">
+                <i class="fa fa-paper-plane me-2" title="Send" role="img" aria-label="Send"></i>
+                Send Message
+            </button>
+        </form>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- CONTACT PAGE                                                           -->
+    <!-- ===================================================================== -->
+    <template id="contact_page" name="Contact Page">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Contact Us</t>
+            
+            <div id="wrap" class="mm-website">
+                <section class="mm-page-header">
+                    <div class="container">
+                        <h1>Contact Us</h1>
+                        <p>We'd love to hear from you. Fill out the form and we'll get back to you within 24-48 hours.</p>
+                    </div>
+                </section>
+                
+                <section class="mm-contact py-5">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-5 mb-4">
+                                <div class="mm-contact-info">
+                                    <h2>Get In Touch</h2>
+                                    <p>
+                                        Tell us about your immigration goals and we'll reach out with next steps. 
+                                        After reviewing your inquiry, we'll invite you to our client portal.
+                                    </p>
+                                    <div class="mm-contact-details">
+                                        <div class="mm-contact-item">
+                                            <div class="mm-contact-item-icon">
+                                                <i class="fa fa-envelope" title="Email" role="img" aria-label="Email"></i>
+                                            </div>
+                                            <div class="mm-contact-item-text">
+                                                <strong>Email Us</strong>
+                                                <span>ask@themigrationmonitor.ca</span>
+                                            </div>
+                                        </div>
+                                        <div class="mm-contact-item">
+                                            <div class="mm-contact-item-icon">
+                                                <i class="fa fa-map-marker" title="Location" role="img" aria-label="Location"></i>
+                                            </div>
+                                            <div class="mm-contact-item-text">
+                                                <strong>Location</strong>
+                                                <span>Edmonton, Alberta, Canada</span>
+                                            </div>
+                                        </div>
+                                        <div class="mm-contact-item">
+                                            <div class="mm-contact-item-icon">
+                                                <i class="fa fa-clock-o" title="Response Time" role="img" aria-label="Response Time"></i>
+                                            </div>
+                                            <div class="mm-contact-item-text">
+                                                <strong>Response Time</strong>
+                                                <span>Within 24-48 hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-7">
+                                <div class="mm-contact-form-card">
+                                    <t t-call="mm_website.contact_form"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- THANK YOU PAGE                                                         -->
+    <!-- ===================================================================== -->
+    <template id="contact_thank_you" name="Contact Thank You">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Thank You</t>
+            
+            <div id="wrap" class="mm-website">
+                <section class="mm-thank-you text-center py-5">
+                    <div class="container">
+                        <div class="mm-thank-you-icon">
+                            <i class="fa fa-check-circle" title="Success" role="img" aria-label="Success"></i>
+                        </div>
+                        <h1>Thank You!</h1>
+                        <p class="lead">
+                            Your message has been received. We'll review your inquiry and 
+                            get back to you within 24-48 hours.
+                        </p>
+                        <p>
+                            In the meantime, why not subscribe to our newsletter for the latest 
+                            immigration updates?
+                        </p>
+                        <a href="/" class="btn btn-primary mm-btn-primary mt-3">
+                            <i class="fa fa-home me-2" title="Home" role="img" aria-label="Home"></i>
+                            Return to Homepage
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- SERVICES PAGE                                                          -->
+    <!-- ===================================================================== -->
+    <template id="services_page" name="Services Page">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Our Services</t>
+            
+            <div id="wrap" class="mm-website">
+                <section class="mm-page-header">
+                    <div class="container">
+                        <h1>Our Services</h1>
+                        <p>Comprehensive immigration support tailored to your unique journey.</p>
+                    </div>
+                </section>
+                
+                <!-- Services content - same as homepage services section -->
+                <section class="mm-services py-5">
+                    <div class="container">
+                        <div class="row">
+                            <!-- Immigration Roadmaps - Featured -->
+                            <div class="col-lg-4 mb-4">
+                                <div class="mm-service-card mm-featured">
+                                    <span class="mm-featured-badge">Most Popular</span>
+                                    <div class="mm-service-icon mm-icon-featured">
+                                        <i class="fa fa-map-signs" title="Roadmap" role="img" aria-label="Roadmap"></i>
+                                    </div>
+                                    <h3 class="mm-service-name">Immigration Roadmaps</h3>
+                                    <p class="mm-service-desc">
+                                        Personalized strategy documents that map your optimal path to Canada 
+                                        based on your unique profile and goals.
+                                    </p>
+                                    <ul class="mm-service-features">
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Automated CRS Score Calculation
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            FSW 67-Point Grid Assessment
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Provincial Nominee Analysis
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Custom Timeline &amp; Action Plan
+                                        </li>
+                                    </ul>
+                                    <a href="/contact" class="mm-service-link">
+                                        Get Started <i class="fa fa-arrow-right ms-1" title="Arrow" role="img" aria-label="Arrow"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- GCMS Notes Review -->
+                            <div class="col-lg-4 mb-4">
+                                <div class="mm-service-card">
+                                    <div class="mm-service-icon">
+                                        <i class="fa fa-search" title="Review" role="img" aria-label="Review"></i>
+                                    </div>
+                                    <h3 class="mm-service-name">GCMS Notes Review</h3>
+                                    <p class="mm-service-desc">
+                                        Access your IRCC application file and receive expert analysis to 
+                                        understand decisions and avoid future delays.
+                                    </p>
+                                    <ul class="mm-service-features">
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            GCMS Notes Request
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Expert File Analysis
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Refusal Reason Breakdown
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Strategic Recommendations
+                                        </li>
+                                    </ul>
+                                    <a href="/contact" class="mm-service-link">
+                                        Get Started <i class="fa fa-arrow-right ms-1" title="Arrow" role="img" aria-label="Arrow"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- Application Assistance -->
+                            <div class="col-lg-4 mb-4">
+                                <div class="mm-service-card">
+                                    <div class="mm-service-icon">
+                                        <i class="fa fa-pencil-square-o" title="Application" role="img" aria-label="Application"></i>
+                                    </div>
+                                    <h3 class="mm-service-name">Application Assistance</h3>
+                                    <p class="mm-service-desc">
+                                        End-to-end support to prepare, review, and submit strong applications 
+                                        with milestone tracking from ECA to PR landing.
+                                    </p>
+                                    <ul class="mm-service-features">
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Document Preparation
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Form Review &amp; Submission
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Real-Time Progress Tracking
+                                        </li>
+                                        <li>
+                                            <i class="fa fa-check-circle" title="Included" role="img" aria-label="Included"></i>
+                                            Milestone Notifications
+                                        </li>
+                                    </ul>
+                                    <a href="/contact" class="mm-service-link">
+                                        Get Started <i class="fa fa-arrow-right ms-1" title="Arrow" role="img" aria-label="Arrow"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- ===================================================================== -->
+    <!-- HOW IT WORKS PAGE                                                      -->
+    <!-- ===================================================================== -->
+    <template id="how_it_works_page" name="How It Works Page">
+        <t t-call="website.layout">
+            <t t-set="additional_title">How It Works</t>
+            
+            <div id="wrap" class="mm-website">
+                <section class="mm-page-header">
+                    <div class="container">
+                        <h1>How It Works</h1>
+                        <p>A simple, transparent process to guide you through your immigration journey.</p>
+                    </div>
+                </section>
+                
+                <section class="mm-process-detail py-5">
+                    <div class="container">
+                        <div class="row mm-process-grid">
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="mm-process-step">
+                                    <div class="mm-process-number">1</div>
+                                    <h3 class="mm-process-title">Reach Out</h3>
+                                    <p class="mm-process-desc">
+                                        Contact us through our form. We'll review your situation and 
+                                        send a portal invitation to get started.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="mm-process-step">
+                                    <div class="mm-process-number">2</div>
+                                    <h3 class="mm-process-title">Complete Profile</h3>
+                                    <p class="mm-process-desc">
+                                        Our smart questionnaire captures your background, education, 
+                                        work experience, and language abilities.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="mm-process-step">
+                                    <div class="mm-process-number">3</div>
+                                    <h3 class="mm-process-title">Get Your Roadmap</h3>
+                                    <p class="mm-process-desc">
+                                        Receive your personalized immigration strategy with CRS score, 
+                                        pathway analysis, and timeline.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="mm-process-step">
+                                    <div class="mm-process-number">4</div>
+                                    <h3 class="mm-process-title">Track Progress</h3>
+                                    <p class="mm-process-desc">
+                                        Monitor every milestone from ECA to PR landing through your 
+                                        personal dashboard.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-5">
+                            <a href="/contact" class="btn btn-primary mm-btn-primary btn-lg">
+                                <i class="fa fa-paper-plane me-2" title="Start" role="img" aria-label="Start"></i>
+                                Start Your Journey
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+</odoo>

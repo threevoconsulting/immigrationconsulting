@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- 
+        Canadian Provinces and Territories Reference
+        These should already exist in res.country.state, but we document them here for reference.
+        All 13 provinces/territories are available for PNP assessment.
+        
+        Provinces:
+        - ON: Ontario (OINP)
+        - BC: British Columbia (BC PNP)
+        - AB: Alberta (AAIP)
+        - QC: Quebec (QSWP - separate from PNP system)
+        - MB: Manitoba (MPNP)
+        - SK: Saskatchewan (SINP)
+        - NS: Nova Scotia (NSNP)
+        - NB: New Brunswick (NBPNP)
+        - NL: Newfoundland and Labrador (NLPNP)
+        - PE: Prince Edward Island (PEI PNP)
+        
+        Territories:
+        - YT: Yukon (YNP)
+        - NT: Northwest Territories (NTNP)
+        - NU: Nunavut (Nunavut NP)
+        -->
+        
+    </data>
+</odoo>

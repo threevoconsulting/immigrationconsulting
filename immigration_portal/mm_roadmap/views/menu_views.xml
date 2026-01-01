@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ====================== -->
+    <!-- Roadmap Menu Items -->
+    <!-- ====================== -->
+    
+    <!-- Roadmap submenu under Immigration root menu -->
+    <menuitem id="menu_roadmap"
+              name="Roadmaps"
+              parent="mm_immigration.menu_immigration_root"
+              sequence="40"/>
+    
+    <!-- All Roadmaps menu item -->
+    <menuitem id="menu_roadmap_all"
+              name="All Roadmaps"
+              parent="menu_roadmap"
+              action="action_roadmap_document"
+              sequence="10"/>
+    
+    <!-- Draft Roadmaps (filtered view) -->
+    <record id="action_roadmap_draft" model="ir.actions.act_window">
+        <field name="name">Draft Roadmaps</field>
+        <field name="res_model">mm.roadmap.document</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'draft')]</field>
+        <field name="context">{'search_default_filter_draft': 1}</field>
+    </record>
+    
+    <menuitem id="menu_roadmap_draft"
+              name="Draft Roadmaps"
+              parent="menu_roadmap"
+              action="action_roadmap_draft"
+              sequence="20"/>
+    
+    <!-- Under Review -->
+    <record id="action_roadmap_review" model="ir.actions.act_window">
+        <field name="name">Under Review</field>
+        <field name="res_model">mm.roadmap.document</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'review')]</field>
+        <field name="context">{'search_default_filter_review': 1}</field>
+    </record>
+    
+    <menuitem id="menu_roadmap_review"
+              name="Under Review"
+              parent="menu_roadmap"
+              action="action_roadmap_review"
+              sequence="30"/>
+    
+    <!-- Delivered -->
+    <record id="action_roadmap_delivered" model="ir.actions.act_window">
+        <field name="name">Delivered</field>
+        <field name="res_model">mm.roadmap.document</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'delivered')]</field>
+        <field name="context">{'search_default_filter_delivered': 1}</field>
+    </record>
+    
+    <menuitem id="menu_roadmap_delivered"
+              name="Delivered"
+              parent="menu_roadmap"
+              action="action_roadmap_delivered"
+              sequence="40"/>
+    
+</odoo>

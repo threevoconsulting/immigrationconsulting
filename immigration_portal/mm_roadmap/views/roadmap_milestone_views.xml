@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ====================== -->
+    <!-- Roadmap Milestone Views -->
+    <!-- ====================== -->
+    
+    <!-- Roadmap Milestone Form View -->
+    <record id="view_roadmap_milestone_form" model="ir.ui.view">
+        <field name="name">mm.roadmap.milestone.form</field>
+        <field name="model">mm.roadmap.milestone</field>
+        <field name="arch" type="xml">
+            <form string="Timeline Milestone">
+                <header>
+                    <button name="action_mark_in_progress" 
+                            string="Start" 
+                            type="object"
+                            class="oe_highlight"
+                            invisible="status != 'pending'"/>
+                    <button name="action_mark_completed" 
+                            string="Complete" 
+                            type="object" 
+                            class="oe_highlight"
+                            invisible="status not in ('pending', 'in_progress')"/>
+                    <button name="action_mark_delayed"
+                            string="Mark Delayed"
+                            type="object"
+                            invisible="status in ('completed', 'skipped', 'delayed')"/>
+                    <button name="action_reset_to_pending"
+                            string="Reset to Pending"
+                            type="object"
+                            invisible="status == 'pending'"/>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="pending,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="roadmap_id" readonly="1"/>
+                            <field name="name"/>
+                            <field name="milestone_type"/>
+                            <field name="is_critical"/>
+                        </group>
+                        <group>
+                            <field name="target_date"/>
+                            <field name="completed_date" readonly="1"/>
+                            <field name="estimated_duration_days"/>
+                            <field name="days_until_target" readonly="1"/>
+                            <field name="is_overdue" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Dependencies">
+                            <field name="dependencies" nolabel="1"/>
+                        </group>
+                        <group string="Responsible">
+                            <field name="responsible_party"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                    
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Roadmap Milestone List View -->
+    <record id="view_roadmap_milestone_list" model="ir.ui.view">
+        <field name="name">mm.roadmap.milestone.list</field>
+        <field name="model">mm.roadmap.milestone</field>
+        <field name="arch" type="xml">
+            <list string="Timeline Milestones" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="target_date"/>
+                <field name="estimated_duration_days"/>
+                <field name="milestone_type"/>
+                <field name="is_critical" widget="boolean_toggle"/>
+                <field name="status" widget="badge"
+                       decoration-info="status == 'pending'"
+                       decoration-warning="status == 'in_progress'"
+                       decoration-success="status == 'completed'"
+                       decoration-danger="status == 'delayed'"/>
+                <field name="completed_date" optional="hide"/>
+                <field name="responsible_party" optional="hide"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+    
+</odoo>

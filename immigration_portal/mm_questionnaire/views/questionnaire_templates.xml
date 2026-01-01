@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Questionnaire Portal Templates -->
+    <!-- ===================== -->
+    <!-- Base Questionnaire Layout -->
+    <template id="questionnaire_layout" name="Questionnaire Layout">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <div class="mm-questionnaire-container container py-4">
+                <!-- Header -->
+                <div class="mm-questionnaire-header mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-1">
+                                <t t-if="qtype == 'pre'">Pre-Consultation Questionnaire</t>
+                                <t t-else="">Detailed Assessment Questionnaire</t>
+                            </h2>
+                            <p class="text-muted mb-0">
+                                Case: <strong t-field="case.name"/>
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <span class="badge bg-secondary" t-if="response.state == 'not_started'">Not Started</span>
+                            <span class="badge bg-warning" t-if="response.state == 'in_progress'">In Progress</span>
+                            <span class="badge bg-success" t-if="response.state == 'completed'">Completed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <t t-call="mm_questionnaire.questionnaire_progress_bar"/>
+
+                <!-- Section Content -->
+                <div class="mm-questionnaire-content">
+                    <t t-raw="0"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Progress Bar Component -->
+    <template id="questionnaire_progress_bar" name="Questionnaire Progress Bar">
+        <div class="mm-progress-container mb-4">
+            <div class="mm-progress-bar-wrapper">
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary" role="progressbar"
+                         t-attf-style="width: #{response.progress_percent}%"
+                         t-att-aria-valuenow="response.progress_percent"
+                         aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+            </div>
+            <div class="mm-progress-steps mt-3">
+                <div class="row g-0">
+                    <t t-foreach="section_config.items()" t-as="sec">
+                        <div t-attf-class="col text-center mm-step #{'mm-step--active' if sec[0] == section else ''} #{'mm-step--complete' if sec[0] in completed_sections else ''}">
+                            <div class="mm-step__number">
+                                <t t-if="sec[0] in completed_sections">
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                </t>
+                                <t t-else="">
+                                    <t t-esc="sec[0]"/>
+                                </t>
+                            </div>
+                            <div class="mm-step__label d-none d-md-block small">
+                                <t t-esc="sec[1]['name']"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Section Navigation -->
+    <template id="questionnaire_section_nav" name="Section Navigation">
+        <div class="mm-section-nav d-flex justify-content-between align-items-center mt-4 pt-4 border-top">
+            <div>
+                <t t-if="section &gt; 1">
+                    <a t-attf-href="/my/immigration/questionnaire/#{qtype}/section/#{section - 1}?case_id=#{case.id}"
+                       class="btn btn-outline-secondary">
+                        <i class="fa fa-arrow-left me-2" aria-hidden="true"></i> Previous
+                    </a>
+                </t>
+            </div>
+            <div class="mm-save-status text-muted small">
+                <span class="mm-save-indicator" style="display: none;">
+                    <i class="fa fa-spinner fa-spin me-1" aria-hidden="true"></i> Saving...
+                </span>
+                <span class="mm-saved-indicator" style="display: none;">
+                    <i class="fa fa-check text-success me-1" aria-hidden="true"></i> Saved
+                </span>
+            </div>
+            <div>
+                <t t-if="section &lt; total_sections">
+                    <button type="button" class="btn btn-primary mm-btn-next"
+                            t-att-data-next-url="'/my/immigration/questionnaire/%s/section/%s?case_id=%s' % (qtype, section + 1, case.id)"
+                            t-att-data-section="section">
+                        Next <i class="fa fa-arrow-right ms-2" aria-hidden="true"></i>
+                    </button>
+                </t>
+                <t t-else="">
+                    <button type="button" class="btn btn-success mm-btn-next"
+                            t-att-data-next-url="'/my/immigration/questionnaire/%s/review?case_id=%s' % (qtype, case.id)"
+                            t-att-data-section="section">
+                        Review &amp; Submit <i class="fa fa-check ms-2" aria-hidden="true"></i>
+                    </button>
+                </t>
+            </div>
+        </div>
+    </template>
+
+    <!-- Form Field Macros -->
+    <template id="field_text" name="Text Field">
+        <div class="mb-3">
+            <label t-att-for="field_id" class="form-label">
+                <t t-esc="label"/>
+                <span t-if="required" class="text-danger">*</span>
+            </label>
+            <input t-att-type="input_type or 'text'"
+                   t-att-id="field_id"
+                   t-att-name="field_name"
+                   class="form-control mm-auto-save"
+                   t-att-value="value or ''"
+                   t-att-placeholder="placeholder or ''"
+                   t-att-required="required"
+                   t-att-data-model="model or 'profile'"
+                   t-att-data-field="field_name"/>
+            <div t-if="help" class="form-text text-muted">
+                <t t-esc="help"/>
+            </div>
+        </div>
+    </template>
+
+    <template id="field_select" name="Select Field">
+        <div class="mb-3">
+            <label t-att-for="field_id" class="form-label">
+                <t t-esc="label"/>
+                <span t-if="required" class="text-danger">*</span>
+            </label>
+            <select t-att-id="field_id"
+                    t-att-name="field_name"
+                    class="form-select mm-auto-save"
+                    t-att-required="required"
+                    t-att-data-model="model or 'profile'"
+                    t-att-data-field="field_name">
+                <option value="">-- Select --</option>
+                <t t-foreach="options" t-as="opt">
+                    <option t-att-value="opt[0]"
+                            t-att-selected="'selected' if str(value) == str(opt[0]) else None">
+                        <t t-esc="opt[1]"/>
+                    </option>
+                </t>
+            </select>
+            <div t-if="help" class="form-text text-muted">
+                <t t-esc="help"/>
+            </div>
+        </div>
+    </template>
+
+    <template id="field_country" name="Country Select Field">
+        <div class="mb-3">
+            <label t-att-for="field_id" class="form-label">
+                <t t-esc="label"/>
+                <span t-if="required" class="text-danger">*</span>
+            </label>
+            <select t-att-id="field_id"
+                    t-att-name="field_name"
+                    class="form-select mm-auto-save"
+                    t-att-required="required"
+                    t-att-data-model="model or 'profile'"
+                    t-att-data-field="field_name">
+                <option value="">-- Select Country --</option>
+                <t t-foreach="countries" t-as="country">
+                    <option t-att-value="country.id"
+                            t-att-selected="'selected' if value and value.id == country.id else None">
+                        <t t-esc="country.name"/>
+                    </option>
+                </t>
+            </select>
+        </div>
+    </template>
+
+    <template id="field_boolean" name="Boolean Field">
+        <div class="mb-3 form-check">
+            <input type="checkbox"
+                   t-att-id="field_id"
+                   t-att-name="field_name"
+                   class="form-check-input mm-auto-save"
+                   t-att-checked="'checked' if value else None"
+                   t-att-data-model="model or 'profile'"
+                   t-att-data-field="field_name"/>
+            <label t-att-for="field_id" class="form-check-label">
+                <t t-esc="label"/>
+            </label>
+            <div t-if="help" class="form-text text-muted">
+                <t t-esc="help"/>
+            </div>
+        </div>
+    </template>
+
+    <template id="field_radio" name="Radio Field">
+        <div class="mb-3">
+            <label class="form-label">
+                <t t-esc="label"/>
+                <span t-if="required" class="text-danger">*</span>
+            </label>
+            <div>
+                <t t-foreach="options" t-as="opt">
+                    <div class="form-check form-check-inline">
+                        <input type="radio"
+                               t-attf-id="#{field_id}_#{opt[0]}"
+                               t-att-name="field_name"
+                               t-att-value="opt[0]"
+                               class="form-check-input mm-auto-save"
+                               t-att-checked="'checked' if str(value) == str(opt[0]) else None"
+                               t-att-data-model="model or 'profile'"
+                               t-att-data-field="field_name"/>
+                        <label t-attf-for="#{field_id}_#{opt[0]}" class="form-check-label">
+                            <t t-esc="opt[1]"/>
+                        </label>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </template>
+
+    <!-- ===================== -->
+    <!-- Q1: Pre-Consultation Sections -->
+    <!-- ===================== -->
+
+    <!-- Q1 Section 1: Personal Information -->
+    <template id="questionnaire_pre_section_1" name="Q1 Section 1: Personal Info">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-user me-2" aria-hidden="true"></i>
+                        Section 1: Personal Information
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_text">
+                                    <t t-set="field_id">date_of_birth</t>
+                                    <t t-set="field_name">date_of_birth</t>
+                                    <t t-set="label">Date of Birth</t>
+                                    <t t-set="input_type">date</t>
+                                    <t t-set="value" t-value="profile.date_of_birth"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_select">
+                                    <t t-set="field_id">marital_status</t>
+                                    <t t-set="field_name">marital_status</t>
+                                    <t t-set="label">Marital Status</t>
+                                    <t t-set="value" t-value="profile.marital_status"/>
+                                    <t t-set="required" t-value="True"/>
+                                    <t t-set="options" t-value="[('single', 'Single'), ('married', 'Married'), ('common_law', 'Common-Law Partner'), ('divorced', 'Divorced'), ('separated', 'Separated'), ('widowed', 'Widowed')]"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_country">
+                                    <t t-set="field_id">citizenship_country_id</t>
+                                    <t t-set="field_name">citizenship_country_id</t>
+                                    <t t-set="label">Country of Citizenship</t>
+                                    <t t-set="value" t-value="profile.citizenship_country_id"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_country">
+                                    <t t-set="field_id">residence_country_id</t>
+                                    <t t-set="field_name">residence_country_id</t>
+                                    <t t-set="label">Country of Current Residence</t>
+                                    <t t-set="value" t-value="profile.residence_country_id"/>
+                                    <t t-set="required" t-value="True"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" id="has_children" name="has_children"
+                                           class="form-check-input mm-auto-save"
+                                           data-field="has_children"
+                                           t-att-checked="profile.has_children"/>
+                                    <label for="has_children" class="form-check-label">
+                                        <strong>Yes</strong>, I have dependent children under 22
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q1 Section 2: Immigration Intent -->
+    <template id="questionnaire_pre_section_2" name="Q1 Section 2: Immigration Intent">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-plane me-2" aria-hidden="true"></i>
+                        Section 2: Immigration Intent
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <t t-call="mm_questionnaire.field_radio">
+                            <t t-set="field_id">immigration_goal</t>
+                            <t t-set="field_name">immigration_goal</t>
+                            <t t-set="label">What is your immigration goal?</t>
+                            <t t-set="value" t-value="profile.immigration_goal"/>
+                            <t t-set="required" t-value="True"/>
+                            <t t-set="options" t-value="[('pr', 'Permanent Residence'), ('temporary', 'Temporary Residence (Work/Study)'), ('undecided', 'Not Sure Yet')]"/>
+                        </t>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_select">
+                                    <t t-set="field_id">target_year</t>
+                                    <t t-set="field_name">target_year</t>
+                                    <t t-set="label">When do you want to move to Canada?</t>
+                                    <t t-set="value" t-value="profile.target_year"/>
+                                    <t t-set="options" t-value="[('2025', '2025'), ('2026', '2026'), ('2027', '2027'), ('2028', '2028'), ('2029', '2029'), ('2030', '2030')]"/>
+                                </t>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_radio">
+                                    <t t-set="field_id">open_to_rural</t>
+                                    <t t-set="field_name">open_to_rural</t>
+                                    <t t-set="label">Open to settling outside major cities?</t>
+                                    <t t-set="value" t-value="profile.open_to_rural"/>
+                                    <t t-set="options" t-value="[('yes', 'Yes'), ('no', 'No'), ('maybe', 'Maybe')]"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q1 Section 3: Education -->
+    <template id="questionnaire_pre_section_3" name="Q1 Section 3: Education">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-graduation-cap me-2" aria-hidden="true"></i>
+                        Section 3: Education
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <t t-call="mm_questionnaire.field_select">
+                            <t t-set="field_id">highest_education</t>
+                            <t t-set="field_name">highest_education</t>
+                            <t t-set="label">Highest Level of Education Completed</t>
+                            <t t-set="value" t-value="profile.highest_education"/>
+                            <t t-set="required" t-value="True"/>
+                            <t t-set="options" t-value="[('secondary', 'Secondary School (High School)'), ('one_year', 'One-year Post-secondary Program'), ('two_year', 'Two-year Post-secondary Program'), ('bachelors', 'Bachelor\'s Degree'), ('two_or_more', 'Two or More Post-secondary Credentials'), ('masters', 'Master\'s Degree'), ('phd', 'Doctoral Degree (PhD)')]"/>
+                        </t>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_country">
+                                    <t t-set="field_id">education_country_id</t>
+                                    <t t-set="field_name">education_country_id</t>
+                                    <t t-set="label">Country Where Education Was Completed</t>
+                                    <t t-set="value" t-value="profile.education_country_id"/>
+                                </t>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_select">
+                                    <t t-set="field_id">eca_status</t>
+                                    <t t-set="field_name">eca_status</t>
+                                    <t t-set="label">Educational Credential Assessment (ECA) Status</t>
+                                    <t t-set="value" t-value="profile.eca_status"/>
+                                    <t t-set="options" t-value="[('not_started', 'Not Started'), ('in_progress', 'In Progress'), ('completed', 'Completed'), ('not_needed', 'Not Needed (Canadian Education)')]"/>
+                                    <t t-set="help">An ECA is required for foreign credentials</t>
+                                </t>
+                            </div>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q1 Section 4: Work Experience -->
+    <template id="questionnaire_pre_section_4" name="Q1 Section 4: Work Experience">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-briefcase me-2" aria-hidden="true"></i>
+                        Section 4: Work Experience
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <t t-call="mm_questionnaire.field_text">
+                            <t t-set="field_id">current_occupation</t>
+                            <t t-set="field_name">current_occupation</t>
+                            <t t-set="label">Current or Most Recent Job Title</t>
+                            <t t-set="value" t-value="profile.current_occupation"/>
+                            <t t-set="placeholder">e.g., Software Developer, Accountant, Nurse</t>
+                            <t t-set="required" t-value="True"/>
+                        </t>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_text">
+                                    <t t-set="field_id">work_experience_years</t>
+                                    <t t-set="field_name">work_experience_years</t>
+                                    <t t-set="label">Years of Skilled Work Experience</t>
+                                    <t t-set="input_type">number</t>
+                                    <t t-set="value" t-value="profile.work_experience_years"/>
+                                    <t t-set="help">Full-time skilled work experience (TEER 0-3)</t>
+                                </t>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-call="mm_questionnaire.field_country">
+                                    <t t-set="field_id">work_country_id</t>
+                                    <t t-set="field_name">work_country_id</t>
+                                    <t t-set="label">Primary Country of Work Experience</t>
+                                    <t t-set="value" t-value="profile.work_country_id"/>
+                                </t>
+                            </div>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q1 Section 5: Language Ability -->
+    <template id="questionnaire_pre_section_5" name="Q1 Section 5: Language">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-language me-2" aria-hidden="true"></i>
+                        Section 5: Language Ability
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <div class="alert alert-info mb-4">
+                            <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                            Language tests (IELTS, CELPIP, TEF, TCF) are required for most immigration programs.
+                            You'll provide detailed scores in the detailed assessment.
+                        </div>
+
+                        <!-- First Language Selection -->
+                        <div class="mb-3">
+                            <label for="first_language" class="form-label">
+                                First Official Language <span class="text-danger">*</span>
+                            </label>
+                            <select id="first_language" name="first_language" 
+                                    class="form-select mm-auto-save mm-first-language-select"
+                                    data-field="first_language" required="required">
+                                <option value="english" t-att-selected="profile.first_language == 'english' or not profile.first_language">English</option>
+                                <option value="french" t-att-selected="profile.first_language == 'french'">French</option>
+                            </select>
+                            <small class="form-text text-muted">Which official language are you most proficient in?</small>
+                        </div>
+
+                        <!-- Second Language Checkbox with Dynamic Label -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="second_language" name="second_language"
+                                   class="form-check-input mm-auto-save"
+                                   data-field="second_language"
+                                   t-att-checked="profile.second_language"/>
+                            <label for="second_language" class="form-check-label" id="second_language_label">
+                                <strong>Yes</strong>, I also have proficiency in 
+                                <strong class="mm-other-language">
+                                    <t t-if="profile.first_language == 'french'">English</t>
+                                    <t t-else="">French</t>
+                                </strong>
+                            </label>
+                            <br/>
+                            <small class="form-text text-muted">Check if you have or plan to take a test in your second official language</small>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q1 Section 6: Canada Connections -->
+    <template id="questionnaire_pre_section_6" name="Q1 Section 6: Canada Connections">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-maple-leaf me-2" aria-hidden="true"></i>
+                        Section 6: Canada Connections
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <div class="alert alert-light border mb-4">
+                            <i class="fa fa-info-circle me-2 text-muted" aria-hidden="true"></i>
+                            <span class="text-muted">Check each box that applies to your situation.</span>
+                        </div>
+
+                        <h5 class="mb-3">Family in Canada</h5>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="has_family_in_canada" name="has_family_in_canada"
+                                   class="form-check-input mm-auto-save mm-toggle-trigger"
+                                   data-field="has_family_in_canada"
+                                   data-toggle-target="family-details"
+                                   t-att-checked="profile.has_family_in_canada"/>
+                            <label for="has_family_in_canada" class="form-check-label">
+                                <strong>Yes</strong>, I have close family members (parent, sibling, child, grandparent) in Canada
+                            </label>
+                        </div>
+
+                        <!-- Family Details (shown when has_family_in_canada is checked) -->
+                        <div id="family-details" class="ms-4 mb-4 p-3 bg-light rounded" 
+                             t-att-style="'' if profile.has_family_in_canada else 'display: none;'">
+                            <p class="text-muted mb-3">
+                                <i class="fa fa-info-circle me-1" aria-hidden="true"></i>
+                                Please tell us more about your closest family member in Canada:
+                            </p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="family_in_canada_relationship" class="form-label">Relationship</label>
+                                        <select class="form-select mm-auto-save" id="family_in_canada_relationship" 
+                                                name="family_in_canada_relationship" data-field="family_in_canada_relationship">
+                                            <option value="">-- Select --</option>
+                                            <option value="parent" t-att-selected="'selected' if profile.family_in_canada_relationship == 'parent' else None">Parent</option>
+                                            <option value="sibling" t-att-selected="'selected' if profile.family_in_canada_relationship == 'sibling' else None">Sibling (Brother/Sister)</option>
+                                            <option value="grandparent" t-att-selected="'selected' if profile.family_in_canada_relationship == 'grandparent' else None">Grandparent</option>
+                                            <option value="aunt_uncle" t-att-selected="'selected' if profile.family_in_canada_relationship == 'aunt_uncle' else None">Aunt/Uncle</option>
+                                            <option value="cousin" t-att-selected="'selected' if profile.family_in_canada_relationship == 'cousin' else None">Cousin</option>
+                                            <option value="child" t-att-selected="'selected' if profile.family_in_canada_relationship == 'child' else None">Adult Child (18+)</option>
+                                            <option value="other" t-att-selected="'selected' if profile.family_in_canada_relationship == 'other' else None">Other Relative</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="family_member_province_id" class="form-label">Province/Territory</label>
+                                        <select class="form-select mm-auto-save" id="family_member_province_id" 
+                                                name="family_member_province_id" data-field="family_member_province_id">
+                                            <option value="">-- Select --</option>
+                                            <t t-foreach="canada_provinces" t-as="prov">
+                                                <option t-att-value="prov.id"
+                                                        t-att-selected="'selected' if profile.family_member_province_id.id == prov.id else None">
+                                                    <t t-esc="prov.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" id="family_member_is_citizen_pr" name="family_member_is_citizen_pr"
+                                       class="form-check-input mm-auto-save"
+                                       data-field="family_member_is_citizen_pr"
+                                       t-att-checked="profile.family_member_is_citizen_pr"/>
+                                <label for="family_member_is_citizen_pr" class="form-check-label">
+                                    <strong>Yes</strong>, my family member is a Canadian Citizen or Permanent Resident
+                                </label>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Canadian Experience</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" id="studied_in_canada" name="studied_in_canada"
+                                           class="form-check-input mm-auto-save"
+                                           data-field="studied_in_canada"
+                                           t-att-checked="profile.studied_in_canada"/>
+                                    <label for="studied_in_canada" class="form-check-label">
+                                        <strong>Yes</strong>, I have studied in Canada
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" id="worked_in_canada" name="worked_in_canada"
+                                           class="form-check-input mm-auto-save"
+                                           data-field="worked_in_canada"
+                                           t-att-checked="profile.worked_in_canada"/>
+                                    <label for="worked_in_canada" class="form-check-label">
+                                        <strong>Yes</strong>, I have worked in Canada
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="mb-3 mt-4">Previous Applications</h5>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="previous_visa_application" name="previous_visa_application"
+                                   class="form-check-input mm-auto-save"
+                                   data-field="previous_visa_application"
+                                   t-att-checked="profile.previous_visa_application"/>
+                            <label for="previous_visa_application" class="form-check-label">
+                                <strong>Yes</strong>, I have previously applied for a Canadian visa or permit
+                            </label>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Q1 Section 7: Financial & Risk -->
+    <template id="questionnaire_pre_section_7" name="Q1 Section 7: Financial &amp; Risk">
+        <t t-call="mm_questionnaire.questionnaire_layout">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fa fa-dollar me-2" aria-hidden="true"></i>
+                        Section 7: Financial &amp; Risk Factors
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="questionnaire-form" class="mm-questionnaire-form"
+                          t-att-data-case-id="case.id" t-att-data-qtype="qtype">
+
+                        <h5 class="mb-3">Settlement Funds</h5>
+                        <div class="alert alert-info mb-4">
+                            <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                            Express Entry requires proof of settlement funds (unless you have a valid job offer).
+                            Minimum varies by family size.
+                        </div>
+
+                        <t t-call="mm_questionnaire.field_text">
+                            <t t-set="field_id">settlement_funds</t>
+                            <t t-set="field_name">settlement_funds</t>
+                            <t t-set="label">Estimated Settlement Funds (CAD)</t>
+                            <t t-set="input_type">number</t>
+                            <t t-set="value" t-value="profile.settlement_funds"/>
+                            <t t-set="placeholder">e.g., 25000</t>
+                            <t t-set="help">Liquid funds available for settlement in Canada</t>
+                        </t>
+
+                        <h5 class="mb-3 mt-4">Risk Factors</h5>
+                        <p class="text-muted mb-3">Please answer honestly - these help us assess eligibility and do not automatically disqualify you.</p>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="visa_refusal" name="visa_refusal"
+                                   class="form-check-input mm-auto-save"
+                                   data-field="visa_refusal"
+                                   t-att-checked="profile.visa_refusal"/>
+                            <label for="visa_refusal" class="form-check-label">
+                                <strong>Yes</strong>, I have been refused a visa to a country (any country)
+                            </label>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="criminal_history" name="criminal_history"
+                                   class="form-check-input mm-auto-save"
+                                   data-field="criminal_history"
+                                   t-att-checked="profile.criminal_history"/>
+                            <label for="criminal_history" class="form-check-label">
+                                <strong>Yes</strong>, I have been convicted of a criminal offense
+                            </label>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="medical_conditions" name="medical_conditions"
+                                   class="form-check-input mm-auto-save"
+                                   data-field="medical_conditions"
+                                   t-att-checked="profile.medical_conditions"/>
+                            <label for="medical_conditions" class="form-check-label">
+                                <strong>Yes</strong>, I have a serious medical condition
+                            </label>
+                        </div>
+
+                        <t t-call="mm_questionnaire.questionnaire_section_nav"/>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Questionnaire Completed Page -->
+    <template id="questionnaire_completed" name="Questionnaire Completed">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6">
+                        <div class="card shadow-sm border-success">
+                            <div class="card-body text-center py-5">
+                                <!-- Success Icon -->
+                                <div class="mb-4">
+                                    <span class="fa-stack fa-3x text-success">
+                                        <i class="fa fa-circle fa-stack-2x"></i>
+                                        <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </div>
+                                
+                                <!-- Title -->
+                                <h2 class="text-success mb-3">Questionnaire Complete!</h2>
+                                
+                                <!-- Message -->
+                                <p class="lead text-muted mb-4">
+                                    Thank you for completing the <strong><t t-esc="questionnaire_name"/></strong>.
+                                </p>
+                                
+                                <!-- Message - different for Q1 vs Q2 -->
+                                <t t-if="questionnaire_type == 'pre_consultation'">
+                                    <p class="mb-4">
+                                        Our team will review your responses and contact you shortly with next steps.
+                                        You'll receive an email notification when your personalized quote is ready.
+                                    </p>
+                                </t>
+                                <t t-else="">
+                                    <p class="mb-4">
+                                        Your consultant is now reviewing your responses and preparing your personalized 
+                                        Immigration Roadmap. This typically takes 3-5 business days.
+                                        You'll receive an email notification when your roadmap is ready for review.
+                                    </p>
+                                </t>
+                                
+                                <!-- Case Reference -->
+                                <div class="bg-light rounded p-3 mb-4">
+                                    <small class="text-muted">Case Reference</small>
+                                    <div class="fw-bold" t-field="case.name"/>
+                                </div>
+                                
+                                <!-- Action Button -->
+                                <a t-attf-href="/my/immigration/case/#{case.id}" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-arrow-left me-2"></i>
+                                    Back to My Case
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Info -->
+                        <div class="text-center mt-4">
+                            <p class="text-muted small">
+                                <i class="fa fa-question-circle me-1"></i>
+                                Have questions? Contact us at 
+                                <a href="mailto:info@themigrationmonitor.ca">info@themigrationmonitor.ca</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

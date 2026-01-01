@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_roadmap_document_admin,access.roadmap.document.admin,model_mm_roadmap_document,base.group_system,1,1,1,1
+access_roadmap_document_manager,access.roadmap.document.manager,model_mm_roadmap_document,mm_immigration.group_immigration_manager,1,1,1,1
+access_roadmap_document_consultant,access.roadmap.document.consultant,model_mm_roadmap_document,mm_immigration.group_immigration_consultant,1,1,1,0
+access_roadmap_document_user,access.roadmap.document.user,model_mm_roadmap_document,mm_immigration.group_immigration_user,1,0,0,0
+access_roadmap_document_portal,access.roadmap.document.portal,model_mm_roadmap_document,base.group_portal,1,0,0,0
+access_pnp_opportunity_admin,access.pnp.opportunity.admin,model_mm_pnp_opportunity,base.group_system,1,1,1,1
+access_pnp_opportunity_manager,access.pnp.opportunity.manager,model_mm_pnp_opportunity,mm_immigration.group_immigration_manager,1,1,1,1
+access_pnp_opportunity_consultant,access.pnp.opportunity.consultant,model_mm_pnp_opportunity,mm_immigration.group_immigration_consultant,1,1,1,1
+access_pnp_opportunity_user,access.pnp.opportunity.user,model_mm_pnp_opportunity,mm_immigration.group_immigration_user,1,0,0,0
+access_pnp_opportunity_portal,access.pnp.opportunity.portal,model_mm_pnp_opportunity,base.group_portal,1,0,0,0
+access_roadmap_milestone_admin,access.roadmap.milestone.admin,model_mm_roadmap_milestone,base.group_system,1,1,1,1
+access_roadmap_milestone_manager,access.roadmap.milestone.manager,model_mm_roadmap_milestone,mm_immigration.group_immigration_manager,1,1,1,1
+access_roadmap_milestone_consultant,access.roadmap.milestone.consultant,model_mm_roadmap_milestone,mm_immigration.group_immigration_consultant,1,1,1,1
+access_roadmap_milestone_user,access.roadmap.milestone.user,model_mm_roadmap_milestone,mm_immigration.group_immigration_user,1,0,0,0
+access_roadmap_milestone_portal,access.roadmap.milestone.portal,model_mm_roadmap_milestone,base.group_portal,1,0,0,0

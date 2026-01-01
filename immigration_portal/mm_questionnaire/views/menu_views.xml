@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Questionnaire Menu Items -->
+    <!-- ===================== -->
+
+    <!-- Submenu under Immigration root -->
+    <menuitem
+        id="menu_questionnaire_root"
+        name="Questionnaires"
+        parent="mm_immigration.menu_immigration_root"
+        sequence="30"/>
+
+    <!-- Questionnaire Responses -->
+    <menuitem
+        id="menu_questionnaire_responses"
+        name="Responses"
+        parent="menu_questionnaire_root"
+        action="action_questionnaire_response"
+        sequence="10"/>
+
+    <!-- Client Data submenu -->
+    <menuitem
+        id="menu_client_data"
+        name="Client Data"
+        parent="menu_questionnaire_root"
+        sequence="20"/>
+
+    <!-- Education Records -->
+    <menuitem
+        id="menu_education_records"
+        name="Education Records"
+        parent="menu_client_data"
+        action="action_education_record"
+        sequence="10"/>
+
+    <!-- Work Experience -->
+    <menuitem
+        id="menu_work_experience"
+        name="Work Experience"
+        parent="menu_client_data"
+        action="action_work_experience"
+        sequence="20"/>
+
+    <!-- Language Proficiency -->
+    <menuitem
+        id="menu_language_proficiency"
+        name="Language Proficiency"
+        parent="menu_client_data"
+        action="action_language_proficiency"
+        sequence="30"/>
+
+</odoo>

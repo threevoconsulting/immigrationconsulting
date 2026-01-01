@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Portal Dashboard Extension - Questionnaire Status -->
+    <!-- ===================== -->
+
+    <!-- 
+        This extends the portal dashboard to show appropriate status 
+        when Q1 is completed but case is still in Onboarding stage.
+        Also handles dynamic URLs for quote/payment stages.
+    -->
+    <template id="portal_questionnaire_status" 
+              inherit_id="mm_portal.portal_immigration_dashboard"
+              name="Portal Questionnaire Status">
+        
+        <!-- Replace the entire current-stage-info section to handle Q1 completed state -->
+        <xpath expr="//div[hasclass('current-stage-info')]" position="replace">
+            <div class="current-stage-info mt-4 p-3 bg-light rounded">
+                <div class="row align-items-center">
+                    <!-- Q1 Completed - Show success message -->
+                    <t t-if="case.q1_state == 'completed' and case.state in ('invited', 'onboarding')">
+                        <div class="col-md-8">
+                            <h6 class="text-success mb-2">
+                                <i class="fa fa-check-circle me-2" aria-hidden="true"></i>
+                                Questionnaire Complete
+                            </h6>
+                            <p class="mb-0 text-muted">
+                                Thank you for completing your Pre-Consultation Questionnaire. Our team is reviewing your information and will contact you shortly with next steps.
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <span class="text-success">
+                                <i class="fa fa-check-circle fa-2x"></i>
+                            </span>
+                        </div>
+                    </t>
+                    <!-- Default: Show stage info and action button -->
+                    <t t-else="">
+                        <div class="col-md-8">
+                            <h6 class="text-primary mb-2">
+                                <i class="fa fa-info-circle me-2" aria-hidden="true"></i>
+                                Current Step: <t t-esc="case.stage_id.name"/>
+                            </h6>
+                            <p class="mb-0 text-muted">
+                                <t t-esc="case.stage_id.portal_description"/>
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <!-- Quoted stage: Dynamic URL with case ID -->
+                            <t t-if="case.state == 'quoted'">
+                                <a t-attf-href="/my/immigration/quote/#{case.id}" class="btn btn-primary">
+                                    Review Quote
+                                    <i class="fa fa-arrow-right ms-2" aria-hidden="true"></i>
+                                </a>
+                            </t>
+                            <!-- Payment stage: Dynamic URL with case ID -->
+                            <t t-elif="case.state == 'paid'">
+                                <a t-attf-href="/my/immigration/pay/#{case.id}" class="btn btn-primary">
+                                    Complete Payment
+                                    <i class="fa fa-arrow-right ms-2" aria-hidden="true"></i>
+                                </a>
+                            </t>
+                            <!-- Other stages: Use static URL from stage config -->
+                            <t t-elif="case.stage_id.portal_action_url and case.stage_id.portal_action_text">
+                                <a t-attf-href="#{case.stage_id.portal_action_url}" 
+                                   class="btn btn-primary">
+                                    <t t-esc="case.stage_id.portal_action_text"/>
+                                    <i class="fa fa-arrow-right ms-2" aria-hidden="true"></i>
+                                </a>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- ===================== -->
+    <!-- Portal Case Detail Extension - What's Next Section -->
+    <!-- ===================== -->
+    <template id="portal_case_detail_questionnaire_status"
+              inherit_id="mm_portal.portal_immigration_case"
+              name="Portal Case Detail Questionnaire Status">
+        
+        <!-- Replace the What's Next card content for Q1 completed state -->
+        <xpath expr="//div[hasclass('card')][hasclass('border-primary')]" position="replace">
+            <div class="card mb-4 shadow-sm border-primary">
+                <div class="card-header bg-light">
+                    <!-- Q1 Completed state -->
+                    <t t-if="case.q1_state == 'completed' and case.state in ('invited', 'onboarding')">
+                        <h5 class="mb-0 text-success">
+                            <i class="fa fa-check-circle me-2" aria-hidden="true"></i>
+                            Questionnaire Complete
+                        </h5>
+                    </t>
+                    <!-- Default state -->
+                    <t t-else="">
+                        <h5 class="mb-0 text-primary">
+                            <i class="fa fa-tasks me-2" aria-hidden="true"></i>
+                            What's Next?
+                        </h5>
+                    </t>
+                </div>
+                <div class="card-body">
+                    <!-- Q1 Completed state -->
+                    <t t-if="case.q1_state == 'completed' and case.state in ('invited', 'onboarding')">
+                        <p class="lead">
+                            Thank you for completing your Pre-Consultation Questionnaire. Our team is reviewing your information and will contact you shortly with next steps.
+                        </p>
+                    </t>
+                    <!-- Default state -->
+                    <t t-else="">
+                        <p class="lead">
+                            <t t-esc="case.stage_id.portal_description"/>
+                        </p>
+                        <!-- Quoted stage: Dynamic URL with case ID -->
+                        <t t-if="case.state == 'quoted'">
+                            <a t-attf-href="/my/immigration/quote/#{case.id}" class="btn btn-lg btn-primary">
+                                Review Quote
+                                <i class="fa fa-arrow-right ms-2" aria-hidden="true"></i>
+                            </a>
+                        </t>
+                        <!-- Payment stage: Dynamic URL with case ID -->
+                        <t t-elif="case.state == 'paid'">
+                            <a t-attf-href="/my/immigration/pay/#{case.id}" class="btn btn-lg btn-primary">
+                                Complete Payment
+                                <i class="fa fa-arrow-right ms-2" aria-hidden="true"></i>
+                            </a>
+                        </t>
+                        <!-- Other stages: Use static URL from stage config -->
+                        <t t-elif="case.stage_id.portal_action_url and case.stage_id.portal_action_text">
+                            <a t-attf-href="#{case.stage_id.portal_action_url}" 
+                               class="btn btn-lg btn-primary">
+                                <t t-esc="case.stage_id.portal_action_text"/>
+                                <i class="fa fa-arrow-right ms-2" aria-hidden="true"></i>
+                            </a>
+                        </t>
+                        <t t-if="case.stage_id.requires_signature">
+                            <span class="badge bg-warning text-dark ms-2">
+                                <i class="fa fa-pen me-1" aria-hidden="true"></i> Signature Required
+                            </span>
+                        </t>
+                        <t t-if="case.stage_id.requires_payment">
+                            <span class="badge bg-info text-white ms-2">
+                                <i class="fa fa-credit-card me-1" aria-hidden="true"></i> Payment Required
+                            </span>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

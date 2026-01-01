@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Client Profile View Extensions -->
+    <!-- ===================== -->
+
+    <!-- Extend the client profile form with questionnaire fields -->
+    <record id="view_client_profile_form_questionnaire" model="ir.ui.view">
+        <field name="name">mm.client.profile.form.questionnaire</field>
+        <field name="model">mm.client.profile</field>
+        <field name="inherit_id" ref="mm_immigration.view_client_profile_form"/>
+        <field name="arch" type="xml">
+            <!-- Add button box after title -->
+            <xpath expr="//div[@class='oe_title']" position="after">
+                <div name="button_box" class="oe_button_box">
+                    <button name="action_export_pdf" type="object" class="oe_stat_button" icon="fa-file-pdf-o">
+                        <span class="o_stat_text">Export PDF</span>
+                    </button>
+                    <button name="%(action_education_record)d" type="action" class="oe_stat_button" icon="fa-graduation-cap">
+                        <field name="education_count" widget="statinfo" string="Education"/>
+                    </button>
+                    <button name="%(action_work_experience)d" type="action" class="oe_stat_button" icon="fa-briefcase">
+                        <field name="experience_count" widget="statinfo" string="Experience"/>
+                    </button>
+                    <button name="%(action_language_proficiency)d" type="action" class="oe_stat_button" icon="fa-language">
+                        <field name="language_count" widget="statinfo" string="Languages"/>
+                    </button>
+                </div>
+            </xpath>
+
+            <!-- Add gender field after marital status -->
+            <xpath expr="//field[@name='marital_status']" position="after">
+                <field name="gender"/>
+            </xpath>
+
+            <!-- Add legal identity group before notebook -->
+            <xpath expr="//notebook" position="before">
+                <group string="Legal Identity" name="legal_identity">
+                    <group>
+                        <field name="legal_first_name"/>
+                        <field name="legal_middle_name"/>
+                        <field name="legal_last_name"/>
+                    </group>
+                    <group>
+                        <field name="passport_number"/>
+                        <field name="passport_country_id" options="{'no_create': True}"/>
+                        <field name="passport_expiry"/>
+                    </group>
+                </group>
+                <group string="Current Status" name="current_status">
+                    <group>
+                        <field name="current_legal_status"/>
+                        <field name="current_status_expiry" invisible="current_legal_status in ('citizen', False)"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <!-- Replace education page content -->
+            <xpath expr="//page[@name='education']" position="replace">
+                <page string="Education" name="education">
+                    <field name="education_ids" context="{'default_profile_id': id}">
+                        <list editable="bottom">
+                            <field name="institution_name"/>
+                            <field name="institution_country_id" options="{'no_create': True}"/>
+                            <field name="credential_type"/>
+                            <field name="field_of_study"/>
+                            <field name="end_date"/>
+                            <field name="eca_status"/>
+                            <field name="is_primary_credential" widget="boolean_toggle"/>
+                        </list>
+                    </field>
+                    <group>
+                        <group string="Legacy Fields">
+                            <field name="highest_education"/>
+                            <field name="education_country_id"/>
+                            <field name="eca_status"/>
+                            <field name="eca_reference"/>
+                        </group>
+                        <group string="Summary">
+                            <field name="primary_education_level" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- Replace work page content -->
+            <xpath expr="//page[@name='work']" position="replace">
+                <page string="Work Experience" name="work">
+                    <field name="experience_ids" context="{'default_profile_id': id}">
+                        <list>
+                            <field name="job_title"/>
+                            <field name="employer_name"/>
+                            <field name="employer_country_id" options="{'no_create': True}"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="is_current" widget="boolean_toggle"/>
+                            <field name="duration_years"/>
+                            <field name="noc_teer_category"/>
+                            <field name="qualifies_for_crs" widget="boolean_toggle"/>
+                        </list>
+                    </field>
+                    <group>
+                        <group string="Legacy Fields">
+                            <field name="current_occupation"/>
+                            <field name="work_experience_years"/>
+                            <field name="work_country_id"/>
+                        </group>
+                        <group string="Summary">
+                            <field name="total_skilled_experience_years" readonly="1"/>
+                            <field name="total_canadian_experience_months" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- Add spouse page after children -->
+            <xpath expr="//page[@name='children']" position="after">
+                <page string="Spouse/Partner" name="spouse" invisible="marital_status not in ('married', 'common_law')">
+                    <group>
+                        <group string="Spouse Details">
+                            <field name="spouse_first_name"/>
+                            <field name="spouse_last_name"/>
+                            <field name="spouse_date_of_birth"/>
+                            <field name="spouse_age" readonly="1"/>
+                            <field name="spouse_citizenship_country_id" options="{'no_create': True}"/>
+                            <field name="spouse_is_accompanying"/>
+                        </group>
+                        <group string="Spouse Qualifications">
+                            <field name="spouse_highest_education"/>
+                            <field name="spouse_has_eca"/>
+                            <field name="spouse_current_occupation"/>
+                            <field name="spouse_work_experience_years"/>
+                            <field name="spouse_has_canadian_experience"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Spouse Language">
+                            <field name="spouse_english_clb"/>
+                            <field name="spouse_french_clb"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- Add language proficiency page after spouse -->
+            <xpath expr="//page[@name='spouse']" position="after">
+                <page string="Language Proficiency" name="language">
+                    <field name="language_ids" context="{'default_profile_id': id}">
+                        <list>
+                            <field name="language"/>
+                            <field name="is_first_official" widget="boolean_toggle"/>
+                            <field name="test_type"/>
+                            <field name="test_date"/>
+                            <field name="clb_listening"/>
+                            <field name="clb_reading"/>
+                            <field name="clb_writing"/>
+                            <field name="clb_speaking"/>
+                            <field name="clb_minimum"/>
+                            <field name="is_valid" widget="boolean_toggle"/>
+                        </list>
+                    </field>
+                    <group>
+                        <group string="Summary">
+                            <field name="english_clb_minimum" readonly="1"/>
+                            <field name="french_clb_minimum" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- Add immigration intent page after language -->
+            <xpath expr="//page[@name='language']" position="after">
+                <page string="Immigration Intent" name="intent">
+                    <group>
+                        <group string="Goals">
+                            <field name="immigration_goal"/>
+                            <field name="target_year"/>
+                            <field name="open_to_rural"/>
+                        </group>
+                        <group string="Preferences">
+                            <field name="preferred_provinces" widget="many2many_tags" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+            <!-- Extend canada page with additional fields -->
+            <xpath expr="//page[@name='canada']//group/group" position="replace">
+                <group string="Family in Canada">
+                    <field name="has_family_in_canada"/>
+                    <field name="family_in_canada_relationship" invisible="not has_family_in_canada"/>
+                    <field name="family_member_province_id" invisible="not has_family_in_canada" options="{'no_create': True}"/>
+                    <field name="family_member_is_citizen_pr" invisible="not has_family_in_canada"/>
+                </group>
+                <group string="Canadian Experience">
+                    <field name="studied_in_canada"/>
+                    <field name="canada_study_duration_months" invisible="not studied_in_canada"/>
+                    <field name="worked_in_canada"/>
+                    <field name="canada_work_duration_months" invisible="not worked_in_canada"/>
+                </group>
+                <group string="Previous Applications">
+                    <field name="previous_visa_application"/>
+                    <field name="previous_visa_type" invisible="not previous_visa_application"/>
+                    <field name="previous_visa_result" invisible="not previous_visa_application"/>
+                </group>
+            </xpath>
+
+            <!-- Extend financial page -->
+            <xpath expr="//page[@name='financial']//group/group" position="replace">
+                <group string="Settlement Funds">
+                    <field name="settlement_funds"/>
+                    <field name="funds_source"/>
+                    <field name="funds_liquid"/>
+                    <field name="can_prove_funds"/>
+                </group>
+            </xpath>
+
+            <!-- Extend risk page -->
+            <xpath expr="//page[@name='risk']//group/group" position="replace">
+                <group string="Risk Factors">
+                    <field name="visa_refusal"/>
+                    <field name="visa_refusal_details" invisible="not visa_refusal"/>
+                    <field name="criminal_history"/>
+                    <field name="criminal_history_details" invisible="not criminal_history"/>
+                    <field name="medical_conditions"/>
+                    <field name="medical_condition_details" invisible="not medical_conditions"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

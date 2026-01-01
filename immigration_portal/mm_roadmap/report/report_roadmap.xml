@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo> 
+    <!-- Roadmap Report Action -->
+    <record id="action_report_roadmap" model="ir.actions.report">
+        <field name="name">Immigration Roadmap</field>
+        <field name="model">mm.roadmap.document</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mm_roadmap.report_roadmap_document</field>
+        <field name="report_file">mm_roadmap.report_roadmap_document</field>
+        <field name="print_report_name">'Immigration_Roadmap_%s_v%s' % (object.case_id.name, object.version)</field>
+        <field name="binding_model_id" ref="model_mm_roadmap_document"/>
+        <field name="binding_type">report</field>
+    </record>
+    
+    <!-- Roadmap Report Template -->
+    <template id="report_roadmap_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="mm_roadmap.report_roadmap_document_content"/>
+            </t>
+        </t>
+    </template>
+    
+    <!-- Roadmap Document Content -->
+    <template id="report_roadmap_document_content">
+        <t t-call="web.basic_layout">
+            <t t-set="doc" t-value="doc"/>
+            
+            <!-- Custom Styles -->
+            <style>
+                @page {
+                    size: letter;
+                    margin: 1in;
+                }
+                
+                .roadmap-header {
+                    background: linear-gradient(135deg, #E8967A 0%, #D4826F 100%);
+                    color: white;
+                    padding: 30px;
+                    margin: -1in -1in 30px -1in;
+                    text-align: center;
+                }
+                
+                .roadmap-header h1 {
+                    font-size: 28px;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+                
+                .roadmap-header .subtitle {
+                    font-size: 16px;
+                    opacity: 0.9;
+                }
+                
+                .section-title {
+                    color: #E8967A;
+                    border-bottom: 2px solid #E8967A;
+                    padding-bottom: 5px;
+                    margin-top: 30px;
+                    margin-bottom: 15px;
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+                
+                .info-box {
+                    background: #f8f9fa;
+                    border-left: 4px solid #E8967A;
+                    padding: 15px;
+                    margin: 15px 0;
+                }
+                
+                .score-highlight {
+                    font-size: 36px;
+                    font-weight: bold;
+                    color: #E8967A;
+                }
+                
+                .badge-fit-excellent { background: #28a745; color: white; padding: 3px 8px; border-radius: 3px; }
+                .badge-fit-good { background: #5cb85c; color: white; padding: 3px 8px; border-radius: 3px; }
+                .badge-fit-moderate { background: #ffc107; color: black; padding: 3px 8px; border-radius: 3px; }
+                .badge-fit-limited { background: #dc3545; color: white; padding: 3px 8px; border-radius: 3px; }
+                
+                .timeline-item {
+                    border-left: 3px solid #E8967A;
+                    padding-left: 20px;
+                    margin-left: 10px;
+                    padding-bottom: 15px;
+                }
+                
+                .timeline-marker {
+                    width: 12px;
+                    height: 12px;
+                    background: #E8967A;
+                    border-radius: 50%;
+                    position: absolute;
+                    left: -7px;
+                }
+                
+                .page-footer {
+                    position: fixed;
+                    bottom: 0;
+                    width: 100%;
+                    text-align: center;
+                    font-size: 10px;
+                    color: #666;
+                    padding: 10px 0;
+                    border-top: 1px solid #ddd;
+                }
+                
+                table.data-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 15px 0;
+                }
+                
+                table.data-table th {
+                    background: #E8967A;
+                    color: white;
+                    padding: 8px;
+                    text-align: left;
+                }
+                
+                table.data-table td {
+                    padding: 8px;
+                    border-bottom: 1px solid #ddd;
+                }
+                
+                table.data-table tr:nth-child(even) {
+                    background: #f8f9fa;
+                }
+            </style>
+            
+            <!-- Cover Page / Header -->
+            <div class="roadmap-header">
+                <t t-if="doc.company_logo">
+                    <img t-att-src="image_data_uri(doc.company_logo)" style="max-height: 60px; margin-bottom: 15px;"/>
+                </t>
+                <h1>Immigration Roadmap</h1>
+                <div class="subtitle">
+                    Prepared for <t t-esc="doc.client_full_name"/>
+                </div>
+                <div class="subtitle" style="margin-top: 5px;">
+                    <t t-esc="doc.document_date"/>
+                </div>
+            </div>
+            
+            <!-- Client Information -->
+            <div class="info-box">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%;">
+                            <strong>Case Reference:</strong> <t t-esc="doc.case_id.name"/>
+                        </td>
+                        <td>
+                            <strong>Version:</strong> <t t-esc="doc.version"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Citizenship:</strong> <t t-esc="doc.client_citizenship"/>
+                        </td>
+                        <td>
+                            <strong>Prepared By:</strong> <t t-esc="doc.consultant_id.name"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- Executive Summary -->
+            <h2 class="section-title">Executive Summary</h2>
+            <div t-raw="doc.executive_summary or 'No executive summary provided.'"/>
+            
+            <!-- Profile Overview -->
+            <h2 class="section-title">Profile Overview</h2>
+            <table class="data-table">
+                <tr>
+                    <th colspan="2">Personal Information</th>
+                    <th colspan="2">Qualifications</th>
+                </tr>
+                <tr>
+                    <td><strong>Age</strong></td>
+                    <td><t t-esc="doc.profile_age"/> years</td>
+                    <td><strong>Education</strong></td>
+                    <td><t t-esc="dict(doc._fields['profile_education'].related_field.selection).get(doc.profile_education, 'N/A')"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Marital Status</strong></td>
+                    <td><t t-esc="dict(doc._fields['profile_marital_status'].related_field.selection).get(doc.profile_marital_status, 'N/A')"/></td>
+                    <td><strong>English CLB</strong></td>
+                    <td><t t-esc="doc.profile_english_clb or 'N/A'"/></td>
+                </tr>
+                <tr>
+                    <td><strong>Dependents</strong></td>
+                    <td><t t-esc="doc.profile_children_count"/></td>
+                    <td><strong>French CLB</strong></td>
+                    <td><t t-esc="doc.profile_french_clb or 'N/A'"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td><strong>Work Experience</strong></td>
+                    <td><t t-esc="doc.profile_experience_years"/> years</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td><strong>Canadian Experience</strong></td>
+                    <td><t t-esc="doc.profile_canadian_exp_months"/> months</td>
+                </tr>
+            </table>
+            
+            <!-- CRS Assessment -->
+            <h2 class="section-title">CRS &amp; FSW Assessment</h2>
+            <div style="display: flex; justify-content: space-around; margin: 20px 0;">
+                <div style="text-align: center;">
+                    <div class="score-highlight"><t t-esc="doc.crs_total_score"/></div>
+                    <div style="font-size: 14px; color: #666;">CRS Score</div>
+                    <div style="font-size: 12px;">
+                        <t t-esc="dict(doc._fields['crs_tier'].related_field.selection).get(doc.crs_tier, '')"/>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="score-highlight"><t t-esc="doc.fsw_total_points"/>/100</div>
+                    <div style="font-size: 14px; color: #666;">FSW Points</div>
+                    <div style="font-size: 12px;">
+                        <t t-if="doc.fsw_eligible">✓ Eligible</t>
+                        <t t-else="">✗ Not Eligible</t>
+                    </div>
+                </div>
+            </div>
+            
+            <t t-if="doc.fsw_analysis">
+                <h3 style="font-size: 14px; font-weight: bold; margin-top: 20px;">FSW Analysis</h3>
+                <div t-raw="doc.fsw_analysis"/>
+            </t>
+            
+            <t t-if="doc.crs_simulation_notes">
+                <h3 style="font-size: 14px; font-weight: bold; margin-top: 20px;">Score Improvement Analysis</h3>
+                <div t-raw="doc.crs_simulation_notes"/>
+            </t>
+            
+            <!-- PNP Opportunities -->
+            <t t-if="doc.pnp_opportunity_ids">
+                <div style="page-break-before: always;"/>
+                <h2 class="section-title">PNP Opportunities</h2>
+                
+                <t t-if="doc.pnp_analysis">
+                    <div t-raw="doc.pnp_analysis"/>
+                </t>
+                
+                <table class="data-table">
+                    <tr>
+                        <th>Province</th>
+                        <th>Program</th>
+                        <th>Stream</th>
+                        <th>Fit Rating</th>
+                        <th>Processing</th>
+                    </tr>
+                    <t t-foreach="doc.pnp_opportunity_ids" t-as="pnp">
+                        <tr>
+                            <td><t t-esc="pnp.province_id.name"/></td>
+                            <td><t t-esc="pnp.program_name"/></td>
+                            <td><t t-esc="dict(pnp._fields['program_stream'].selection).get(pnp.program_stream, '')"/></td>
+                            <td>
+                                <span t-attf-class="#{int(pnp.fit_rating) >= 4 and 'badge-fit-excellent' or int(pnp.fit_rating) == 3 and 'badge-fit-moderate' or 'badge-fit-limited'}">
+                                    <t t-esc="pnp.fit_rating_display"/>
+                                </span>
+                            </td>
+                            <td>
+                                <t t-if="pnp.estimated_processing_months">
+                                    ~<t t-esc="pnp.estimated_processing_months"/> mo.
+                                </t>
+                            </td>
+                        </tr>
+                    </t>
+                </table>
+            </t>
+            
+            <!-- Recommended Strategy -->
+            <h2 class="section-title">Recommended Strategy</h2>
+            
+            <div class="info-box">
+                <h3 style="color: #E8967A; margin-top: 0;">Primary Strategy</h3>
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">
+                    <t t-esc="dict(doc._fields['primary_strategy'].selection).get(doc.primary_strategy, 'Not specified')"/>
+                </div>
+                <div t-raw="doc.primary_strategy_rationale"/>
+            </div>
+            
+            <t t-if="doc.backup_strategy and doc.backup_strategy != 'none'">
+                <div class="info-box" style="border-left-color: #6c757d;">
+                    <h3 style="color: #6c757d; margin-top: 0;">Backup Strategy</h3>
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">
+                        <t t-esc="dict(doc._fields['backup_strategy'].selection).get(doc.backup_strategy, '')"/>
+                    </div>
+                    <div t-raw="doc.backup_strategy_rationale"/>
+                </div>
+            </t>
+            
+            <!-- Timeline -->
+            <t t-if="doc.milestone_ids">
+                <div style="page-break-before: always;"/>
+                <h2 class="section-title">Timeline</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <strong>Start Date:</strong> <t t-esc="doc.timeline_start_date"/>
+                    <t t-if="doc.estimated_pr_date">
+                        <span style="margin-left: 30px;">
+                            <strong>Estimated PR Date:</strong> 
+                            <span style="color: #28a745; font-weight: bold;">
+                                <t t-esc="doc.estimated_pr_date"/>
+                            </span>
+                        </span>
+                    </t>
+                </div>
+                
+                <table class="data-table">
+                    <tr>
+                        <th style="width: 80px;">Week</th>
+                        <th>Milestone</th>
+                        <th style="width: 120px;">Target Date</th>
+                        <th>Description</th>
+                    </tr>
+                    <t t-foreach="doc.milestone_ids" t-as="milestone">
+                        <tr t-att-style="milestone.is_critical and 'background: #fff3cd;' or ''">
+                            <td style="text-align: center;">
+                                <t t-esc="milestone.weeks_from_start"/>
+                                <t t-if="milestone.is_critical">
+                                    <span style="color: #dc3545;"> ⚠</span>
+                                </t>
+                            </td>
+                            <td><strong><t t-esc="milestone.name"/></strong></td>
+                            <td><t t-esc="milestone.target_date"/></td>
+                            <td><t t-esc="milestone.description"/></td>
+                        </tr>
+                    </t>
+                </table>
+                
+                <t t-if="doc.timeline_notes">
+                    <div style="margin-top: 15px;" t-raw="doc.timeline_notes"/>
+                </t>
+            </t>
+            
+            <!-- Next Steps -->
+            <h2 class="section-title">Next Steps</h2>
+            <div t-raw="doc.next_steps or 'No next steps specified.'"/>
+            
+            <t t-if="doc.eca_guidance">
+                <h3 style="font-size: 14px; font-weight: bold; margin-top: 20px;">ECA Guidance</h3>
+                <div t-raw="doc.eca_guidance"/>
+            </t>
+            
+            <t t-if="doc.language_guidance">
+                <h3 style="font-size: 14px; font-weight: bold; margin-top: 20px;">Language Test Guidance</h3>
+                <div t-raw="doc.language_guidance"/>
+            </t>
+            
+            <!-- Appendices -->
+            <t t-if="doc.appendix_notes">
+                <div style="page-break-before: always;"/>
+                <h2 class="section-title">Appendices</h2>
+                <div t-raw="doc.appendix_notes"/>
+            </t>
+            
+            <!-- Footer -->
+            <div class="page-footer">
+                <div>The Migration Monitor | Immigration Consulting Services</div>
+                <div>This document is confidential and prepared exclusively for <t t-esc="doc.client_full_name"/></div>
+            </div>
+            
+        </t>
+    </template>
+    
+
+</odoo>

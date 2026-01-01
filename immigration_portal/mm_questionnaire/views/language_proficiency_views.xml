@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Language Proficiency Views -->
+    <!-- ===================== -->
+
+    <!-- List View -->
+    <record id="view_language_proficiency_list" model="ir.ui.view">
+        <field name="name">mm.language.proficiency.list</field>
+        <field name="model">mm.language.proficiency</field>
+        <field name="arch" type="xml">
+            <list string="Language Proficiency">
+                <field name="profile_id" column_invisible="True"/>
+                <field name="language"/>
+                <field name="is_first_official" widget="boolean_toggle"/>
+                <field name="test_type"/>
+                <field name="test_date"/>
+                <field name="clb_listening"/>
+                <field name="clb_reading"/>
+                <field name="clb_writing"/>
+                <field name="clb_speaking"/>
+                <field name="clb_minimum" decoration-success="clb_minimum &gt;= 7" decoration-warning="clb_minimum &gt;= 5 and clb_minimum &lt; 7" decoration-danger="clb_minimum &lt; 5"/>
+                <field name="is_valid" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_language_proficiency_form" model="ir.ui.view">
+        <field name="name">mm.language.proficiency.form</field>
+        <field name="model">mm.language.proficiency</field>
+        <field name="arch" type="xml">
+            <form string="Language Proficiency">
+                <sheet>
+                    <widget name="web_ribbon" title="First Official Language" bg_color="text-bg-primary" invisible="not is_first_official"/>
+                    <widget name="web_ribbon" title="Expired" bg_color="text-bg-danger" invisible="is_valid or not test_date"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" placeholder="Language Test"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Language">
+                            <field name="language" widget="radio" options="{'horizontal': True}"/>
+                            <field name="is_first_official"/>
+                        </group>
+                        <group string="Test Information">
+                            <field name="test_type"/>
+                            <field name="test_date"/>
+                            <field name="test_expires" readonly="1"/>
+                            <field name="is_valid" readonly="1"/>
+                            <field name="test_report_number" placeholder="TRF Number"/>
+                        </group>
+                    </group>
+
+                    <!-- IELTS Scores -->
+                    <group string="IELTS Scores (0.0 - 9.0)" invisible="test_type != 'ielts_general'">
+                        <group>
+                            <field name="ielts_listening"/>
+                            <field name="ielts_reading"/>
+                        </group>
+                        <group>
+                            <field name="ielts_writing"/>
+                            <field name="ielts_speaking"/>
+                        </group>
+                    </group>
+
+                    <!-- CELPIP Scores -->
+                    <group string="CELPIP Scores (1 - 12)" invisible="test_type != 'celpip_general'">
+                        <group>
+                            <field name="celpip_listening"/>
+                            <field name="celpip_reading"/>
+                        </group>
+                        <group>
+                            <field name="celpip_writing"/>
+                            <field name="celpip_speaking"/>
+                        </group>
+                    </group>
+
+                    <!-- TEF Scores -->
+                    <group string="TEF Canada Scores" invisible="test_type != 'tef_canada'">
+                        <group>
+                            <field name="tef_listening" help="0-360"/>
+                            <field name="tef_reading" help="0-300"/>
+                        </group>
+                        <group>
+                            <field name="tef_writing" help="0-450"/>
+                            <field name="tef_speaking" help="0-450"/>
+                        </group>
+                    </group>
+
+                    <!-- TCF Scores -->
+                    <group string="TCF Canada Scores" invisible="test_type != 'tcf_canada'">
+                        <group>
+                            <field name="tcf_listening" help="0-699"/>
+                            <field name="tcf_reading" help="0-699"/>
+                        </group>
+                        <group>
+                            <field name="tcf_writing" help="0-20"/>
+                            <field name="tcf_speaking" help="0-20"/>
+                        </group>
+                    </group>
+
+                    <!-- CLB Equivalents -->
+                    <group string="CLB Equivalents" invisible="test_type == 'none'">
+                        <group>
+                            <field name="clb_listening" readonly="1"/>
+                            <field name="clb_reading" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="clb_writing" readonly="1"/>
+                            <field name="clb_speaking" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="clb_average" readonly="1"/>
+                            <field name="clb_minimum" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Linked To" groups="mm_immigration.group_immigration_consultant">
+                        <field name="profile_id"/>
+                        <field name="partner_id"/>
+                    </group>
+
+                    <group string="Notes">
+                        <field name="notes" nolabel="1" placeholder="Additional notes about this language test..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_language_proficiency_search" model="ir.ui.view">
+        <field name="name">mm.language.proficiency.search</field>
+        <field name="model">mm.language.proficiency</field>
+        <field name="arch" type="xml">
+            <search string="Language Proficiency">
+                <field name="profile_id"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter name="filter_english" string="English" domain="[('language', '=', 'english')]"/>
+                <filter name="filter_french" string="French" domain="[('language', '=', 'french')]"/>
+                <separator/>
+                <filter name="filter_first_official" string="First Official Language" domain="[('is_first_official', '=', True)]"/>
+                <filter name="filter_valid" string="Valid Tests" domain="[('is_valid', '=', True)]"/>
+                <filter name="filter_expired" string="Expired Tests" domain="[('is_valid', '=', False), ('test_date', '!=', False)]"/>
+                <separator/>
+                <filter name="filter_clb_9_plus" string="CLB 9+" domain="[('clb_minimum', '&gt;=', 9)]"/>
+                <filter name="filter_clb_7_plus" string="CLB 7+" domain="[('clb_minimum', '&gt;=', 7)]"/>
+                <filter name="filter_clb_below_7" string="CLB Below 7" domain="[('clb_minimum', '&lt;', 7), ('clb_minimum', '&gt;', 0)]"/>
+                <separator/>
+                <filter name="group_language" string="Language" context="{'group_by': 'language'}"/>
+                <filter name="group_test" string="Test Type" context="{'group_by': 'test_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_language_proficiency" model="ir.actions.act_window">
+        <field name="name">Language Proficiency</field>
+        <field name="res_model">mm.language.proficiency</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_language_proficiency_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No language proficiency records yet
+            </p>
+            <p>
+                Language records are created when clients complete the detailed assessment questionnaire.
+            </p>
+        </field>
+    </record>
+
+</odoo>

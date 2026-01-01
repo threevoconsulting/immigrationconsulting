@@ -1,0 +1,594 @@
+// ============================================================================
+// The Migration Monitor - Questionnaire Styles
+// ============================================================================
+// Stylesheet for the Questionnaire Module (mm_questionnaire)
+//
+// IMPORTANT - Odoo 19 Compliance:
+// - No @import statements (forbidden in Odoo 19)
+// - Variables are loaded via mm_portal/_variables.scss (dependency loads first)
+// - All custom classes use .mm- prefix
+// - BEM naming convention: .mm-block__element--modifier
+// ============================================================================
+
+// ============================================================================
+// QUESTIONNAIRE CONTAINER
+// ============================================================================
+
+.mm-questionnaire-container {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.mm-questionnaire-header {
+    border-bottom: 2px solid $mm-border-color;
+    padding-bottom: $mm-spacing-4;
+    margin-bottom: $mm-spacing-5;
+    
+    h2 {
+        color: $mm-secondary;
+        font-weight: $mm-font-weight-bold;
+        margin-bottom: $mm-spacing-2;
+    }
+    
+    .text-muted {
+        color: $mm-text-muted;
+        
+        strong {
+            color: $mm-text-primary;
+        }
+    }
+    
+    // Status badges in header
+    .badge {
+        font-size: $mm-font-size-sm;
+        padding: $mm-spacing-2 $mm-spacing-3;
+        
+        &.bg-secondary {
+            background-color: $mm-gray-500 !important;
+        }
+        
+        &.bg-warning {
+            background-color: $mm-warning !important;
+            color: $mm-white;
+        }
+        
+        &.bg-success {
+            background-color: $mm-success !important;
+        }
+    }
+}
+
+// ============================================================================
+// PROGRESS BAR & STEPS
+// ============================================================================
+
+.mm-progress-container {
+    background: $mm-light;
+    padding: $mm-spacing-5;
+    border-radius: $mm-radius-xl;
+    margin-bottom: $mm-spacing-5;
+    
+    // Main progress bar
+    .progress {
+        height: 8px;
+        border-radius: $mm-radius-full;
+        background-color: $mm-gray-200;
+        overflow: hidden;
+        
+        .progress-bar {
+            background-color: $mm-primary;
+            border-radius: $mm-radius-full;
+            transition: width $mm-transition-slow;
+        }
+    }
+}
+
+.mm-progress-steps {
+    margin-top: $mm-spacing-4;
+}
+
+.mm-step {
+    position: relative;
+    text-align: center;
+    
+    &__number {
+        width: 36px;
+        height: 36px;
+        border-radius: $mm-radius-full;
+        background: $mm-gray-200;
+        color: $mm-gray-500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto $mm-spacing-2;
+        font-weight: $mm-font-weight-semibold;
+        font-size: $mm-font-size-sm;
+        transition: all $mm-transition-base;
+        border: 2px solid transparent;
+    }
+    
+    &__label {
+        color: $mm-text-muted;
+        font-size: $mm-font-size-xs;
+        line-height: $mm-line-height-tight;
+        font-weight: $mm-font-weight-normal;
+    }
+    
+    // Active step state
+    &--active {
+        .mm-step__number {
+            background: $mm-primary;
+            color: $mm-white;
+            border-color: $mm-primary;
+            box-shadow: 0 0 0 4px rgba($mm-primary, 0.2);
+        }
+        
+        .mm-step__label {
+            color: $mm-primary;
+            font-weight: $mm-font-weight-semibold;
+        }
+    }
+    
+    // Completed step state
+    &--complete {
+        .mm-step__number {
+            background: $mm-success;
+            color: $mm-white;
+            border-color: $mm-success;
+        }
+        
+        .mm-step__label {
+            color: $mm-success;
+            font-weight: $mm-font-weight-medium;
+        }
+    }
+}
+
+// Connecting lines between steps
+.mm-progress-steps .row > .col {
+    position: relative;
+    
+    &:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 18px;
+        left: calc(50% + 22px);
+        width: calc(100% - 44px);
+        height: 2px;
+        background: $mm-gray-200;
+        z-index: 0;
+    }
+    
+    &.mm-step--complete:not(:last-child)::after {
+        background: $mm-success;
+    }
+}
+
+// ============================================================================
+// FORM STYLING
+// ============================================================================
+
+.mm-questionnaire-form {
+    .form-label {
+        font-weight: $mm-font-weight-medium;
+        color: $mm-text-primary;
+        margin-bottom: $mm-spacing-2;
+    }
+    
+    .form-control,
+    .form-select {
+        border-radius: $mm-input-border-radius;
+        border-color: $mm-input-border-color;
+        padding: $mm-input-padding-y $mm-input-padding-x;
+        font-size: $mm-font-size-base;
+        transition: border-color $mm-transition-fast, box-shadow $mm-transition-fast;
+        
+        &:focus {
+            border-color: $mm-primary;
+            box-shadow: $mm-focus-ring;
+        }
+        
+        &::placeholder {
+            color: $mm-gray-400;
+        }
+    }
+    
+    .form-text {
+        font-size: $mm-font-size-sm;
+        color: $mm-text-muted;
+        margin-top: $mm-spacing-1;
+    }
+    
+    .form-check {
+        padding-left: 1.75em;
+        
+        .form-check-input {
+            width: 1.125em;
+            height: 1.125em;
+            margin-top: 0.125em;
+            border-color: $mm-gray-400;
+            
+            &:checked {
+                background-color: $mm-primary;
+                border-color: $mm-primary;
+            }
+            
+            &:focus {
+                border-color: $mm-primary;
+                box-shadow: $mm-focus-ring;
+            }
+        }
+        
+        .form-check-label {
+            color: $mm-text-primary;
+        }
+    }
+    
+    // Required field indicator
+    .text-danger {
+        color: $mm-danger !important;
+        font-weight: $mm-font-weight-normal;
+    }
+}
+
+// ============================================================================
+// SECTION NAVIGATION
+// ============================================================================
+
+.mm-section-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: $mm-spacing-6;
+    padding-top: $mm-spacing-5;
+    border-top: 1px solid $mm-border-color;
+    
+    .btn {
+        min-width: 120px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: $mm-spacing-2;
+    }
+}
+
+.mm-save-status {
+    min-width: 100px;
+    text-align: center;
+    font-size: $mm-font-size-sm;
+    color: $mm-text-muted;
+}
+
+.mm-save-indicator,
+.mm-saved-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: $mm-spacing-1;
+    
+    i {
+        font-size: $mm-font-size-sm;
+    }
+}
+
+.mm-saved-indicator {
+    color: $mm-success;
+}
+
+// ============================================================================
+// REPEATER SECTIONS (Education, Work Experience, etc.)
+// ============================================================================
+
+.mm-repeater-section {
+    margin-top: $mm-spacing-4;
+}
+
+.mm-repeater-item {
+    border: 1px solid $mm-border-color;
+    border-radius: $mm-radius-lg;
+    margin-bottom: $mm-spacing-4;
+    transition: border-color $mm-transition-base, box-shadow $mm-transition-base;
+    
+    &:hover {
+        border-color: $mm-primary-light;
+        box-shadow: 0 2px 8px rgba($mm-primary, 0.1);
+    }
+    
+    .card-header {
+        background: $mm-light;
+        border-bottom: 1px solid $mm-border-color;
+        padding: $mm-spacing-3 $mm-spacing-4;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        h6 {
+            color: $mm-secondary;
+            font-weight: $mm-font-weight-semibold;
+            margin: 0;
+        }
+        
+        .btn-link {
+            color: $mm-danger;
+            padding: 0;
+            
+            &:hover {
+                color: $mm-danger-dark;
+            }
+        }
+    }
+    
+    .card-body {
+        padding: $mm-spacing-4;
+    }
+}
+
+// Add new item button
+.mm-add-item-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $mm-spacing-2;
+    width: 100%;
+    padding: $mm-spacing-3;
+    border: 2px dashed $mm-border-color;
+    border-radius: $mm-radius-lg;
+    background: $mm-light;
+    color: $mm-text-muted;
+    transition: all $mm-transition-base;
+    
+    &:hover {
+        border-color: $mm-primary;
+        color: $mm-primary;
+        background: rgba($mm-primary, 0.05);
+    }
+}
+
+// ============================================================================
+// QUESTIONNAIRE CONTENT CARDS
+// ============================================================================
+
+.mm-questionnaire-content {
+    .card {
+        border: none;
+        box-shadow: $mm-shadow-lg;
+        border-radius: $mm-card-border-radius;
+        overflow: hidden;
+        margin-bottom: $mm-spacing-5;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, $mm-light 0%, $mm-gray-100 100%);
+        border-bottom: 1px solid $mm-border-color;
+        padding: $mm-spacing-4 $mm-spacing-5;
+        
+        h4 {
+            color: $mm-secondary;
+            font-weight: $mm-font-weight-semibold;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: $mm-spacing-3;
+        }
+        
+        i {
+            color: $mm-primary;
+            font-size: $mm-font-size-xl;
+        }
+    }
+    
+    .card-body {
+        padding: $mm-spacing-5;
+    }
+}
+
+// ============================================================================
+// ALERTS WITHIN QUESTIONNAIRE
+// ============================================================================
+
+.mm-questionnaire-content {
+    .alert-info {
+        background-color: $mm-info-bg;
+        border: 1px solid $mm-info-light;
+        border-radius: $mm-radius-lg;
+        color: $mm-info-dark;
+        
+        i {
+            color: $mm-info;
+        }
+    }
+    
+    .alert-warning {
+        background-color: $mm-warning-bg;
+        border: 1px solid $mm-warning-light;
+        color: $mm-warning-dark;
+        
+        i {
+            color: $mm-warning;
+        }
+    }
+    
+    .alert-success {
+        background-color: $mm-success-bg;
+        border: 1px solid $mm-success-light;
+        color: $mm-success-dark;
+        
+        i {
+            color: $mm-success;
+        }
+    }
+}
+
+// ============================================================================
+// BADGES IN QUESTIONNAIRE
+// ============================================================================
+
+.mm-questionnaire-container {
+    .badge {
+        font-weight: $mm-font-weight-medium;
+        padding: $mm-badge-padding-y $mm-badge-padding-x;
+        border-radius: $mm-badge-border-radius;
+    }
+}
+
+// ============================================================================
+// REVIEW PAGE
+// ============================================================================
+
+.mm-questionnaire-review {
+    .progress {
+        height: 24px;
+        border-radius: $mm-radius-lg;
+        background-color: $mm-gray-200;
+        
+        .progress-bar {
+            font-weight: $mm-font-weight-semibold;
+            font-size: $mm-font-size-sm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+    
+    // Section completion summary
+    .mm-review-section {
+        padding: $mm-spacing-4;
+        border: 1px solid $mm-border-color;
+        border-radius: $mm-radius-lg;
+        margin-bottom: $mm-spacing-3;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        &--complete {
+            border-color: $mm-success-light;
+            background-color: $mm-success-bg;
+        }
+        
+        &--incomplete {
+            border-color: $mm-warning-light;
+            background-color: $mm-warning-bg;
+        }
+        
+        .mm-review-section__name {
+            font-weight: $mm-font-weight-medium;
+            color: $mm-text-primary;
+        }
+        
+        .mm-review-section__status {
+            display: flex;
+            align-items: center;
+            gap: $mm-spacing-2;
+            font-size: $mm-font-size-sm;
+        }
+    }
+}
+
+// ============================================================================
+// RESPONSIVE ADJUSTMENTS
+// ============================================================================
+
+@media (max-width: $mm-breakpoint-md - 1px) {
+    .mm-progress-container {
+        padding: $mm-spacing-4;
+    }
+    
+    .mm-step__number {
+        width: 28px;
+        height: 28px;
+        font-size: $mm-font-size-xs;
+    }
+    
+    .mm-progress-steps .row > .col:not(:last-child)::after {
+        display: none;
+    }
+    
+    .mm-section-nav {
+        flex-direction: column;
+        gap: $mm-spacing-4;
+        
+        .btn {
+            width: 100%;
+        }
+        
+        .mm-save-status {
+            order: -1;
+        }
+    }
+    
+    .mm-questionnaire-content {
+        .card-header {
+            padding: $mm-spacing-4;
+            
+            h4 {
+                font-size: $mm-font-size-lg;
+            }
+        }
+        
+        .card-body {
+            padding: $mm-spacing-4;
+        }
+    }
+    
+    .mm-repeater-item {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: $mm-spacing-2;
+        }
+    }
+}
+
+// ============================================================================
+// PRINT STYLES
+// ============================================================================
+
+@media print {
+    .mm-progress-container,
+    .mm-section-nav,
+    .mm-save-status,
+    .mm-add-item-btn {
+        display: none !important;
+    }
+    
+    .mm-questionnaire-content .card {
+        box-shadow: none;
+        border: 1px solid $mm-gray-300;
+    }
+    
+    .mm-repeater-item {
+        break-inside: avoid;
+    }
+}
+
+// ============================================================================
+// ACCESSIBILITY ENHANCEMENTS
+// ============================================================================
+
+.mm-questionnaire-form {
+    // Required field announcement for screen readers
+    .form-label[data-required="true"]::after {
+        content: " (required)";
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+    }
+    
+    // Error states
+    .is-invalid {
+        border-color: $mm-danger;
+        
+        &:focus {
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
+        }
+    }
+    
+    .invalid-feedback {
+        color: $mm-danger;
+        font-size: $mm-font-size-sm;
+    }
+}

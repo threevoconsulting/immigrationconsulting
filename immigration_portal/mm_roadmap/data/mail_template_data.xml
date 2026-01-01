@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Email Template: Roadmap Delivered -->
+        <record id="mail_template_roadmap_delivered" model="mail.template">
+            <field name="name">Immigration Roadmap: Document Ready</field>
+            <field name="model_id" ref="model_mm_roadmap_document"/>
+            <field name="email_from">{{ (object.case_id.company_id.email or object.case_id.consultant_id.email or 'noreply@example.com') }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="subject">Your Immigration Roadmap is Ready - {{ object.case_id.name }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" style="padding-top: 16px; background-color: #F8F8F8; width: 100%;">
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="590" style="background-color: white; padding: 20px;">
+                    <tr>
+                        <td>
+                            <h2 style="color: #E8967A; margin-bottom: 20px;">Your Immigration Roadmap is Ready!</h2>
+                            
+                            <p>Dear <t t-out="object.partner_id.name or 'Valued Client'"/>,</p>
+                            
+                            <p>Great news! Your personalized Immigration Roadmap has been prepared and is ready for your review.</p>
+                            
+                            <p>Your roadmap includes:</p>
+                            <ul>
+                                <li>Comprehensive analysis of your immigration profile</li>
+                                <li>CRS score breakdown and FSW assessment</li>
+                                <li>Provincial Nominee Program opportunities</li>
+                                <li>Recommended immigration strategy</li>
+                                <li>Detailed timeline with milestones</li>
+                                <li>Next steps and action items</li>
+                            </ul>
+                            
+                            <p style="margin: 20px 0;">
+                                <a href="/my/immigration/roadmap" 
+                                   style="background-color: #E8967A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                                    View Your Roadmap
+                                </a>
+                            </p>
+                            
+                            <p>Please review the document carefully and sign the acknowledgment to proceed to the consultation phase.</p>
+                            
+                            <p>If you have any questions about your roadmap, please don't hesitate to reach out to your consultant.</p>
+                            
+                            <p>Best regards,<br/>
+                            <t t-out="object.consultant_id.name or 'Your Immigration Consultant'"/><br/>
+                            The Migration Monitor</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+            </field>
+        </record>
+        
+        <!-- Email Template: Roadmap Acknowledged -->
+        <record id="mail_template_roadmap_acknowledged" model="mail.template">
+            <field name="name">Immigration Roadmap: Acknowledgment Received</field>
+            <field name="model_id" ref="model_mm_roadmap_document"/>
+            <field name="email_from">{{ (object.case_id.company_id.email or 'noreply@example.com') }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="subject">Roadmap Acknowledged - Ready for Consultation - {{ object.case_id.name }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" style="padding-top: 16px; background-color: #F8F8F8; width: 100%;">
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="590" style="background-color: white; padding: 20px;">
+                    <tr>
+                        <td>
+                            <h2 style="color: #E8967A; margin-bottom: 20px;">Thank You for Acknowledging Your Roadmap</h2>
+                            
+                            <p>Dear <t t-out="object.partner_id.name or 'Valued Client'"/>,</p>
+                            
+                            <p>We've received your acknowledgment of the Immigration Roadmap. You're now ready to proceed to the consultation phase!</p>
+                            
+                            <p><strong>Next Steps:</strong></p>
+                            <ol>
+                                <li>Book your consultation call with your RCIC consultant</li>
+                                <li>Prepare any questions you have about the roadmap</li>
+                                <li>Start working on the immediate action items listed in your roadmap</li>
+                            </ol>
+                            
+                            <p style="margin: 20px 0;">
+                                <a href="/my/immigration/book" 
+                                   style="background-color: #E8967A; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                                    Book Consultation
+                                </a>
+                            </p>
+                            
+                            <p>We look forward to speaking with you soon!</p>
+                            
+                            <p>Best regards,<br/>
+                            The Migration Monitor Team</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===================================================================== -->
+    <!-- BACKEND VIEWS FOR CONTACT INQUIRIES                                   -->
+    <!-- ===================================================================== -->
+    
+    <!-- Contact Inquiry List View -->
+    <record id="view_contact_inquiry_list" model="ir.ui.view">
+        <field name="name">mm.contact.inquiry.list</field>
+        <field name="model">mm.contact.inquiry</field>
+        <field name="arch" type="xml">
+            <list string="Contact Inquiries" default_order="create_date desc">
+                <field name="create_date" string="Date"/>
+                <field name="display_name" string="Name"/>
+                <field name="email"/>
+                <field name="country_id" optional="show"/>
+                <field name="service_interest" optional="show"/>
+                <field name="state" widget="badge" 
+                       decoration-info="state == 'new'"
+                       decoration-warning="state == 'contacted'"
+                       decoration-success="state in ('invited', 'converted')"
+                       decoration-muted="state == 'closed'"/>
+                <field name="partner_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Contact Inquiry Form View -->
+    <record id="view_contact_inquiry_form" model="ir.ui.view">
+        <field name="name">mm.contact.inquiry.form</field>
+        <field name="model">mm.contact.inquiry</field>
+        <field name="arch" type="xml">
+            <form string="Contact Inquiry">
+                <header>
+                    <button name="action_mark_contacted" 
+                            type="object" 
+                            string="Mark Contacted"
+                            class="btn-secondary"
+                            invisible="state != 'new'"/>
+                    <button name="action_create_contact" 
+                            type="object" 
+                            string="Create Contact"
+                            class="btn-secondary"
+                            invisible="partner_id"/>
+                    <button name="action_send_portal_invite" 
+                            type="object" 
+                            string="Send Portal Invite"
+                            class="btn-primary"
+                            invisible="state in ('invited', 'converted', 'closed')"/>
+                    <button name="action_close" 
+                            type="object" 
+                            string="Close"
+                            class="btn-secondary"
+                            invisible="state == 'closed'"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="new,contacted,invited,converted"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Contact Information">
+                            <field name="first_name"/>
+                            <field name="last_name"/>
+                            <field name="email" widget="email"/>
+                            <field name="country_id" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Inquiry Details">
+                            <field name="service_interest"/>
+                            <field name="source" readonly="1"/>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Message">
+                        <field name="message" nolabel="1" colspan="2"/>
+                    </group>
+                    <group string="Linked Records" invisible="not partner_id and not case_id">
+                        <field name="partner_id" readonly="1"/>
+                        <field name="case_id" readonly="1"/>
+                    </group>
+                    <group string="UTM Tracking" invisible="not utm_source and not utm_medium and not utm_campaign">
+                        <field name="utm_source" readonly="1"/>
+                        <field name="utm_medium" readonly="1"/>
+                        <field name="utm_campaign" readonly="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Contact Inquiry Search View - NO GROUP ELEMENT (Odoo 19) -->
+    <record id="view_contact_inquiry_search" model="ir.ui.view">
+        <field name="name">mm.contact.inquiry.search</field>
+        <field name="model">mm.contact.inquiry</field>
+        <field name="arch" type="xml">
+            <search string="Search Inquiries">
+                <field name="display_name"/>
+                <field name="email"/>
+                <field name="country_id"/>
+                <separator/>
+                <filter name="filter_new" string="New" domain="[('state', '=', 'new')]"/>
+                <filter name="filter_contacted" string="Contacted" domain="[('state', '=', 'contacted')]"/>
+                <filter name="filter_invited" string="Invited" domain="[('state', '=', 'invited')]"/>
+                <separator/>
+                <filter name="filter_roadmap" string="Roadmap Interest" domain="[('service_interest', '=', 'roadmap')]"/>
+                <filter name="filter_gcms" string="GCMS Interest" domain="[('service_interest', '=', 'gcms')]"/>
+                <filter name="filter_application" string="Application Interest" domain="[('service_interest', '=', 'application')]"/>
+                <separator/>
+                <!-- Group By filters - no <group> wrapper in Odoo 19 -->
+                <filter name="groupby_state" string="Status" context="{'group_by': 'state'}"/>
+                <filter name="groupby_service" string="Service Interest" context="{'group_by': 'service_interest'}"/>
+                <filter name="groupby_country" string="Country" context="{'group_by': 'country_id'}"/>
+                <filter name="groupby_date" string="Date" context="{'group_by': 'create_date:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Contact Inquiry Kanban View -->
+    <record id="view_contact_inquiry_kanban" model="ir.ui.view">
+        <field name="name">mm.contact.inquiry.kanban</field>
+        <field name="model">mm.contact.inquiry</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_mobile">
+                <field name="display_name"/>
+                <field name="email"/>
+                <field name="service_interest"/>
+                <field name="state"/>
+                <field name="create_date"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="display_name"/>
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <field name="email"/>
+                                <br/>
+                                <span class="text-muted">
+                                    <field name="service_interest"/>
+                                </span>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="create_date" widget="date"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Contact Inquiry Action -->
+    <record id="action_contact_inquiry" model="ir.actions.act_window">
+        <field name="name">Contact Inquiries</field>
+        <field name="res_model">mm.contact.inquiry</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_contact_inquiry_search"/>
+        <field name="context">{'search_default_filter_new': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No contact inquiries yet
+            </p>
+            <p>
+                Contact inquiries from the website will appear here.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_contact_inquiries"
+              name="Website Inquiries"
+              action="action_contact_inquiry"
+              sequence="90"/>
+
+</odoo>

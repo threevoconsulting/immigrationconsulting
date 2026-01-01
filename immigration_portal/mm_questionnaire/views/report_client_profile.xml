@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ===================== -->
+    <!-- Client Profile PDF Report -->
+    <!-- ===================== -->
+
+    <!-- Report Action -->
+    <record id="action_report_client_profile" model="ir.actions.report">
+        <field name="name">Client Profile Report</field>
+        <field name="model">mm.client.profile</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mm_questionnaire.report_client_profile</field>
+        <field name="report_file">mm_questionnaire.report_client_profile</field>
+        <field name="print_report_name">'Client Profile - %s' % object.name</field>
+        <field name="binding_model_id" ref="mm_immigration.model_mm_client_profile"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Report Template -->
+    <template id="report_client_profile">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="profile">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h1>Client Profile Report</h1>
+                            <h3 class="text-muted">
+                                <t t-esc="profile.name"/>
+                            </h3>
+                            <p class="text-muted">
+                                Generated: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                            </p>
+                        </div>
+
+                        <hr/>
+
+                        <!-- Personal Information -->
+                        <h4 class="mt-4 mb-3 text-primary">1. Personal Information</h4>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td class="bg-light" style="width: 30%;"><strong>Full Name</strong></td>
+                                <td>
+                                    <t t-esc="profile.legal_first_name or ''"/>
+                                    <t t-if="profile.legal_middle_name"> <t t-esc="profile.legal_middle_name"/></t>
+                                    <t t-if="profile.legal_last_name"> <t t-esc="profile.legal_last_name"/></t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Date of Birth</strong></td>
+                                <td><t t-esc="profile.date_of_birth" t-options="{'widget': 'date'}"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Age</strong></td>
+                                <td><t t-esc="profile.age"/> years</td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Gender</strong></td>
+                                <td><t t-esc="dict(profile._fields['gender'].selection).get(profile.gender, '-')"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Country of Citizenship</strong></td>
+                                <td><t t-esc="profile.citizenship_country_id.name or '-'"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Country of Residence</strong></td>
+                                <td><t t-esc="profile.residence_country_id.name or '-'"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Marital Status</strong></td>
+                                <td><t t-esc="dict(profile._fields['marital_status'].selection).get(profile.marital_status, '-')"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Has Dependent Children</strong></td>
+                                <td><t t-if="profile.has_children">Yes</t><t t-else="">No</t></td>
+                            </tr>
+                        </table>
+
+                        <!-- Passport Information -->
+                        <h4 class="mt-4 mb-3 text-primary">2. Passport Information</h4>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td class="bg-light" style="width: 30%;"><strong>Passport Number</strong></td>
+                                <td><t t-esc="profile.passport_number or '-'"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Passport Country</strong></td>
+                                <td><t t-esc="profile.passport_country_id.name or '-'"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Passport Expiry</strong></td>
+                                <td><t t-esc="profile.passport_expiry" t-options="{'widget': 'date'}"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Current Legal Status</strong></td>
+                                <td><t t-esc="dict(profile._fields['current_legal_status'].selection).get(profile.current_legal_status, '-')"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- Immigration Intent -->
+                        <h4 class="mt-4 mb-3 text-primary">3. Immigration Intent</h4>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td class="bg-light" style="width: 30%;"><strong>Immigration Goal</strong></td>
+                                <td><t t-esc="dict(profile._fields['immigration_goal'].selection).get(profile.immigration_goal, '-')"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Target Year</strong></td>
+                                <td><t t-esc="profile.target_year or '-'"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Open to Rural/Northern</strong></td>
+                                <td><t t-if="profile.open_to_rural">Yes</t><t t-else="">No</t></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Preferred Provinces</strong></td>
+                                <td>
+                                    <t t-if="profile.preferred_provinces">
+                                        <t t-foreach="profile.preferred_provinces" t-as="prov">
+                                            <t t-esc="prov.name"/><t t-if="not prov_last">, </t>
+                                        </t>
+                                    </t>
+                                    <t t-else="">-</t>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Education -->
+                        <h4 class="mt-4 mb-3 text-primary">4. Education</h4>
+                        <t t-if="profile.education_ids">
+                            <table class="table table-sm table-bordered">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Institution</th>
+                                        <th>Credential</th>
+                                        <th>Field of Study</th>
+                                        <th>Country</th>
+                                        <th>Completed</th>
+                                        <th>ECA Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="profile.education_ids" t-as="edu">
+                                        <tr>
+                                            <td><t t-esc="edu.institution_name"/></td>
+                                            <td><t t-esc="dict(edu._fields['credential_type'].selection).get(edu.credential_type, '-')"/></td>
+                                            <td><t t-esc="edu.field_of_study or '-'"/></td>
+                                            <td><t t-esc="edu.institution_country_id.name or '-'"/></td>
+                                            <td><t t-esc="edu.end_date" t-options="{'widget': 'date'}"/></td>
+                                            <td><t t-esc="dict(edu._fields['eca_status'].selection).get(edu.eca_status, '-')"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <p class="text-muted">No education records provided.</p>
+                        </t>
+                        <p><strong>Primary Education Level:</strong> <t t-esc="dict(profile._fields['primary_education_level'].selection).get(profile.primary_education_level, '-')"/></p>
+
+                        <!-- Work Experience -->
+                        <h4 class="mt-4 mb-3 text-primary">5. Work Experience</h4>
+                        <t t-if="profile.experience_ids">
+                            <table class="table table-sm table-bordered">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Job Title</th>
+                                        <th>Employer</th>
+                                        <th>Country</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>NOC Code</th>
+                                        <th>TEER</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="profile.experience_ids" t-as="exp">
+                                        <tr>
+                                            <td><t t-esc="exp.job_title"/></td>
+                                            <td><t t-esc="exp.employer_name"/></td>
+                                            <td><t t-esc="exp.employer_country_id.name or '-'"/></td>
+                                            <td><t t-esc="exp.start_date" t-options="{'widget': 'date'}"/></td>
+                                            <td>
+                                                <t t-if="exp.is_current">Present</t>
+                                                <t t-else=""><t t-esc="exp.end_date" t-options="{'widget': 'date'}"/></t>
+                                            </td>
+                                            <td><t t-esc="exp.noc_code or '-'"/></td>
+                                            <td><t t-esc="exp.noc_teer_category or '-'"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <p class="text-muted">No work experience records provided.</p>
+                        </t>
+                        <p><strong>Total Skilled Experience:</strong> <t t-esc="profile.total_skilled_experience_years or 0"/> years</p>
+                        <p><strong>Canadian Experience:</strong> <t t-esc="profile.total_canadian_experience_months or 0"/> months</p>
+
+                        <!-- Language Proficiency -->
+                        <h4 class="mt-4 mb-3 text-primary">6. Language Proficiency</h4>
+                        <t t-if="profile.language_ids">
+                            <table class="table table-sm table-bordered">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Language</th>
+                                        <th>Test Type</th>
+                                        <th>Test Date</th>
+                                        <th>Listening (CLB)</th>
+                                        <th>Reading (CLB)</th>
+                                        <th>Writing (CLB)</th>
+                                        <th>Speaking (CLB)</th>
+                                        <th>Min CLB</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="profile.language_ids" t-as="lang">
+                                        <tr>
+                                            <td><t t-esc="dict(lang._fields['language'].selection).get(lang.language, '-')"/></td>
+                                            <td><t t-esc="dict(lang._fields['test_type'].selection).get(lang.test_type, '-')"/></td>
+                                            <td><t t-esc="lang.test_date" t-options="{'widget': 'date'}"/></td>
+                                            <td><t t-esc="lang.clb_listening"/></td>
+                                            <td><t t-esc="lang.clb_reading"/></td>
+                                            <td><t t-esc="lang.clb_writing"/></td>
+                                            <td><t t-esc="lang.clb_speaking"/></td>
+                                            <td><strong><t t-esc="lang.clb_minimum"/></strong></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <p class="text-muted">No language test records provided.</p>
+                        </t>
+                        <p><strong>English CLB Minimum:</strong> <t t-esc="profile.english_clb_minimum or '-'"/></p>
+                        <p><strong>French CLB Minimum:</strong> <t t-esc="profile.french_clb_minimum or '-'"/></p>
+
+                        <!-- Canada Connections -->
+                        <h4 class="mt-4 mb-3 text-primary">7. Canada Connections</h4>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td class="bg-light" style="width: 40%;"><strong>Has Family in Canada</strong></td>
+                                <td>
+                                    <t t-if="profile.has_family_in_canada">
+                                        Yes
+                                        <t t-if="profile.family_in_canada_relationship">
+                                            - <t t-esc="dict(profile._fields['family_in_canada_relationship'].selection).get(profile.family_in_canada_relationship, '')"/>
+                                        </t>
+                                        <t t-if="profile.family_member_province_id">
+                                            in <t t-esc="profile.family_member_province_id.name"/>
+                                        </t>
+                                    </t>
+                                    <t t-else="">No</t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Studied in Canada</strong></td>
+                                <td>
+                                    <t t-if="profile.studied_in_canada">
+                                        Yes - <t t-esc="profile.canada_study_duration_months or 0"/> months
+                                    </t>
+                                    <t t-else="">No</t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Worked in Canada</strong></td>
+                                <td>
+                                    <t t-if="profile.worked_in_canada">
+                                        Yes - <t t-esc="profile.canada_work_duration_months or 0"/> months
+                                    </t>
+                                    <t t-else="">No</t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Previous Visa Application</strong></td>
+                                <td>
+                                    <t t-if="profile.previous_visa_application">
+                                        Yes
+                                        <t t-if="profile.previous_visa_type">
+                                            - <t t-esc="dict(profile._fields['previous_visa_type'].selection).get(profile.previous_visa_type, '')"/>
+                                        </t>
+                                        <t t-if="profile.previous_visa_result">
+                                            (<t t-esc="dict(profile._fields['previous_visa_result'].selection).get(profile.previous_visa_result, '')"/>)
+                                        </t>
+                                    </t>
+                                    <t t-else="">No</t>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Financial &amp; Risk -->
+                        <h4 class="mt-4 mb-3 text-primary">8. Financial &amp; Risk Factors</h4>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td class="bg-light" style="width: 40%;"><strong>Settlement Funds (CAD)</strong></td>
+                                <td>$<t t-esc="'{:,.2f}'.format(profile.settlement_funds or 0)"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Funds Source</strong></td>
+                                <td><t t-esc="dict(profile._fields['funds_source'].selection).get(profile.funds_source, '-')"/></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Funds are Liquid</strong></td>
+                                <td><t t-if="profile.funds_liquid">Yes</t><t t-else="">No</t></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Can Prove Funds</strong></td>
+                                <td><t t-if="profile.can_prove_funds">Yes</t><t t-else="">No</t></td>
+                            </tr>
+                        </table>
+
+                        <h5 class="mt-3 mb-2">Risk Factors</h5>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <td class="bg-light" style="width: 40%;"><strong>Visa Refusal History</strong></td>
+                                <td>
+                                    <t t-if="profile.visa_refusal">
+                                        <span class="text-warning">Yes</span>
+                                        <t t-if="profile.visa_refusal_details">
+                                            - <t t-esc="profile.visa_refusal_details"/>
+                                        </t>
+                                    </t>
+                                    <t t-else=""><span class="text-success">No</span></t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Criminal History</strong></td>
+                                <td>
+                                    <t t-if="profile.criminal_history">
+                                        <span class="text-warning">Yes</span>
+                                        <t t-if="profile.criminal_history_details">
+                                            - <t t-esc="profile.criminal_history_details"/>
+                                        </t>
+                                    </t>
+                                    <t t-else=""><span class="text-success">No</span></t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-light"><strong>Medical Conditions</strong></td>
+                                <td>
+                                    <t t-if="profile.medical_conditions">
+                                        <span class="text-warning">Yes</span>
+                                        <t t-if="profile.medical_condition_details">
+                                            - <t t-esc="profile.medical_condition_details"/>
+                                        </t>
+                                    </t>
+                                    <t t-else=""><span class="text-success">No</span></t>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Spouse Information (if applicable) -->
+                        <t t-if="profile.marital_status in ('married', 'common_law')">
+                            <h4 class="mt-4 mb-3 text-primary">9. Spouse/Partner Information</h4>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <td class="bg-light" style="width: 30%;"><strong>Spouse Name</strong></td>
+                                    <td><t t-esc="profile.spouse_first_name or ''"/> <t t-esc="profile.spouse_last_name or ''"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-light"><strong>Date of Birth</strong></td>
+                                    <td><t t-esc="profile.spouse_date_of_birth" t-options="{'widget': 'date'}"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-light"><strong>Citizenship</strong></td>
+                                    <td><t t-esc="profile.spouse_citizenship_country_id.name or '-'"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-light"><strong>Accompanying</strong></td>
+                                    <td><t t-if="profile.spouse_is_accompanying">Yes</t><t t-else="">No</t></td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-light"><strong>Highest Education</strong></td>
+                                    <td><t t-esc="dict(profile._fields['spouse_highest_education'].selection).get(profile.spouse_highest_education, '-')"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-light"><strong>Has ECA</strong></td>
+                                    <td><t t-if="profile.spouse_has_eca">Yes</t><t t-else="">No</t></td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-light"><strong>Work Experience</strong></td>
+                                    <td><t t-esc="profile.spouse_work_experience_years or 0"/> years</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-light"><strong>English CLB</strong></td>
+                                    <td><t t-esc="profile.spouse_english_clb or '-'"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-light"><strong>French CLB</strong></td>
+                                    <td><t t-esc="profile.spouse_french_clb or '-'"/></td>
+                                </tr>
+                            </table>
+                        </t>
+
+                        <!-- Children (if applicable) -->
+                        <t t-if="profile.has_children and profile.children_ids">
+                            <h4 class="mt-4 mb-3 text-primary">10. Dependent Children</h4>
+                            <table class="table table-sm table-bordered">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Date of Birth</th>
+                                        <th>Age</th>
+                                        <th>Country</th>
+                                        <th>Accompanying</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="profile.children_ids" t-as="child">
+                                        <tr>
+                                            <td><t t-esc="child.name"/></td>
+                                            <td><t t-esc="child.date_of_birth" t-options="{'widget': 'date'}"/></td>
+                                            <td><t t-esc="child.age"/> years</td>
+                                            <td><t t-esc="child.country_id.name or '-'"/></td>
+                                            <td><t t-if="child.is_accompanying">Yes</t><t t-else="">No</t></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- Footer -->
+                        <hr class="mt-4"/>
+                        <p class="text-center text-muted small">
+                            <em>This report was generated from The Migration Monitor immigration portal.</em>
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

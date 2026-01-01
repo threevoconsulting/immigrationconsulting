@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Portal users can only see their own roadmaps (delivered or acknowledged) -->
+        <record id="rule_roadmap_portal_own" model="ir.rule">
+            <field name="name">Portal: Own Roadmaps (Delivered)</field>
+            <field name="model_id" ref="model_mm_roadmap_document"/>
+            <field name="domain_force">[('partner_id', '=', user.partner_id.id), ('state', 'in', ['delivered', 'acknowledged'])]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        
+        <!-- Portal users can see PNP opportunities in their roadmaps -->
+        <record id="rule_pnp_portal_own" model="ir.rule">
+            <field name="name">Portal: Own PNP Opportunities</field>
+            <field name="model_id" ref="model_mm_pnp_opportunity"/>
+            <field name="domain_force">[('roadmap_id.partner_id', '=', user.partner_id.id), ('roadmap_id.state', 'in', ['delivered', 'acknowledged'])]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        
+        <!-- Portal users can see milestones in their roadmaps -->
+        <record id="rule_milestone_portal_own" model="ir.rule">
+            <field name="name">Portal: Own Milestones</field>
+            <field name="model_id" ref="model_mm_roadmap_milestone"/>
+            <field name="domain_force">[('roadmap_id.partner_id', '=', user.partner_id.id), ('roadmap_id.state', 'in', ['delivered', 'acknowledged'])]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        
+        <!-- Consultants can see roadmaps for their assigned cases -->
+        <record id="rule_roadmap_consultant_assigned" model="ir.rule">
+            <field name="name">Consultant: Assigned Case Roadmaps</field>
+            <field name="model_id" ref="model_mm_roadmap_document"/>
+            <field name="domain_force">['|', ('case_id.consultant_id', '=', user.id), ('consultant_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('mm_immigration.group_immigration_consultant'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        
+    </data>
+</odoo>
